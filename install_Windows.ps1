@@ -9,4 +9,6 @@ pip install --upgrade pip
 pip install flask
 
 npm install
-npm run api
+
+npm run dev:all
+Write-Host "Installation terminée. Vous pouvez maintenant exécuter l'application."
