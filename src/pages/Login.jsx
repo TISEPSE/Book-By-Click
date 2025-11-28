@@ -3,7 +3,7 @@ import React from "react";
 export default function LoginForm() {
   return (
     <div className="flex items-center justify-center">
-      <form className="bg-white p-6 rounded shadow-md w-80 flex flex-col gap-4">
+      <form className="bg-white p-6 rounded shadow-md w-80 flex flex-col gap-4" action="/login" method="POST">
         <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
 
         <label className="flex flex-col text-sm text-gray-800">
