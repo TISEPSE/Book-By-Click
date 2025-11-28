@@ -1,27 +1,14 @@
-import { useState } from "react";
-
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-
-    await fetch("http://localhost:5000/login_form", {
-      method: "POST",
-      body: formData
-    });
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center mt-10">
       <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-80 flex flex-col gap-4"
+        action="http://localhost:5000/login_form"
+        method="POST"
+        className="w-80 flex flex-col gap-4 p-6 rounded shadow-md"
+        style={{
+          backgroundColor: "#ffffffff",
+          border: "1px solid #e5e5e500"
+        }}
       >
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Login
@@ -33,8 +20,8 @@ export default function LoginForm() {
             type="email"
             name="email"
             required
-            className="mt-1 p-2 border border-gray-400 rounded bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ border: "1px solid #e5e5e500", backgroundColor: "#F2F2F2" }}
           />
         </label>
 
@@ -44,8 +31,8 @@ export default function LoginForm() {
             type="password"
             name="password"
             required
-            className="mt-1 p-2 border border-gray-400 rounded bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ border: "1px solid #e5e5e500", backgroundColor: "#F2F2F2" }}
           />
         </label>
 
