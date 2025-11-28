@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:all": "concurrently \"cd api && ../venv/bin/python -m flask --app api run --no-debugger\" \"npm run dev\"",
+    "dev:all": "concurrently \"cd Backend && ../venv/bin/python -m flask --app app run --no-debugger\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
