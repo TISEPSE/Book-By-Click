@@ -10,11 +10,6 @@ function App() {
 
   return (
     <BrowserRouter>
-    {/* Navigation temporaire, vers la page racine "/" et La page "./pages/Page_Teste.jsx" */}
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/register_form">Register</Link>
-      </nav>
-
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/register_form" element={<Resgister/>}/>
