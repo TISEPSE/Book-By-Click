@@ -11,8 +11,7 @@ source venv/bin/activate
 
 # Installe Flask si pas déjà installé
 pip install --upgrade pip
-pip install flask flask-cors
+pip install flask
 
-# Lancer l'API avec npm et installer les dépendances
-npm install
+# Lancer l'API avec npm
 npm run api
