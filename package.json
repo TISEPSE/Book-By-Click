@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:all": "concurrently \"cd Backend && ../venv/bin/python -m flask --app app run --no-debugger\" \"npm run dev\"",
+    "dev:win": "concurrently \"cd Backend && ..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
