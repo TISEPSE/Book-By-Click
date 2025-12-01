@@ -1,22 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import useFormSubmit from "../Hook/useForm";
 
 export default function Login() {
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-
-    // 1 seule lecture du corps de la réponse
-    const res = await fetch("http://localhost:5000/login_form", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json(); // JSON valide fourni par Flask
-    navigate("/recap", { state: { data } });
-  };
+  // On récupère le hook pour gérer le submit
+  const { handleSubmit } = useFormSubmit(
+    "http://localhost:5000/login_form", // URL du backend
+    "/recap"                            // route de succès
+  );
 
   return (
     <main className="w-full h-screen flex items-center justify-center bg-gray-50">
