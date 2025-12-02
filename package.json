@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:all": "concurrently -k -s first \"bash -c 'cd Backend/db && docker-compose up -d'\" \"bash -c 'cd Backend && ../venv/bin/python -m flask --app app run --no-debugger'\" \"npm run dev\"",
+    "dev:lin":" concurrently \"cd Backend && ../venv/bin/python -m flask --app app run --no-debugger\" \"npm run dev\"",
     "dev:win": "concurrently \"cd Backend && ..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
