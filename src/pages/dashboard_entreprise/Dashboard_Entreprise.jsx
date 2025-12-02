@@ -22,7 +22,6 @@ const Dashboard_entreprises = () => {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* MODIF IMPORTANTE : passer activeSection ET setActiveSection */}
       <Header 
         activeSection={activeSection}
         setActiveSection={setActiveSection} 

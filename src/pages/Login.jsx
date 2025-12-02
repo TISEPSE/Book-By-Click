@@ -1,4 +1,12 @@
+import useFormSubmit from "../Hook/useForm";
+
 export default function Login() {
+  // On récupère le hook pour gérer le submit
+  const { handleSubmit } = useFormSubmit(
+    "http://localhost:5000/login_form", // URL du backend
+    "/recap"                            // route de succès
+  );
+  
   return (
     <main className="w-full h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
@@ -24,6 +32,7 @@ export default function Login() {
             className="space-y-5"
             action="http://localhost:5000/login_form"
             method="POST"
+            onSubmit={handleSubmit}
           >
             <div className="flex flex-col items-start">
               <label className="font-medium block text-left">Email</label>

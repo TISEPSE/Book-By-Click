@@ -237,14 +237,7 @@ export default function Home() {
                     Fonctionnalités
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition duration-300 text-sm"
-                  >
-                    Tarifs
-                  </a>
-                </li>
+                <li></li>
                 <li>
                   <a
                     href="#"
