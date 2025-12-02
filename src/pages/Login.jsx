@@ -11,7 +11,7 @@ export default function Login() {
               Pas de compte ?{" "}
               <a
                 href="register_form"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
+                className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
               >
                 Crée un compte
               </a>

@@ -15,4 +15,4 @@ pip install flask flask-cors
 
 # Lancer l'API avec npm et installer les dépendances
 npm install
-npm run api
+npm run dev:all

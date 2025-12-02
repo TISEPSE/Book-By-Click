@@ -10,9 +10,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "api": "cd api && python -m flask --app api run --no-debugger"
+    "app": "cd Backend && python -m flask --app app run --no-debugger"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.17",
     "express": "^5.1.0",
     "flask": "^0.2.10",
