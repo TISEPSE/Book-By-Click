@@ -10,7 +10,7 @@ export default function Login() {
             <p>
               Pas de compte ?{" "}
               <a
-                href="register_form"
+                href="register_choice"
                 className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
               >
                 Crée un compte

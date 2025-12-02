@@ -8,9 +8,9 @@ export default function Home() {
           <a href="#" className="mr-6">
             <div className="flex items-center space-x-2">
               <CalendarDaysIcon className="w-8 h-8 text-indigo-600 " />
-              <span className="text-xl font-bold text-gray-900">
+              <a href="/" className="text-xl font-bold text-gray-900">
                 Book By Click
-              </span>
+              </a>
             </div>
           </a>
           <div className="flex-1 flex justify-center">
