@@ -104,27 +104,3 @@ class Reservation(db.Model):
     dateCreation = db.Column(db.DateTime, nullable=False)
 
     EventEmails = db.relationship('EventEmail', backref='reservation')
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
