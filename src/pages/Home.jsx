@@ -25,7 +25,7 @@ export default function Home() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href=""
                   className="text-gray-700 hover:text-indigo-600 transition duration-300"
                 >
                   Tutoriels
@@ -33,7 +33,7 @@ export default function Home() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="Contact"
                   className="text-gray-700 hover:text-indigo-600 transition duration-300"
                 >
                   Contact
