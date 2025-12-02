@@ -1,4 +1,3 @@
-// Dashboard_entreprises.jsx
 import { useState } from 'react'
 import Header from '../../components/Header'
 import DashboardContent from './sections/Dashboard_Content'
@@ -10,7 +9,6 @@ import StatisticsContent from './sections/Statistics_Content'
 const Dashboard_entreprises = () => {
   const [activeSection, setActiveSection] = useState('dashboard')
   
-  // Fonction pour choisir le contenu
   const renderContent = () => {
     switch(activeSection) {
       case 'dashboard': return <DashboardContent />
@@ -24,10 +22,12 @@ const Dashboard_entreprises = () => {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Passe setActiveSection au Header */}
-      <Header setActiveSection={setActiveSection} />
+      {/* MODIF IMPORTANTE : passer activeSection ET setActiveSection */}
+      <Header 
+        activeSection={activeSection}
+        setActiveSection={setActiveSection} 
+      />
       
-      {/* Contenu qui change */}
       <main className="max-w-screen-xl mx-auto px-4 py-8">
         {renderContent()}
       </main>

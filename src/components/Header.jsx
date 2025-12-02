@@ -1,8 +1,8 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/outline"
 import Avatar from "../components/Avatar_Menu"
 
-// MODIF : Accepter setActiveSection en prop
-export default ({ setActiveSection }) => {
+// MODIF : Accepter activeSection ET setActiveSection
+export default ({ activeSection, setActiveSection }) => {
   return (
     <header className="text-base lg:text-sm bg-white border-b border-gray-200">
       <div className="items-center gap-x-14 px-4 max-w-screen-xl mx-auto lg:flex lg:px-8">
@@ -61,8 +61,8 @@ export default ({ setActiveSection }) => {
       </div>
       <nav className="border-gray-100">
         <ul className="flex items-center gap-x-3 max-w-screen-xl mx-auto px-4 overflow-x-auto lg:px-8">
-  
-          <li className="py-1 border-b-2 border-indigo-600">
+          {/* MODIF : Condition sur chaque li */}
+          <li className={`py-1 ${activeSection === 'dashboard' ? 'border-b-2 border-indigo-600' : ''}`}>
             <a
               onClick={() => setActiveSection && setActiveSection('dashboard')}
               className="block py-2 px-3 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 duration-150 cursor-pointer"
@@ -71,7 +71,8 @@ export default ({ setActiveSection }) => {
             </a>
           </li>
           
-          <li className="py-1">
+          {/* MODIF : Condition sur chaque li */}
+          <li className={`py-1 ${activeSection === 'calendar' ? 'border-b-2 border-indigo-600' : ''}`}>
             <a
               onClick={() => setActiveSection && setActiveSection('calendar')}
               className="block py-2 px-3 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 duration-150 cursor-pointer"
@@ -80,7 +81,8 @@ export default ({ setActiveSection }) => {
             </a>
           </li>
           
-          <li className="py-1">
+          {/* MODIF : Condition sur chaque li */}
+          <li className={`py-1 ${activeSection === 'reservations' ? 'border-b-2 border-indigo-600' : ''}`}>
             <a
               onClick={() => setActiveSection && setActiveSection('reservations')}
               className="block py-2 px-3 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 duration-150 cursor-pointer"
@@ -89,7 +91,8 @@ export default ({ setActiveSection }) => {
             </a>
           </li>
           
-          <li className="py-1">
+          {/* MODIF : Condition sur chaque li */}
+          <li className={`py-1 ${activeSection === 'clients' ? 'border-b-2 border-indigo-600' : ''}`}>
             <a
               onClick={() => setActiveSection && setActiveSection('clients')}
               className="block py-2 px-3 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 duration-150 cursor-pointer"
@@ -98,7 +101,8 @@ export default ({ setActiveSection }) => {
             </a>
           </li>
           
-          <li className="py-1">
+          {/* MODIF : Condition sur chaque li */}
+          <li className={`py-1 ${activeSection === 'statistics' ? 'border-b-2 border-indigo-600' : ''}`}>
             <a
               onClick={() => setActiveSection && setActiveSection('statistics')}
               className="block py-2 px-3 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 duration-150 cursor-pointer"
