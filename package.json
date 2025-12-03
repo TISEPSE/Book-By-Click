@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:all": "concurrently -k -s first \"bash -c 'cd Backend/db && docker-compose up -d'\" \"bash -c 'cd Backend && ../venv/bin/python -m flask --app app run --no-debugger'\" \"npm run dev\"",
-    "dev:lin":" concurrently \"cd Backend && ../venv/bin/python -m flask --app app run --no-debugger\" \"npm run dev\"",
+    "dev:lin": " concurrently \"cd Backend && ../venv/bin/python -m flask --app app run --no-debugger\" \"npm run dev\"",
     "dev:win": "concurrently \"cd Backend && ..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
@@ -16,12 +16,17 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.17",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "express": "^5.1.0",
     "flask": "^0.2.10",
+    "lucide-react": "^0.555.0",
     "react": "^19.2.0",
+    "react-day-picker": "^9.11.3",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6",
     "styled-components": "^6.1.19",
+    "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
