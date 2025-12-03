@@ -2,8 +2,7 @@
 const CalendarContent = () => {
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Calendrier</h1>
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-gray-200">
         <p className="text-gray-600">Ici tu mettras un vrai calendrier interactif !</p>
         <div className="mt-4 p-4 border-2 border-dashed border-gray-300 rounded">
           <p className="text-center text-gray-500">[ Espace pour un calendrier ]</p>
