@@ -1,10 +1,11 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/outline"
+import UserAvatar from "./UserAvatar"
 
 const Header = ({ activeSection, setActiveSection }) => {
   return (
     <header className="text-base lg:text-sm bg-white border-b border-gray-200">
-      <div className="items-center gap-x-14 px-4 max-w-screen-xl mx-auto lg:flex lg:px-8">
-        <div className="flex items-center justify-between py-3 lg:py-5">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-x-6 px-4 max-w-screen-xl mx-auto lg:px-8">
+        <div className="flex items-center justify-between py-3 lg:py-5 lg:shrink-0">
           <div className="flex items-center space-x-2">
             <CalendarDaysIcon className="w-8 h-8 text-indigo-600" />
             <a href="/" className="text-xl font-bold text-gray-900">
@@ -30,40 +31,34 @@ const Header = ({ activeSection, setActiveSection }) => {
           </div>
         </div>
 
-        <div className="nav-menu flex-1 pb-28 mt-8 overflow-y-auto max-h-screen hidden lg:block lg:overflow-visible lg:pb-0 lg:mt-0">
-          <ul className="items-center space-y-6 lg:flex lg:space-x-6 lg:space-y-0">
-
-            <li className="flex-1 items-center justify-start pb-4 lg:flex lg:pb-0">
-              <div className="flex items-center gap-2 px-3 border border-gray-200 rounded-lg bg-gray-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-all">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full px-2 py-2 text-gray-700 bg-transparent rounded-md outline-none placeholder:text-gray-400"
+        <div className="nav-menu pb-28 mt-8 overflow-y-auto max-h-screen hidden lg:flex lg:flex-1 lg:items-center lg:gap-6 lg:overflow-visible lg:pb-0 lg:mt-0">
+          <div className="flex-1 flex items-center">
+            <div className="w-full flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-all">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
-              </div>
-            </li>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full px-2 text-gray-700 bg-transparent rounded-md outline-none placeholder:text-gray-400"
+              />
+            </div>
+          </div>
 
-            <li>
-              <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
-                A
-              </div>
-            </li>
-
-          </ul>
+          <div className="flex items-center">
+            <UserAvatar />
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 const ReservationsContent = () => {
   return (
     <div>
+      <h1 className="text-3xl font-bold mb-6">Réservations</h1>
       <div className="bg-white p-6 rounded-lg shadow">
         <p>Liste de toutes vos réservations.</p>
         <ul className="mt-4 space-y-2">
@@ -13,4 +14,3 @@ const ReservationsContent = () => {
   )
 }
 export default ReservationsContent
-
