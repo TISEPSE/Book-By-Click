@@ -22,7 +22,7 @@ function App() {
         <Route path="/register_form_pro" element={<Resgister_pro />} />
         <Route path="/fogot_password" element={<Forgot_password />} />
         <Route
-          path="/dashboard_entreprise"
+          path="/dashboard"
           element={<Dashboard_Entreprise />}
         />
 

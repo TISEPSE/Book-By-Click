@@ -5,12 +5,10 @@ export default function Home() {
     <div>
       <nav className="relative items-center pt-5 px-4 mx-auto max-w-screen-xl sm:px-8 md:flex md:space-x-6">
         <div className="flex justify-between items-center w-full">
-          <a href="#" className="mr-6">
+          <a href="/" className="mr-6">
             <div className="flex items-center space-x-2">
               <CalendarDaysIcon className="w-8 h-8 text-indigo-600 " />
-              <a href="/" className="text-xl font-bold text-gray-900">
                 Book By Click
-              </a>
             </div>
           </a>
           <div className="flex-1 flex justify-center">
