@@ -150,7 +150,7 @@ export default function Calendar() {
         </div>
       </div>
 
-      <div className="w-full h-[900px]">
+      <div className="w-full h-[1000px]">
         <BigCalendar
           localizer={localizer}
           culture="fr"
