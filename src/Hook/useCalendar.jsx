@@ -1,9 +1,9 @@
-import {useState, useMemo} from "react"
+import {useState} from "react"
 import {addMonths, subMonths, addWeeks, subWeeks} from "date-fns"
 
 export function useCalendar() {
   const [date, setDate] = useState(new Date())
-  const [view, setView] = useState("week")
+  const [view, setView] = useState("month")
 
   const events = []
 
