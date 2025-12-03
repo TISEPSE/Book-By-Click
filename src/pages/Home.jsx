@@ -411,7 +411,7 @@ export default function Home() {
             </a>
             <a
               href="login_form"
-              className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-300 text-gray-900 font-bold rounded-xl shadow-md hover:shadow-lg hover:underline hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-0.5 transition-all duration-300"
+              className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-300 text-gray-900 font-bold rounded-xl shadow-md hover:shadow-lg hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-0.5 transition-all duration-300"
             >
               Se connecter
             </a>
