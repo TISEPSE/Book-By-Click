@@ -1,6 +1,13 @@
 import {useState} from "react"
-import {LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area, RadarChart, Radar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell} from "recharts"
-import {TrendingUp, TrendingDown, Users, Calendar, DollarSign, Star, Activity, ShoppingCart, Award, Target, ArrowUpRight, ArrowDownRight} from "lucide-react"
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area, 
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell
+} from "recharts"
+import {
+  TrendingUp, TrendingDown, Users, Calendar, DollarSign, Star, 
+  Activity, Target, ArrowUpRight, ArrowDownRight
+} from "lucide-react"
 
 export default function DashboardEntrepreneur() {
   // Filtres
