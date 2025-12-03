@@ -8,7 +8,6 @@ import {
   Edit2,
   X,
   Check,
-  Plus,
 } from "lucide-react"
 
 // Mock data for demonstration - represents diverse reservation scenarios
@@ -170,16 +169,13 @@ const ReservationsContent = () => {
   return (
     <div className="space-y-6">
       {/* Page Header with Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Réservations</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Gérez toutes vos réservations et rendez-vous
-          </p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Réservations</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Gérez toutes vos réservations et rendez-vous
+        </p>
       </div>
 
-      
 
       {/* Filters and Search Bar */}
       <div className="bg-white rounded-xl border border-gray-200 p-4">
