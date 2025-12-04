@@ -7,6 +7,8 @@ import Choice_Register from "./pages/Choice_Register.jsx"
 import Forgot_password from "./pages/Forgot_password.jsx"
 import Dashboard_Entreprise from "./pages/dashboard/Dashboard_Entreprise.jsx"
 import "./static/App.css"
+import Contact from "./pages/Contact.jsx"
+
 //===============PAGE DE TEST=================
 import Test from "./pages/Teste_form.jsx"
 import Recap from "./pages/Recap.jsx"
@@ -21,6 +23,8 @@ function App() {
         <Route path="/register_form_user" element={<Resgister_user />} />
         <Route path="/register_form_pro" element={<Resgister_pro />} />
         <Route path="/fogot_password" element={<Forgot_password />} />
+        <Route path="/dashboard_entreprise"element={<Dashboard_Entreprise />}/>
+        <Route path="/contact" element={<Contact />} />
         <Route
           path="/dashboard"
           element={<Dashboard_Entreprise />}
