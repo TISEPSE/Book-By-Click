@@ -9,6 +9,7 @@ def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI", "postgresql://appuser:apppassword@localhost:5432/appdb")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = "key"
     app.register_blueprint(pages_blueprint)
     db.init_app(app)
     cors(app)

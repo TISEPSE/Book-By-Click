@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session, redirect, url_for
 from extension import cors, db
 from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 
@@ -35,7 +35,16 @@ def login_form():
 def recap():
     username = request.form.get("username")
     user = Utilisateur.query.filter(Utilisateur.nom == username).first()
-    return jsonify({"id": user.idClient,"nom":user.nom,"prenom":user.prenom,"dateNaissance":user.dateNaissance,"email":user.email,"motDePasseHash":user.motDePasseHash,"telephone":user.telephone} )
+    if user != None:
+        session["data_user"] ={"id": user.idClient,"nom":user.nom,"prenom":user.prenom,"dateNaissance":user.dateNaissance,"email":user.email,"motDePasseHash":user.motDePasseHash,"telephone":user.telephone} 
+    else:
+        session["data_user"] = {"erreur":"Non valide"}
+    return redirect(url_for("pages.data_user"))
+
+@pages_blueprint.route("/data_user")
+def data_user():
+    data = session.get("data_user")
+    return jsonify(data)
 
 
 # -------------------------------------------
