@@ -1,5 +1,5 @@
 import {useState, useRef, useEffect} from "react"
-import {LogOut} from "lucide-react"
+import {LogOut, User, Settings, HelpCircle} from "lucide-react"
 
 export default function UserAvatarSimple({user = {name: "Utilisateur", email: "user@bookbyclick.com"}}) {
   const [isOpen, setIsOpen] = useState(false)
@@ -16,6 +16,12 @@ export default function UserAvatarSimple({user = {name: "Utilisateur", email: "u
   }, [])
 
   const initials = user.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+
+  const menuItems = [
+    { label: "Mon profil", icon: User },
+    { label: "Paramètres", icon: Settings },
+    { label: "Aide", icon: HelpCircle }
+  ]
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -35,15 +41,19 @@ export default function UserAvatarSimple({user = {name: "Utilisateur", email: "u
           </div>
 
           <div>
-            {["Mon profil", "Paramètres", "Aide"].map(item => (
-              <button
-                key={item}
-                onClick={() => setIsOpen(false)}
-                className="w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
-              >
-                {item}
-              </button>
-            ))}
+            {menuItems.map(item => {
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                >
+                  <Icon className="size-4" />
+                  <span>{item.label}</span>
+                </button>
+              )
+            })}
           </div>
 
           <div className="border-t border-gray-200">

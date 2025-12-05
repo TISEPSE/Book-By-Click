@@ -10,12 +10,17 @@ __pycache__/
 
 # Node
 node_modules/
+package-lock.json
 npm-debug.log*
 yarn-error.log*
 
-# Build
+# Build / Vite
 dist/
+.vite/
 build/
+
+# Docker
+docker-compose.override.yml
 
 # OS
 .DS_Store
@@ -27,4 +32,3 @@ Thumbs.db
 
 # Logs
 *.log
-venv/

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { CalendarDaysIcon } from "@heroicons/react/24/outline"
-import { Search, MapPin, Calendar, Clock, CheckCircle, Users, TrendingUp } from "lucide-react"
+import { Search, MapPin, Calendar, Clock, CheckCircle, Users, TrendingUp, Scissors, UtensilsCrossed, Stethoscope, Sparkles, Dumbbell, Heart } from "lucide-react"
 
 export default function Home() {
   // State for search inputs - ready for future implementation
@@ -60,7 +60,7 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <a
                 href="login_form"
-                className="hidden sm:block px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-300"
+                className="hidden sm:block px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-300 hover:underline"
               >
                 Se connecter
               </a>
@@ -76,7 +76,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section - Planity-inspired with centered search bar */}
-      <section className="relative py-16 sm:py-20 lg:py-28 overflow-hidden">
+      <section className="relative sm:py-20 lg:py-20 overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-100 rounded-full blur-3xl opacity-30"></div>
@@ -86,11 +86,6 @@ export default function Home() {
         <div className="relative max-w-screen-xl mx-auto px-4 sm:px-8">
           {/* Hero Content - Centered */}
           <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-sm font-medium text-indigo-700 mb-6">
-              <TrendingUp className="w-4 h-4" />
-              <span>La solution de réservation n°1 en France</span>
-            </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
@@ -100,10 +95,6 @@ export default function Home() {
               en un seul clic
             </h1>
 
-            {/* Subheadline */}
-            <p className="text-lg sm:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Coiffeur, restaurant, médecin, esthéticienne... Trouvez et réservez instantanément auprès de milliers de professionnels près de chez vous.
-            </p>
 
             {/* Search Bar - Main CTA - Planity-inspired design */}
             <div className="max-w-4xl mx-auto mb-8">
@@ -167,9 +158,9 @@ export default function Home() {
                   </div>
 
                   {/* Popular Searches - Quick suggestions */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <p className="text-sm text-gray-500 mb-2">Recherches populaires :</p>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+                    <p className="text-sm text-gray-500 mb-3">Recherches populaires :</p>
+                    <div className="flex flex-wrap justify-center gap-2">
                       {["Coiffeur", "Restaurant", "Médecin", "Esthéticienne", "Massage"].map(
                         (tag) => (
                           <button
@@ -188,21 +179,6 @@ export default function Home() {
               </form>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Réservation instantanée</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-indigo-500" />
-                <span>10,000+ professionnels</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-purple-500" />
-                <span>Gratuit & sans engagement</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -227,14 +203,9 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 group-hover:bg-indigo-600 rounded-2xl mb-6 transition-all duration-300">
                 <Search className="w-10 h-10 text-indigo-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <div className="relative mb-4">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow-lg">
-                  1
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mt-2">
-                  Recherchez
-                </h3>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Recherchez
+              </h3>
               <p className="text-gray-600 leading-relaxed">
                 Trouvez le professionnel qui correspond à vos besoins parmi des milliers d'établissements près de chez vous.
               </p>
@@ -245,14 +216,9 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 group-hover:bg-purple-600 rounded-2xl mb-6 transition-all duration-300">
                 <Calendar className="w-10 h-10 text-purple-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <div className="relative mb-4">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-purple-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow-lg">
-                  2
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mt-2">
-                  Réservez
-                </h3>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Réservez
+              </h3>
               <p className="text-gray-600 leading-relaxed">
                 Choisissez le créneau horaire qui vous convient et réservez instantanément en quelques clics.
               </p>
@@ -263,14 +229,9 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 group-hover:bg-green-600 rounded-2xl mb-6 transition-all duration-300">
                 <CheckCircle className="w-10 h-10 text-green-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <div className="relative mb-4">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-green-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow-lg">
-                  3
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mt-2">
-                  Confirmé !
-                </h3>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Confirmé !
+              </h3>
               <p className="text-gray-600 leading-relaxed">
                 Recevez une confirmation instantanée par email et SMS. Gérez facilement vos rendez-vous.
               </p>
@@ -301,7 +262,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Popular Categories Section */}
+      {/* Popular Categories Section - Professional redesign with neutral backgrounds */}
       <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-8">
           {/* Section Header */}
@@ -314,26 +275,39 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Categories Grid */}
+          {/* Categories Grid - Professional card-based design */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              { name: "Coiffure", emoji: "💇", color: "bg-pink-100 hover:bg-pink-200 border-pink-200" },
-              { name: "Restaurant", emoji: "🍽️", color: "bg-orange-100 hover:bg-orange-200 border-orange-200" },
-              { name: "Médecin", emoji: "🏥", color: "bg-blue-100 hover:bg-blue-200 border-blue-200" },
-              { name: "Beauté", emoji: "💅", color: "bg-purple-100 hover:bg-purple-200 border-purple-200" },
-              { name: "Sport", emoji: "💪", color: "bg-green-100 hover:bg-green-200 border-green-200" },
-              { name: "Bien-être", emoji: "🧘", color: "bg-indigo-100 hover:bg-indigo-200 border-indigo-200" },
-            ].map((category) => (
-              <button
-                key={category.name}
-                className={`${category.color} border-2 p-6 rounded-xl transition-all duration-300 text-center group hover:shadow-lg hover:-translate-y-1`}
-              >
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                  {category.emoji}
-                </div>
-                <p className="text-sm font-semibold text-gray-900">{category.name}</p>
-              </button>
-            ))}
+              { name: "Coiffure", icon: "Scissors", color: "text-pink-600", hoverBg: "hover:bg-pink-50", borderColor: "group-hover:border-pink-200" },
+              { name: "Restaurant", icon: "UtensilsCrossed", color: "text-orange-600", hoverBg: "hover:bg-orange-50", borderColor: "group-hover:border-orange-200" },
+              { name: "Médecin", icon: "Stethoscope", color: "text-blue-600", hoverBg: "hover:bg-blue-50", borderColor: "group-hover:border-blue-200" },
+              { name: "Beauté", icon: "Sparkles", color: "text-purple-600", hoverBg: "hover:bg-purple-50", borderColor: "group-hover:border-purple-200" },
+              { name: "Sport", icon: "Dumbbell", color: "text-green-600", hoverBg: "hover:bg-green-50", borderColor: "group-hover:border-green-200" },
+              { name: "Bien-être", icon: "Heart", color: "text-indigo-600", hoverBg: "hover:bg-indigo-50", borderColor: "group-hover:border-indigo-200" },
+            ].map((category) => {
+              const iconMap = {
+                Scissors: Scissors,
+                UtensilsCrossed: UtensilsCrossed,
+                Stethoscope: Stethoscope,
+                Sparkles: Sparkles,
+                Dumbbell: Dumbbell,
+                Heart: Heart,
+              }
+              const Icon = iconMap[category.icon]
+              return (
+                <button
+                  key={category.name}
+                  className={`bg-white ${category.hoverBg} border border-gray-200 ${category.borderColor} p-6 rounded-xl transition-all duration-300 text-center group hover:shadow-lg hover:-translate-y-1`}
+                >
+                  {/* Icon with colored accent - scales on hover */}
+                  <div className="flex items-center justify-center mb-3">
+                    <Icon className={`w-10 h-10 ${category.color} group-hover:scale-110 transition-transform duration-300`} />
+                  </div>
+                  {/* Category name with professional typography */}
+                  <p className="text-sm font-semibold text-gray-900">{category.name}</p>
+                </button>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -401,42 +375,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section - Sign up now */}
-      <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
+      {/* CTA Section - Soft, professional redesign with elegant gradient */}
+      <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50 relative overflow-hidden">
+        {/* Subtle background pattern with reduced opacity */}
+        <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, #4f46e5 1px, transparent 1px)",
             backgroundSize: "30px 30px"
           }}></div>
         </div>
 
+        {/* Decorative gradient orbs for depth */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-200 rounded-full blur-3xl opacity-20"></div>
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-20"></div>
+        </div>
+
         <div className="relative max-w-screen-xl mx-auto px-4 sm:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+          {/* Heading with professional color scheme */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             Prêt à simplifier vos réservations ?
           </h2>
-          <p className="text-lg sm:text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
+          {/* Subheading with refined color */}
+          <p className="text-lg sm:text-xl text-gray-700 mb-10 max-w-2xl mx-auto">
             Rejoignez des milliers d'utilisateurs qui ont déjà adopté Book By Click pour gérer leurs rendez-vous
           </p>
 
+          {/* CTA Buttons with enhanced professional styling */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="register_choice"
-              className="w-full sm:w-auto px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+              className="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-300"
             >
               Créer mon compte gratuitement
             </a>
             <a
               href="login_form"
-              className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-indigo-600 transition-all duration-300"
+              className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-300 text-gray-900 font-bold rounded-xl shadow-md hover:shadow-lg hover:underline hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-0.5 transition-all duration-300"
             >
               Se connecter
             </a>
           </div>
 
-          <p className="text-indigo-100 text-sm mt-6">
-            Sans carte bancaire • Sans engagement • Annulation gratuite
-          </p>
+          {/* Trust indicators with subtle styling */}
+          <div className="mt-8 flex items-center justify-center gap-6 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <span>Sans carte bancaire</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <span>Sans engagement</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <span>Annulation gratuite</span>
+            </div>
+          </div>
         </div>
       </section>
 

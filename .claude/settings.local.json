@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm install:*)",
+      "Bash(rm:*)",
+      "Bash(cmd /c:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(/c/Python312/python:*)",
+      "Bash(/c/Python312/python.exe -m venv:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -5,16 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "db": "cd Backend/src && docker compose up",
+    "db": "cd Backend/src && docker compose up -d",
     "api": "cd Backend/src && ../../venv/bin/python -m flask --app app run --no-debugger",
+    "api:win": "cd Backend && ..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger",
     "web": "vite",
-    "dev:all": "concurrently -k \"npm run db\" \"npm run api\" \"npm run web\"",
-    "dev:lin": " concurrently \"cd Backend && ../venv/bin/python -m flask --app app run --no-debugger\" \"npm run dev\"",
-    "dev:win": "concurrently \"cd Backend && ..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger\" \"npm run dev\"",
+    "dev:lin": "concurrently --kill-others-on-fail false \"npm run api\" \"npm run web\"",
+    "dev:win": "concurrently --kill-others-on-fail false \"npm run api:win\" \"npm run web\"",
+    "dev:all": "npm run db && node -e \"require('os').platform()==='win32'?process.exit(1):process.exit(0)\" && npm run dev:lin || npm run dev:win",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "app": "cd Backend && python -m flask --app app run --no-debugger"
+    "app": "cd Backend && python -m flask --app app run --no-debugger",
+    "setup": "npm run setup:py && npm install",
+    "setup:py": "node -e \"require('child_process').execSync('python -m venv venv', {stdio:'inherit'})\" && node -e \"require('child_process').execSync('venv/bin/python -m pip install --upgrade pip -r requirements.txt', {stdio:'inherit'})\""
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -29,7 +32,7 @@
     "react-big-calendar": "^1.19.4",
     "react-day-picker": "^9.11.3",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.6",
+    "react-router-dom": "^7.10.1",
     "recharts": "^3.5.1",
     "styled-components": "^6.1.19",
     "tailwind-merge": "^3.4.0",
@@ -51,3 +54,4 @@
     "vite": "npm:rolldown-vite@7.2.5"
   }
 }
+
