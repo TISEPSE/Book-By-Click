@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "db": "cd Backend/db && docker compose up -d",
-    "api": "cd Backend && ../venv/bin/python -m flask --app app run --no-debugger",
+    "db": "cd Backend/src && docker compose up -d",
+    "api": "cd Backend/src && ../../venv/bin/python -m flask --app app run --no-debugger",
     "api:win": "cd Backend && ..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger",
     "web": "vite",
     "dev:lin": "concurrently --kill-others-on-fail false \"npm run api\" \"npm run web\"",
