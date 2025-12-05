@@ -38,11 +38,6 @@ class SemaineType(db.Model):
     joursPattern = db.Column(db.String())
 
 
-
-
-
-
-
 class Utilisateur(db.Model):
     __tablename__ = "utilisateur"
     idClient = db.Column(db.Integer, primary_key=True)

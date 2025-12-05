@@ -1,17 +1,6 @@
 from flask import Blueprint, request, jsonify
 from extension import cors, db
-from models import (
-    db,
-    Utilisateur,
-    TypeUtilisateur,
-    Entreprise,
-    Creneau,
-    Prestation,
-    Reservation,
-    EventEmail,
-    Evenement,
-    SemaineType,
-)
+from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 
 
 pages_blueprint = Blueprint("pages", __name__)
@@ -45,9 +34,8 @@ def login_form():
 @pages_blueprint.route("/teste", methods=["POST"])
 def recap():
     username = request.form.get("username")
-    utilisateurs = Utilisateur.query.all()
-    print(username)
-    return username
+    user = Utilisateur.query.filter(Utilisateur.nom == username).first()
+    return jsonify({"id": user.idClient,"nom":user.nom,"prenom":user.prenom,"dateNaissance":user.dateNaissance,"email":user.email,"motDePasseHash":user.motDePasseHash,"telephone":user.telephone} )
 
 
 # -------------------------------------------
