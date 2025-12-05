@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Vérifie si le venv existe
-if [ ! -d "venv" ]; then
-    echo "Création du virtualenv..."
-    python3 -m venv venv
+# Supprime le venv s'il existe pour une installation propre
+if [ -d "venv" ]; then
+    echo "Suppression de l'ancien virtualenv..."
+    rm -rf venv
 fi
+
+# Création du virtualenv
+echo "Création du virtualenv..."
+python3 -m venv venv
 
 # Active le virtualenv
 source venv/bin/activate
