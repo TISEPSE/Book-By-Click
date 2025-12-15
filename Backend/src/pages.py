@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from extension import cors, db
 from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
+from mailer import send_contact_email
 
 
 pages_blueprint = Blueprint("pages", __name__)
@@ -39,7 +40,32 @@ def recap():
 
 
 # -------------------------------------------
-# 2) LANCEMENT
+# 2) CONTACT : envoie un email
+# -------------------------------------------
+@pages_blueprint.route("/contact", methods=["POST"])
+def contact():
+    data = request.json
+
+    name = data.get("name")
+    email = data.get("email")
+    phone = data.get("phone")
+    message = data.get("message")
+
+    
+    if not name or not email or not message:
+        return jsonify({"success": False, "error": "Tous les champs sont requis"}), 400
+
+   
+    success = send_contact_email(name, email, phone, message)
+
+    if success:
+        return jsonify({"success": True, "message": "Votre message a été envoyé avec succès !"}), 200
+    else:
+        return jsonify({"success": False, "error": "Erreur lors de l'envoi du message"}), 500
+
+
+# -------------------------------------------
+# 3) LANCEMENT
 # -------------------------------------------
 if __name__ == "__main__":
     app = create_app()
