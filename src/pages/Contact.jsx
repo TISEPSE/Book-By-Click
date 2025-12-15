@@ -1,10 +1,54 @@
-import useFormSubmit from "../Hook/useForm";
+import { useState } from 'react';
 
-export default function Login() {
-  const { handleSubmit } = useFormSubmit(
-    "http://localhost:5000/login_form",
-    "/recap"
-  );
+export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus('');
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        alert('Votre message a été envoyé avec succès !');
+      } else {
+        setStatus('error');
+        alert('❌ Erreur : ' + data.error);
+      }
+    } catch (error) {
+      setStatus('error');
+      alert('Erreur lors de l\'envoi du message');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="w-full min-h-screen flex items-center justify-center bg-white">
@@ -26,6 +70,8 @@ export default function Login() {
               required
               placeholder="Ex: Jean Dupont"
               className="w-full h-12 px-4 border rounded-lg text-base sm:text-lg"
+              value={formData.name}
+              onChange={handleChange}
             />
 
             <label htmlFor="email" className="block text-gray-700 font-medium mb-1">
@@ -38,6 +84,8 @@ export default function Login() {
               required
               placeholder="Ex: jean.dupont@email.com"
               className="w-full h-12 px-4 border rounded-lg text-base sm:text-lg"
+              value={formData.email}
+              onChange={handleChange}
             />
 
             <label htmlFor="telephone" className="block text-gray-700 font-medium mb-1">
@@ -45,13 +93,17 @@ export default function Login() {
             </label>
             <input
               id="telephone"
-              name="Telephone"
+              name="phone"
               type="tel"
               required
               placeholder="Ex: 0612345678"
               className="w-full h-12 px-4 border rounded-lg text-base sm:text-lg"
               inputMode="numeric"
-              onInput={e => (e.target.value = e.target.value.replace(/\D/g, ""))}
+              value={formData.phone}
+              onChange={(e) => {
+                const numericValue = e.target.value.replace(/\D/g, "");
+                setFormData({ ...formData, phone: numericValue });
+              }}
             />
 
             <label htmlFor="message" className="block text-gray-700 font-medium mb-1">
@@ -59,18 +111,21 @@ export default function Login() {
             </label>
             <textarea
               id="message"
-              name="Message"
+              name="message"
               required
               placeholder="Ex: Bonjour, je souhaite avoir plus d'informations sur vos services."
               rows="5"
               className="w-full min-h-[120px] px-4 py-3 border rounded-lg text-base sm:text-lg"
+              value={formData.message}
+              onChange={handleChange}
             ></textarea>
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={loading}
             >
-              Envoyer
+              {loading ? 'Envoi en cours...' : 'Envoyer'}
             </button>
           </form>
         </div>

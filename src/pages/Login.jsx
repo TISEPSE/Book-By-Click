@@ -1,12 +1,4 @@
-import useFormSubmit from "../Hook/useForm";
-
 export default function Login() {
-  // On récupère le hook pour gérer le submit
-  const { handleSubmit } = useFormSubmit(
-    "http://localhost:5000/login_form", // URL du backend
-    "/recap"                            // route de succès
-  );
-  
   return (
     <main className="w-full h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
@@ -32,7 +24,6 @@ export default function Login() {
             className="space-y-5"
             action="http://localhost:5000/login_form"
             method="POST"
-            onSubmit={handleSubmit}
           >
             <div className="flex flex-col items-start">
               <label className="font-medium block text-left">Email</label>
@@ -120,19 +111,29 @@ export default function Login() {
               Se connecter avec google
             </button>
             {/* Section liens supplémentaires */}
-          <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
-            <div className="text-center">
-              <a 
-                href="/" 
-                className="text-indigo-600 hover:text-indigo-500 font-medium inline-flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Retour à l'accueil
-              </a>
+            <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
+              <div className="text-center">
+                <a
+                  href="/"
+                  className="text-indigo-600 hover:text-indigo-500 font-medium inline-flex items-center gap-1"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                  </svg>
+                  Retour à l'accueil
+                </a>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

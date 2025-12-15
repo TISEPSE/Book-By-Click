@@ -48,7 +48,7 @@ export default function Home() {
               </li>
               <li>
                 <a
-                  href="#contact"
+                  href="contact"
                   className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
                 >
                   Contact
