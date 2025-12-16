@@ -39,7 +39,7 @@ export default function Contact() {
         alert('Votre message a été envoyé avec succès !');
       } else {
         setStatus('error');
-        alert('❌ Erreur : ' + data.error);
+        alert('Erreur : ' + data.error);
       }
     } catch (error) {
       setStatus('error');
