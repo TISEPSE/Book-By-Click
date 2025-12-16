@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from extension import cors, db
 from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from mailer import send_contact_email
+import json
+import os
 
 
 pages_blueprint = Blueprint("pages", __name__)
@@ -51,11 +53,11 @@ def contact():
     phone = data.get("phone")
     message = data.get("message")
 
-    
+
     if not name or not email or not message:
         return jsonify({"success": False, "error": "Tous les champs sont requis"}), 400
 
-   
+
     success = send_contact_email(name, email, phone, message)
 
     if success:
@@ -65,8 +67,74 @@ def contact():
 
 
 # -------------------------------------------
-# 3) LANCEMENT
+# 3) AUTOCOMPLETE : Services disponibles
+# -------------------------------------------
+@pages_blueprint.route("/api/services", methods=["GET"])
+def get_services():
+    try:
+        data_dir = os.path.join(os.path.dirname(__file__), 'data')
+        services_file = os.path.join(data_dir, 'services.json')
+
+        with open(services_file, 'r', encoding='utf-8') as f:
+            services = json.load(f)
+
+        query = request.args.get('q', '').lower()
+
+        if query:
+            filtered = [s for s in services if query in s.lower()]
+            return jsonify(filtered[:20])
+
+        return jsonify(services)
+    except Exception as e:
+        print(f"Erreur lors du chargement des services: {e}")
+        return jsonify([]), 500
+
+
+# Cache global pour les villes (chargé une seule fois)
+_villes_cache = None
+
+def load_villes_cache():
+    global _villes_cache
+    if _villes_cache is None:
+        try:
+            data_dir = os.path.join(os.path.dirname(__file__), 'data')
+            communes_file = os.path.join(data_dir, 'communes-france-avec-polygon-2025.json')
+
+            with open(communes_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            # Extraire uniquement les noms des villes (sans le reste des données)
+            _villes_cache = [commune.get('nom_standard', '') for commune in data.get('data', [])]
+            print(f"Cache des villes chargé : {len(_villes_cache)} communes")
+        except Exception as e:
+            print(f"Erreur lors du chargement du cache des villes: {e}")
+            _villes_cache = []
+    return _villes_cache
+
+# -------------------------------------------
+# 4) AUTOCOMPLETE : Villes de France 
+# -------------------------------------------
+@pages_blueprint.route("/api/villes", methods=["GET"])
+def get_villes():
+    try:
+        villes_cache = load_villes_cache()
+        query = request.args.get('q', '').lower()
+
+        if not query:
+            return jsonify(villes_cache[:100])
+
+      
+        filtered = [v for v in villes_cache if v.lower().startswith(query)]
+        return jsonify(filtered[:15])
+    except Exception as e:
+        print(f"Erreur lors de la recherche des villes: {e}")
+        return jsonify([]), 500
+
+
+# -------------------------------------------
+# 5) LANCEMENT
 # -------------------------------------------
 if __name__ == "__main__":
+    from app import create_app
     app = create_app()
     app.run(port=5000)

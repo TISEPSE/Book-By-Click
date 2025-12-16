@@ -1,22 +1,94 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { CalendarDaysIcon } from "@heroicons/react/24/outline"
 import { Search, MapPin, Calendar, Clock, CheckCircle, Users, TrendingUp, Scissors, UtensilsCrossed, Stethoscope, Sparkles, Dumbbell, Heart } from "lucide-react"
 
 export default function Home() {
-  // State for search inputs - ready for future implementation
+
   const [serviceInput, setServiceInput] = useState("")
   const [locationInput, setLocationInput] = useState("")
+  const [showServiceSuggestions, setShowServiceSuggestions] = useState(false)
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false)
 
-  // Handle search submission (placeholder for future implementation)
+  // State pour les suggestions depuis l'API
+  const [serviceSuggestions, setServiceSuggestions] = useState([])
+  const [citySuggestions, setCitySuggestions] = useState([])
+
+  // Refs for click outside detection
+  const serviceRef = useRef(null)
+  const locationRef = useRef(null)
+
+  // Charger les suggestions de services depuis l'API
+  const fetchServiceSuggestions = async (query) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/services?q=${encodeURIComponent(query)}`)
+      const data = await response.json()
+      setServiceSuggestions(data)
+    } catch (error) {
+      console.error("Erreur lors du chargement des services:", error)
+      setServiceSuggestions([])
+    }
+  }
+
+  // Charger les suggestions de villes depuis l'API
+  const fetchCitySuggestions = async (query) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/villes?q=${encodeURIComponent(query)}`)
+      const data = await response.json()
+      setCitySuggestions(data)
+    } catch (error) {
+      console.error("Erreur lors du chargement des villes:", error)
+      setCitySuggestions([])
+    }
+  }
+
+
+  useEffect(() => {
+    if (serviceInput.length > 0) {
+      const timer = setTimeout(() => {
+        fetchServiceSuggestions(serviceInput)
+      }, 150)
+      return () => clearTimeout(timer)
+    } else {
+      setServiceSuggestions([])
+    }
+  }, [serviceInput])
+
+  useEffect(() => {
+    if (locationInput.length > 0) {
+      const timer = setTimeout(() => {
+        fetchCitySuggestions(locationInput)
+      }, 150)
+      return () => clearTimeout(timer)
+    } else {
+      setCitySuggestions([])
+    }
+  }, [locationInput])
+
+
   const handleSearch = (e) => {
     e.preventDefault()
     console.log("Searching for:", serviceInput, "in", locationInput)
-    // Future: Implement actual search logic
+    setShowServiceSuggestions(false)
+    setShowLocationSuggestions(false)
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (serviceRef.current && !serviceRef.current.contains(event.target)) {
+        setShowServiceSuggestions(false)
+      }
+      if (locationRef.current && !locationRef.current.contains(event.target)) {
+        setShowLocationSuggestions(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Navigation Bar - Clean and minimal */}
+      {}
       <nav className="relative bg-white border-b border-gray-100">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-8">
           <div className="flex items-center justify-between py-4">
@@ -104,7 +176,7 @@ export default function Home() {
                   {/* Search Inputs Container - Responsive layout */}
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
                     {/* Service/Business Type Input */}
-                    <div className="flex-1 relative group">
+                    <div className="flex-1 relative group" ref={serviceRef}>
                       <label
                         htmlFor="service"
                         className="block text-sm font-semibold text-gray-700 mb-2"
@@ -118,14 +190,38 @@ export default function Home() {
                           type="text"
                           placeholder="Coiffeur, restaurant, médecin..."
                           value={serviceInput}
-                          onChange={(e) => setServiceInput(e.target.value)}
+                          onChange={(e) => {
+                            setServiceInput(e.target.value)
+                            setShowServiceSuggestions(true)
+                          }}
+                          onFocus={() => setShowServiceSuggestions(true)}
                           className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-0 outline-none transition-all duration-300 text-base"
                         />
+
+                        {/* Dropdown des suggestions de services */}
+                        {showServiceSuggestions && serviceSuggestions.length > 0 && (
+                          <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            {serviceSuggestions.slice(0, 8).map((service, index) => (
+                              <button
+                                key={index}
+                                type="button"
+                                onClick={() => {
+                                  setServiceInput(service)
+                                  setShowServiceSuggestions(false)
+                                }}
+                                className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                              >
+                                <Search className="w-4 h-4 text-gray-400" />
+                                <span className="text-gray-900">{service}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* Location Input */}
-                    <div className="flex-1 relative group">
+                    <div className="flex-1 relative group" ref={locationRef}>
                       <label
                         htmlFor="location"
                         className="block text-sm font-semibold text-gray-700 mb-2"
@@ -139,9 +235,33 @@ export default function Home() {
                           type="text"
                           placeholder="Paris, Lyon, Marseille..."
                           value={locationInput}
-                          onChange={(e) => setLocationInput(e.target.value)}
+                          onChange={(e) => {
+                            setLocationInput(e.target.value)
+                            setShowLocationSuggestions(true)
+                          }}
+                          onFocus={() => setShowLocationSuggestions(true)}
                           className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-0 outline-none transition-all duration-300 text-base"
                         />
+
+                        {/* Dropdown des suggestions de villes */}
+                        {showLocationSuggestions && citySuggestions.length > 0 && (
+                          <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            {citySuggestions.slice(0, 8).map((city, index) => (
+                              <button
+                                key={index}
+                                type="button"
+                                onClick={() => {
+                                  setLocationInput(city)
+                                  setShowLocationSuggestions(false)
+                                }}
+                                className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                              >
+                                <MapPin className="w-4 h-4 text-gray-400" />
+                                <span className="text-gray-900">{city}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
