@@ -1,9 +1,22 @@
-import { useState, useRef, useEffect } from "react"
-import { CalendarDaysIcon } from "@heroicons/react/24/outline"
-import { Search, MapPin, Calendar, Clock, CheckCircle, Users, TrendingUp, Scissors, UtensilsCrossed, Stethoscope, Sparkles, Dumbbell, Heart } from "lucide-react"
+import {useState, useRef, useEffect} from "react"
+import {CalendarDaysIcon} from "@heroicons/react/24/outline"
+import {
+  Search,
+  MapPin,
+  Calendar,
+  Clock,
+  CheckCircle,
+  Users,
+  TrendingUp,
+  Scissors,
+  UtensilsCrossed,
+  Stethoscope,
+  Sparkles,
+  Dumbbell,
+  Heart,
+} from "lucide-react"
 
 export default function Home() {
-
   const [serviceInput, setServiceInput] = useState("")
   const [locationInput, setLocationInput] = useState("")
   const [showServiceSuggestions, setShowServiceSuggestions] = useState(false)
@@ -18,9 +31,11 @@ export default function Home() {
   const locationRef = useRef(null)
 
   // Charger les suggestions de services depuis l'API
-  const fetchServiceSuggestions = async (query) => {
+  const fetchServiceSuggestions = async query => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/services?q=${encodeURIComponent(query)}`)
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/services?q=${encodeURIComponent(query)}`
+      )
       const data = await response.json()
       setServiceSuggestions(data)
     } catch (error) {
@@ -30,9 +45,11 @@ export default function Home() {
   }
 
   // Charger les suggestions de villes depuis l'API
-  const fetchCitySuggestions = async (query) => {
+  const fetchCitySuggestions = async query => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/villes?q=${encodeURIComponent(query)}`)
+      const response = await fetch(
+        `http://127.0.0.1:5000/api/villes?q=${encodeURIComponent(query)}`
+      )
       const data = await response.json()
       setCitySuggestions(data)
     } catch (error) {
@@ -40,7 +57,6 @@ export default function Home() {
       setCitySuggestions([])
     }
   }
-
 
   useEffect(() => {
     if (serviceInput.length > 0) {
@@ -64,8 +80,7 @@ export default function Home() {
     }
   }, [locationInput])
 
-
-  const handleSearch = (e) => {
+  const handleSearch = e => {
     e.preventDefault()
     console.log("Searching for:", serviceInput, "in", locationInput)
     setShowServiceSuggestions(false)
@@ -73,7 +88,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (serviceRef.current && !serviceRef.current.contains(event.target)) {
         setShowServiceSuggestions(false)
       }
@@ -82,8 +97,8 @@ export default function Home() {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
   return (
@@ -148,7 +163,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section - Planity-inspired with centered search bar */}
-      <section className="relative sm:py-20 lg:py-20 overflow-hidden">
+      <section className="relative h-screen flex items-start pt-20 overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-100 rounded-full blur-3xl opacity-30"></div>
@@ -158,7 +173,6 @@ export default function Home() {
         <div className="relative max-w-screen-xl mx-auto px-4 sm:px-8">
           {/* Hero Content - Centered */}
           <div className="text-center max-w-4xl mx-auto">
-
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
               Réservez tous vos
@@ -167,9 +181,8 @@ export default function Home() {
               en un seul clic
             </h1>
 
-
             {/* Search Bar - Main CTA - Planity-inspired design */}
-            <div className="max-w-5xl mx-auto mb-8">
+            <div className="max-w-5xl mx-auto">
               <form onSubmit={handleSearch}>
                 {/* Search Card Container */}
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6 transition-shadow duration-300 hover:shadow-2xl">
@@ -190,7 +203,7 @@ export default function Home() {
                           type="text"
                           placeholder="Coiffeur, restaurant, médecin..."
                           value={serviceInput}
-                          onChange={(e) => {
+                          onChange={e => {
                             setServiceInput(e.target.value)
                             setShowServiceSuggestions(true)
                           }}
@@ -199,24 +212,29 @@ export default function Home() {
                         />
 
                         {/* Dropdown des suggestions de services */}
-                        {showServiceSuggestions && serviceSuggestions.length > 0 && (
-                          <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                            {serviceSuggestions.slice(0, 8).map((service, index) => (
-                              <button
-                                key={index}
-                                type="button"
-                                onClick={() => {
-                                  setServiceInput(service)
-                                  setShowServiceSuggestions(false)
-                                }}
-                                className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
-                              >
-                                <Search className="w-4 h-4 text-gray-400" />
-                                <span className="text-gray-900">{service}</span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        {showServiceSuggestions &&
+                          serviceSuggestions.length > 0 && (
+                            <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                              {serviceSuggestions
+                                .slice(0, 8)
+                                .map((service, index) => (
+                                  <button
+                                    key={index}
+                                    type="button"
+                                    onClick={() => {
+                                      setServiceInput(service)
+                                      setShowServiceSuggestions(false)
+                                    }}
+                                    className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                                  >
+                                    <Search className="w-4 h-4 text-gray-400" />
+                                    <span className="text-gray-900">
+                                      {service}
+                                    </span>
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -235,7 +253,7 @@ export default function Home() {
                           type="text"
                           placeholder="Paris, Lyon, Marseille..."
                           value={locationInput}
-                          onChange={(e) => {
+                          onChange={e => {
                             setLocationInput(e.target.value)
                             setShowLocationSuggestions(true)
                           }}
@@ -244,24 +262,29 @@ export default function Home() {
                         />
 
                         {/* Dropdown des suggestions de villes */}
-                        {showLocationSuggestions && citySuggestions.length > 0 && (
-                          <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                            {citySuggestions.slice(0, 8).map((city, index) => (
-                              <button
-                                key={index}
-                                type="button"
-                                onClick={() => {
-                                  setLocationInput(city)
-                                  setShowLocationSuggestions(false)
-                                }}
-                                className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
-                              >
-                                <MapPin className="w-4 h-4 text-gray-400" />
-                                <span className="text-gray-900">{city}</span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        {showLocationSuggestions &&
+                          citySuggestions.length > 0 && (
+                            <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                              {citySuggestions
+                                .slice(0, 8)
+                                .map((city, index) => (
+                                  <button
+                                    key={index}
+                                    type="button"
+                                    onClick={() => {
+                                      setLocationInput(city)
+                                      setShowLocationSuggestions(false)
+                                    }}
+                                    className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                                  >
+                                    <MapPin className="w-4 h-4 text-gray-400" />
+                                    <span className="text-gray-900">
+                                      {city}
+                                    </span>
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -279,7 +302,6 @@ export default function Home() {
                 </div>
               </form>
             </div>
-
           </div>
         </div>
       </section>
@@ -308,7 +330,8 @@ export default function Home() {
                 Recherchez
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Trouvez le professionnel qui correspond à vos besoins parmi des milliers d'établissements près de chez vous.
+                Trouvez le professionnel qui correspond à vos besoins parmi des
+                milliers d'établissements près de chez vous.
               </p>
             </div>
 
@@ -317,11 +340,10 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 group-hover:bg-purple-600 rounded-2xl mb-6 transition-all duration-300">
                 <Calendar className="w-10 h-10 text-purple-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Réservez
-              </h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Réservez</h3>
               <p className="text-gray-600 leading-relaxed">
-                Choisissez le créneau horaire qui vous convient et réservez instantanément en quelques clics.
+                Choisissez le créneau horaire qui vous convient et réservez
+                instantanément en quelques clics.
               </p>
             </div>
 
@@ -334,7 +356,8 @@ export default function Home() {
                 Confirmé !
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Recevez une confirmation instantanée par email et SMS. Gérez facilement vos rendez-vous.
+                Recevez une confirmation instantanée par email et SMS. Gérez
+                facilement vos rendez-vous.
               </p>
             </div>
           </div>
@@ -379,13 +402,49 @@ export default function Home() {
           {/* Categories Grid - Professional card-based design */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              { name: "Coiffure", icon: "Scissors", color: "text-pink-600", hoverBg: "hover:bg-pink-50", borderColor: "group-hover:border-pink-200" },
-              { name: "Restaurant", icon: "UtensilsCrossed", color: "text-orange-600", hoverBg: "hover:bg-orange-50", borderColor: "group-hover:border-orange-200" },
-              { name: "Médecin", icon: "Stethoscope", color: "text-blue-600", hoverBg: "hover:bg-blue-50", borderColor: "group-hover:border-blue-200" },
-              { name: "Beauté", icon: "Sparkles", color: "text-purple-600", hoverBg: "hover:bg-purple-50", borderColor: "group-hover:border-purple-200" },
-              { name: "Sport", icon: "Dumbbell", color: "text-green-600", hoverBg: "hover:bg-green-50", borderColor: "group-hover:border-green-200" },
-              { name: "Bien-être", icon: "Heart", color: "text-indigo-600", hoverBg: "hover:bg-indigo-50", borderColor: "group-hover:border-indigo-200" },
-            ].map((category) => {
+              {
+                name: "Coiffure",
+                icon: "Scissors",
+                color: "text-pink-600",
+                hoverBg: "hover:bg-pink-50",
+                borderColor: "group-hover:border-pink-200",
+              },
+              {
+                name: "Restaurant",
+                icon: "UtensilsCrossed",
+                color: "text-orange-600",
+                hoverBg: "hover:bg-orange-50",
+                borderColor: "group-hover:border-orange-200",
+              },
+              {
+                name: "Médecin",
+                icon: "Stethoscope",
+                color: "text-blue-600",
+                hoverBg: "hover:bg-blue-50",
+                borderColor: "group-hover:border-blue-200",
+              },
+              {
+                name: "Beauté",
+                icon: "Sparkles",
+                color: "text-purple-600",
+                hoverBg: "hover:bg-purple-50",
+                borderColor: "group-hover:border-purple-200",
+              },
+              {
+                name: "Sport",
+                icon: "Dumbbell",
+                color: "text-green-600",
+                hoverBg: "hover:bg-green-50",
+                borderColor: "group-hover:border-green-200",
+              },
+              {
+                name: "Bien-être",
+                icon: "Heart",
+                color: "text-indigo-600",
+                hoverBg: "hover:bg-indigo-50",
+                borderColor: "group-hover:border-indigo-200",
+              },
+            ].map(category => {
               const iconMap = {
                 Scissors: Scissors,
                 UtensilsCrossed: UtensilsCrossed,
@@ -402,10 +461,14 @@ export default function Home() {
                 >
                   {/* Icon with colored accent - scales on hover */}
                   <div className="flex items-center justify-center mb-3">
-                    <Icon className={`w-10 h-10 ${category.color} group-hover:scale-110 transition-transform duration-300`} />
+                    <Icon
+                      className={`w-10 h-10 ${category.color} group-hover:scale-110 transition-transform duration-300`}
+                    />
                   </div>
                   {/* Category name with professional typography */}
-                  <p className="text-sm font-semibold text-gray-900">{category.name}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {category.name}
+                  </p>
                 </button>
               )
             })}
@@ -432,7 +495,8 @@ export default function Home() {
                 Pourquoi choisir Book By Click ?
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                La plateforme de réservation la plus complète et intuitive du marché
+                La plateforme de réservation la plus complète et intuitive du
+                marché
               </p>
 
               <div className="space-y-6">
@@ -440,22 +504,26 @@ export default function Home() {
                   {
                     icon: Clock,
                     title: "Gain de temps",
-                    description: "Réservez en 30 secondes, 24h/24 et 7j/7, sans appel téléphonique",
+                    description:
+                      "Réservez en 30 secondes, 24h/24 et 7j/7, sans appel téléphonique",
                   },
                   {
                     icon: CheckCircle,
                     title: "Confirmation instantanée",
-                    description: "Recevez immédiatement la confirmation de votre réservation",
+                    description:
+                      "Recevez immédiatement la confirmation de votre réservation",
                   },
                   {
                     icon: Calendar,
                     title: "Gestion simplifiée",
-                    description: "Gérez tous vos rendez-vous depuis un seul espace personnel",
+                    description:
+                      "Gérez tous vos rendez-vous depuis un seul espace personnel",
                   },
                   {
                     icon: Users,
                     title: "Réseau de confiance",
-                    description: "Des milliers de professionnels vérifiés et notés par les utilisateurs",
+                    description:
+                      "Des milliers de professionnels vérifiés et notés par les utilisateurs",
                   },
                 ].map((benefit, index) => (
                   <div key={index} className="flex gap-4 group">
@@ -480,10 +548,14 @@ export default function Home() {
       <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50 relative overflow-hidden">
         {/* Subtle background pattern with reduced opacity */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: "radial-gradient(circle, #4f46e5 1px, transparent 1px)",
-            backgroundSize: "30px 30px"
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, #4f46e5 1px, transparent 1px)",
+              backgroundSize: "30px 30px",
+            }}
+          ></div>
         </div>
 
         {/* Decorative gradient orbs for depth */}
@@ -499,7 +571,8 @@ export default function Home() {
           </h2>
           {/* Subheading with refined color */}
           <p className="text-lg sm:text-xl text-gray-700 mb-10 max-w-2xl mx-auto">
-            Rejoignez des milliers d'utilisateurs qui ont déjà adopté Book By Click pour gérer leurs rendez-vous
+            Rejoignez des milliers d'utilisateurs qui ont déjà adopté Book By
+            Click pour gérer leurs rendez-vous
           </p>
 
           {/* CTA Buttons with enhanced professional styling */}
@@ -547,7 +620,9 @@ export default function Home() {
                 <span className="text-xl font-bold">Book By Click</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
-                Book By Click révolutionne la gestion des réservations avec une solution simple, efficace et sécurisée pour tous vos besoins de planning.
+                Book By Click révolutionne la gestion des réservations avec une
+                solution simple, efficace et sécurisée pour tous vos besoins de
+                planning.
               </p>
               <div className="flex space-x-4">
                 <a
@@ -555,7 +630,11 @@ export default function Home() {
                   className="w-10 h-10 bg-gray-800 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors duration-300"
                   aria-label="Twitter"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
                   </svg>
                 </a>
@@ -564,7 +643,11 @@ export default function Home() {
                   className="w-10 h-10 bg-gray-800 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors duration-300"
                   aria-label="Instagram"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                   </svg>
                 </a>
@@ -573,7 +656,11 @@ export default function Home() {
                   className="w-10 h-10 bg-gray-800 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors duration-300"
                   aria-label="LinkedIn"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                   </svg>
                 </a>
