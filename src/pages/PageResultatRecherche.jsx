@@ -16,22 +16,22 @@ import { useState } from "react"
 const businesses = [
   {
     id: 1,
-    name: "Salon Le Parisien",
-    category: "Coiffeur",
+    name: "Restaurant Le Gourmet",
+    category: "Restaurant",
     distance: 2.3,
     rating: 4.8,
     reviewCount: 234,
     priceRange: "€€",
     address: "15 Rue de Rivoli, 75001 Paris",
-    nextSlot: "Aujourd'hui à 14h30",
+    nextSlot: "Aujourd'hui à 19h30",
     verified: true,
     discount: "-20%",
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200",
   },
   {
     id: 2,
-    name: "Coiffure Moderne",
-    category: "Coiffeur",
+    name: "Garage Auto Expert",
+    category: "Garage automobile",
     distance: 1.8,
     rating: 4.9,
     reviewCount: 189,
@@ -40,54 +40,54 @@ const businesses = [
     nextSlot: "Demain à 10h00",
     verified: true,
     discount: null,
-    image: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200",
+    image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=200",
   },
   {
     id: 3,
-    name: "Barbier Vintage",
-    category: "Barbier",
+    name: "Cabinet Dr. Martin",
+    category: "Médecin généraliste",
     distance: 3.1,
     rating: 4.7,
     reviewCount: 156,
     priceRange: "€€",
     address: "42 Rue du Temple, 75003 Paris",
     nextSlot: "Aujourd'hui à 16h00",
-    verified: false,
+    verified: true,
     discount: null,
-    image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200",
+    image: "https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=200",
   },
   {
     id: 4,
-    name: "Beauty Lounge Paris",
-    category: "Institut de beauté",
+    name: "Fitness Club Paris",
+    category: "Salle de sport",
     distance: 4.2,
     rating: 4.6,
     reviewCount: 312,
-    priceRange: "€€€€",
+    priceRange: "€€",
     address: "8 Boulevard Haussmann, 75009 Paris",
     nextSlot: "Demain à 15h30",
     verified: true,
     discount: "-15%",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200",
+    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=200",
   },
   {
     id: 5,
-    name: "Spa & Wellness Center",
-    category: "Spa",
+    name: "Salon Le Parisien",
+    category: "Coiffeur",
     distance: 2.7,
     rating: 4.9,
     reviewCount: 421,
-    priceRange: "€€€€",
+    priceRange: "€€",
     address: "12 Rue de la Paix, 75002 Paris",
-    nextSlot: "Aujourd'hui à 18h00",
+    nextSlot: "Aujourd'hui à 14h30",
     verified: true,
     discount: null,
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=200",
+    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200",
   },
 ]
 
 // ============= COMPOSANT ACCORDION FILTRE =============
-function FilterAccordion({ title, icon: Icon, defaultOpen = true, children }) {
+function FilterAccordion({ title, icon: IconComponent, defaultOpen = true, children }) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
@@ -97,7 +97,7 @@ function FilterAccordion({ title, icon: Icon, defaultOpen = true, children }) {
         className="w-full flex items-center justify-between py-4 px-2 hover:bg-indigo-50 rounded-lg transition-colors duration-200"
       >
         <div className="flex items-center gap-3">
-          <Icon className="w-5 h-5 text-indigo-600" />
+          <IconComponent className="w-5 h-5 text-indigo-600" />
           <span className="font-semibold text-gray-900">{title}</span>
         </div>
         {isOpen ? (
@@ -147,7 +147,7 @@ function BusinessCard({ business }) {
               <img
                 src={business.image}
                 alt={business.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-full object-cover"
               />
               {business.discount && (
                 <span className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-md shadow-sm">
@@ -222,6 +222,8 @@ function BusinessCard({ business }) {
 
 // ============= COMPOSANT PRINCIPAL =============
 export default function PageResultatRecherche() {
+  const [maxPrice, setMaxPrice] = useState(150)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50/30">
       {/* Navigation */}
@@ -285,7 +287,7 @@ export default function PageResultatRecherche() {
         <div className="flex gap-8">
           {/* Sidebar Filtres */}
           <aside className="w-80 flex-shrink-0 hidden lg:block">
-            <div className="sticky top-24 bg-gradient-to-br from-indigo-50/50 to-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="sticky top-24 bg-gradient-to-br from-indigo-50/50 to-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden max-h-[calc(100vh-7rem)]">
               {/* Header */}
               <div className="bg-white border-b border-gray-200 px-6 py-5">
                 <div className="flex items-center gap-3">
@@ -300,23 +302,40 @@ export default function PageResultatRecherche() {
               </div>
 
               {/* Filtres */}
-              <div className="p-4">
+              <div className="p-4 overflow-y-auto max-h-[calc(100vh-16rem)]">
                 {/* Catégories */}
                 <FilterAccordion title="Catégories" icon={SlidersHorizontal} defaultOpen={true}>
-                  <FilterCheckbox label="Coiffeur" count={42} />
-                  <FilterCheckbox label="Barbier" count={18} />
-                  <FilterCheckbox label="Institut de beauté" count={35} />
-                  <FilterCheckbox label="Spa" count={12} />
-                  <FilterCheckbox label="Massage" count={24} />
-                  <FilterCheckbox label="Onglerie" count={16} />
+                  <FilterCheckbox label="Restaurant" count={42} />
+                  <FilterCheckbox label="Médecin" count={38} />
+                  <FilterCheckbox label="Coiffeur" count={35} />
+                  <FilterCheckbox label="Garage automobile" count={28} />
+                  <FilterCheckbox label="Salle de sport" count={24} />
+                  <FilterCheckbox label="Avocat" count={16} />
+                  <FilterCheckbox label="Spa & Bien-être" count={19} />
+                  <FilterCheckbox label="Vétérinaire" count={15} />
                 </FilterAccordion>
 
                 {/* Prix */}
-                <FilterAccordion title="Prix" icon={SlidersHorizontal} defaultOpen={true}>
-                  <FilterCheckbox label="€ - Économique (- de 30€)" count={28} />
-                  <FilterCheckbox label="€€ - Abordable (30-60€)" count={45} />
-                  <FilterCheckbox label="€€€ - Moyen (60-100€)" count={32} />
-                  <FilterCheckbox label="€€€€ - Premium (100€+)" count={15} />
+                <FilterAccordion title="Budget maximum" icon={SlidersHorizontal} defaultOpen={true}>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Prix maximum par prestation</span>
+                      <span className="font-semibold text-indigo-600">{maxPrice}€</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="500"
+                      value={maxPrice}
+                      step="10"
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                    />
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>0€</span>
+                      <span>500€</span>
+                    </div>
+                  </div>
                 </FilterAccordion>
 
                 {/* Note */}
@@ -391,7 +410,7 @@ export default function PageResultatRecherche() {
                   <div>
                     <p className="text-sm text-gray-500">Vous recherchez</p>
                     <p className="text-xl font-bold text-gray-900">
-                      Coiffeur à Paris
+                      Toutes catégories à Paris
                     </p>
                   </div>
                 </div>

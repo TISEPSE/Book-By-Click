@@ -1,4 +1,5 @@
 import {useState, useRef, useEffect} from "react"
+import { useNavigate } from 'react-router-dom'
 import {CalendarDaysIcon} from "@heroicons/react/24/outline"
 import {
   Search,
@@ -28,6 +29,9 @@ export default function Home() {
   // Refs for click outside detection
   const serviceRef = useRef(null)
   const locationRef = useRef(null)
+
+  //Navigation pour la page de résultats
+  const navigate = useNavigate();
 
   // Charger les suggestions de services depuis l'API
   const fetchServiceSuggestions = async query => {
@@ -79,11 +83,11 @@ export default function Home() {
     return () => clearTimeout(timer)
   }, [locationInput])
 
+// Navigation vers la page de résultats
   const handleSearch = e => {
     e.preventDefault()
-    console.log("Searching for:", serviceInput, "in", locationInput)
-    setShowServiceSuggestions(false)
-    setShowLocationSuggestions(false)
+
+    navigate('/result')
   }
 
   useEffect(() => {
@@ -291,7 +295,7 @@ export default function Home() {
                     <div className="lg:self-end">
                       <button
                         type="submit"
-                        className="w-full lg:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl focus:ring-0 focus:outline-none active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 group"
+                        className="w-full lg:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl focus:ring-0 focus:outline-none active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 group" 
                       >
                         <Search className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                         <span>Rechercher</span>
