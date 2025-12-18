@@ -148,18 +148,14 @@ export default function Home() {
       </nav>
 
       {/* Hero Section - Planity-inspired with centered search bar */}
-      <section className="relative sm:py-20 lg:py-20 overflow-hidden">
-        {/* Background decorative elements */}
+      <section className="relative sm:py-20 lg:py-20">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-100 rounded-full blur-3xl opacity-30"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-30"></div>
         </div>
 
         <div className="relative max-w-screen-xl mx-auto px-4 sm:px-8">
-          {/* Hero Content - Centered */}
           <div className="text-center max-w-4xl mx-auto">
-
-            {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
               Réservez tous vos
               <span className="text-indigo-600"> rendez-vous</span>
@@ -168,14 +164,11 @@ export default function Home() {
             </h1>
 
 
-            {/* Search Bar - Main CTA - Planity-inspired design */}
+          
             <div className="max-w-5xl mx-auto mb-8">
               <form onSubmit={handleSearch}>
-                {/* Search Card Container */}
-                <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6 transition-shadow duration-300 hover:shadow-2xl">
-                  {/* Search Inputs Container - Responsive layout */}
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6 transition-shadow duration-300 hover:shadow-2xl relative">
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
-                    {/* Service/Business Type Input */}
                     <div className="flex-1 relative group" ref={serviceRef}>
                       <label
                         htmlFor="service"
