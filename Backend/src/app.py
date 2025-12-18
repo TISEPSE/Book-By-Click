@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint
-from src.pages import pages_blueprint
+from pages import pages_blueprint
 import os
 from extension import db, cors
 
@@ -13,9 +13,19 @@ def create_app():
     db.init_app(app)
     cors(app)
 
-    with app.app_context():
-        db.create_all()
-        import seed
+    # Essayer de créer les tables, mais continuer même si la DB n'est pas disponible
+    try:
+        with app.app_context():
+            db.create_all()
+            import seed
+    except Exception as e:
+        print(f"Avertissement: Impossible de se connecter à la base de données: {e}")
+        print("Le serveur continuera sans connexion à la base de données.")
 
 
     return app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True, port=5000)
