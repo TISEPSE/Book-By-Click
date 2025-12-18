@@ -7,7 +7,6 @@ import {
   Clock,
   CheckCircle,
   Users,
-  TrendingUp,
   Scissors,
   UtensilsCrossed,
   Stethoscope,

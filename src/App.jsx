@@ -1,17 +1,17 @@
-import {BrowserRouter, Routes, Route, Link} from "react-router-dom"
-import Home from "./pages/Home.jsx"
-import Login from "./pages/Login.jsx"
-import Resgister_user from "./pages/Register_User.jsx"
-import Resgister_pro from "./pages/Register_Pro.jsx"
-import Choice_Register from "./pages/Choice_Register.jsx"
-import Forgot_password from "./pages/Forgot_password.jsx"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import {
+  Home,
+  Login,
+  Contact,
+  Forgot_password,
+  Resgister_user,
+  Resgister_pro,
+  Choice_Register,
+  Test,
+  Recap
+} from "./pages"
 import Dashboard_Entreprise from "./pages/dashboard/Dashboard_Entreprise.jsx"
 import "./static/App.css"
-import Contact from "./pages/Contact.jsx"
-
-//===============PAGE DE TEST=================
-import Test from "./pages/Teste_form.jsx"
-import Recap from "./pages/Recap.jsx"
 
 function App() {
   return (
