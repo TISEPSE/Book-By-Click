@@ -58,25 +58,25 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (serviceInput.length > 0) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      if (serviceInput.length > 0) {
         fetchServiceSuggestions(serviceInput)
-      }, 150)
-      return () => clearTimeout(timer)
-    } else {
-      setServiceSuggestions([])
-    }
+      } else {
+        setServiceSuggestions([])
+      }
+    }, 150)
+    return () => clearTimeout(timer)
   }, [serviceInput])
 
   useEffect(() => {
-    if (locationInput.length > 0) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      if (locationInput.length > 0) {
         fetchCitySuggestions(locationInput)
-      }, 150)
-      return () => clearTimeout(timer)
-    } else {
-      setCitySuggestions([])
-    }
+      } else {
+        setCitySuggestions([])
+      }
+    }, 150)
+    return () => clearTimeout(timer)
   }, [locationInput])
 
   const handleSearch = e => {
