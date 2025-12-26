@@ -1,264 +1,169 @@
-import React, { useState, useEffect } from "react"
-import { 
-  Search, Calendar, Clock, User, Eye, 
-  Edit2, X, Check, Loader2, Mail, MessageSquare, Info
-} from "lucide-react"
+import React, { useState, useEffect } from 'react';
+import { Eye, Mail, Phone, X, CheckCircle, Clock, Calendar as CalIcon } from 'lucide-react';
 
-// --- DONNÉES DE TEST (MOCK DATA) ---
-// Ces données imitent ce que ton fichier reservation.py renverra
-const TEST_DATA = [
-  {
-    "id": "RDV-001",
-    "db_id": 1,
-    "clientName": "Sophie Martin",
-    "clientEmail": "sophie.martin@email.com",
-    "service": "Coupe Femme & Brushing",
-    "duration": "45 min",
-    "price": 55.0,
-    "date": "2025-12-26",
-    "time": "14:30",
-    "status": "confirmed",
-    "notes": "Première visite, veut un dégradé."
-  },
-  {
-    "id": "RDV-002",
-    "db_id": 2,
-    "clientName": "Thomas Dubois",
-    "clientEmail": "t.dubois@gmail.com",
-    "service": "Taille de Barbe",
-    "duration": "20 min",
-    "price": 25.0,
-    "date": "2025-12-26",
-    "time": "16:15",
-    "status": "pending",
-    "notes": ""
-  },
-  {
-    "id": "RDV-003",
-    "db_id": 3,
-    "clientName": "Marie Lefebvre",
-    "clientEmail": "m.lefebvre@outlook.fr",
-    "service": "Soin Visage Hydratant",
-    "duration": "60 min",
-    "price": 75.0,
-    "date": "2025-12-27",
-    "time": "10:00",
-    "status": "pending",
-    "notes": "Allergie aux produits à base de noix."
-  }
+const MOCK_RESERVATIONS = [
+    {
+        db_id: 1,
+        clientName: "Sophie Martin",
+        clientEmail: "sophie.m@email.com",
+        clientPhone: "06 12 34 56 78",
+        clientSince: "12/05/2023",
+        service: "Coupe & Brushing",
+        duration: "45 min",
+        price: 55,
+        date: "2025-12-26",
+        time: "14:30",
+        status: "confirmed",
+        notes: "Cheveux fragiles, éviter les produits trop agressifs.",
+        mailStatus: true
+    },
+    {
+        db_id: 2,
+        clientName: "Thomas Dubois",
+        clientEmail: "t.dubois@test.fr",
+        clientPhone: "07 88 99 00 11",
+        clientSince: "01/11/2024",
+        service: "Taille de Barbe",
+        duration: "20 min",
+        price: 25,
+        date: "2025-12-26",
+        time: "16:15",
+        status: "pending",
+        notes: "",
+        mailStatus: false
+    }
 ];
 
-const STATUS_CONFIG = {
-  confirmed: { 
-    label: "Confirmée", 
-    color: "bg-green-100 text-green-700 border-green-200", 
-    icon: Check 
-  },
-  pending: { 
-    label: "En attente", 
-    color: "bg-yellow-100 text-yellow-700 border-yellow-200", 
-    icon: Clock 
-  },
-}
+const DashboardContent = () => {
+    // On initialise avec les Mock Data pour ne pas avoir un tableau vide au début
+    const [reservations, setReservations] = useState(MOCK_RESERVATIONS);
+    const [selectedRes, setSelectedRes] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-const ReservationsContent = () => {
-  // REMARQUE : Pour le test, on initialise avec TEST_DATA. 
-  // En production, utilise useState([]) et setLoading(true)
-  const [reservations, setReservations] = useState(TEST_DATA)
-  const [loading, setLoading] = useState(false) 
-  const [activeFilter, setActiveFilter] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
+    useEffect(() => {
+        fetch("http://127.0.0.1:5000/api/entreprise/reservations")
+            .then(res => {
+                if (!res.ok) throw new Error("Serveur non disponible");
+                return res.json();
+            })
+            .then(data => {
+                setReservations(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.warn("Utilisation des Mock Data (Le serveur Flask est probablement éteint)");
+                setLoading(false);
+            });
+    }, []);
 
-  // --- APPELS API ---
-  
-  // Fonction pour charger les données réelles (à activer plus tard)
-  const fetchReservations = async () => {
-    try {
-      // const response = await fetch("http://127.0.0.1:5000/api/entreprise/reservations")
-      // const data = await response.json()
-      // setReservations(data)
-    } catch (error) {
-      console.error("Erreur API:", error)
-    }
-  }
+    return (
+        <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-gray-800">Gestion des Réservations</h1>
 
-  // Fonction pour mettre à jour le statut
-  const handleStatusUpdate = async (db_id, currentStatus) => {
-    const nextStatus = currentStatus === "confirmed" ? "pending" : "confirmed"
-    
-    // Simulation mise à jour locale (Optimistic UI)
-    setReservations(prev => 
-      prev.map(res => res.db_id === db_id ? { ...res, status: nextStatus } : res)
-    )
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-600">Client</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-600">Service</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-600">Date & Heure</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-600">Statut</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-600">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                        {reservations.map((res) => (
+                            <tr key={res.db_id} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-6 py-4">
+                                    <div className="font-medium text-gray-900">{res.clientName}</div>
+                                    <div className="text-xs text-gray-500">{res.clientEmail}</div>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-700">{res.service}</td>
+                                <td className="px-6 py-4 text-sm text-gray-700">{res.date} à {res.time}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${res.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                        {res.status === 'confirmed' ? 'Confirmé' : 'En attente'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button 
+                                        onClick={() => setSelectedRes(res)}
+                                        className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                    >
+                                        <Eye className="size-5" />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-    // Code API réel :
-    /*
-    try {
-      await fetch(`http://127.0.0.1:5000/api/reservations/${db_id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: nextStatus })
-      })
-    } catch (err) { console.error(err) }
-    */
-  }
-
-  // --- FILTRAGE ---
-  const filteredReservations = reservations.filter((res) => {
-    const matchesSearch = 
-      res.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      res.id.toLowerCase().includes(searchQuery.toLowerCase())
-
-    const today = "2025-12-26" // Fixé pour le test, sinon utiliser new Date()...
-    let matchesTab = true
-    if (activeFilter === "today") matchesTab = res.date === today
-    if (activeFilter === "pending") matchesTab = res.status === "pending"
-
-    return matchesSearch && matchesTab
-  })
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-4 lg:p-8 space-y-6">
-      
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard Réservations</h1>
-          <p className="text-gray-500">Gérez les rendez-vous et les clients de votre entreprise</p>
-        </div>
-        <div className="flex items-center gap-3 bg-white p-2 rounded-lg border shadow-sm">
-            <span className="flex size-3 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-sm font-medium text-gray-700">Live Backend Connecté</span>
-        </div>
-      </div>
-
-      {/* Barre d'outils (Recherche & Filtres) */}
-      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full lg:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Rechercher un client (ex: Martin)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-          />
-        </div>
-
-        <div className="flex bg-gray-100 p-1 rounded-xl">
-          {["all", "today", "pending"].map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${
-                activeFilter === filter 
-                ? "bg-white text-indigo-600 shadow-sm" 
-                : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {filter === "all" ? "Toutes" : filter === "today" ? "Aujourd'hui" : "En attente"}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Table des données */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Client</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Prestation</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Date & Heure</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Statut</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {filteredReservations.length > 0 ? (
-                filteredReservations.map((res) => (
-                  <tr key={res.db_id} className="hover:bg-indigo-50/30 transition-colors group">
-                    {/* Colonne Client */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="size-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold shadow-indigo-200 shadow-lg">
-                          {res.clientName.charAt(0)}
+            {/* MODALE DE DÉTAILS (L'OEIL) */}
+            {selectedRes && (
+                <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl animate-in zoom-in duration-200">
+                        
+                        <div className={`p-6 ${selectedRes.status === 'confirmed' ? 'bg-indigo-600' : 'bg-amber-500'} text-white flex justify-between items-start`}>
+                            <div>
+                                <h2 className="text-2xl font-bold">Détails du RDV</h2>
+                                <p className="opacity-90 text-sm">ID Réservation : #{selectedRes.db_id}</p>
+                            </div>
+                            <button onClick={() => setSelectedRes(null)} className="p-2 hover:bg-white/20 rounded-full">
+                                <X className="size-6" />
+                            </button>
                         </div>
-                        <div>
-                          <div className="font-bold text-gray-900">{res.clientName}</div>
-                          <div className="text-xs text-gray-400 flex items-center gap-1">
-                            <Mail className="size-3" /> {res.clientEmail}
-                          </div>
+
+                        <div className="p-6 space-y-6">
+                            <div className="flex items-center gap-4">
+                                <div className="size-14 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl font-bold text-gray-700 border border-gray-200">
+                                    {selectedRes.clientName.charAt(0)}
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg text-gray-900">{selectedRes.clientName}</h3>
+                                    <p className="text-gray-500 text-sm italic font-medium">Membre depuis : {selectedRes.clientSince}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <a href={`tel:${selectedRes.clientPhone}`} className="flex items-center justify-center gap-2 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl text-gray-700 font-bold transition-colors border border-gray-200 text-sm">
+                                    <Phone className="size-4 text-indigo-600" /> Appeler
+                                </a>
+                                <a href={`mailto:${selectedRes.clientEmail}`} className="flex items-center justify-center gap-2 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl text-gray-700 font-bold transition-colors border border-gray-200 text-sm">
+                                    <Mail className="size-4 text-indigo-600" /> Email
+                                </a>
+                            </div>
+
+                            <div className="space-y-3 pt-2">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Prestation</span>
+                                    <span className="font-bold text-gray-800">{selectedRes.service} ({selectedRes.duration})</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Tarif</span>
+                                    <span className="font-bold text-green-600 text-lg">{selectedRes.price} €</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Statut Confirmation Email</span>
+                                    <span className={`flex items-center gap-1 font-bold ${selectedRes.mailStatus ? 'text-blue-600' : 'text-red-500'}`}>
+                                        {selectedRes.mailStatus ? <CheckCircle className="size-4" /> : <Clock className="size-4" />}
+                                        {selectedRes.mailStatus ? "Envoyé" : "En attente"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                                <p className="text-amber-800 text-[10px] font-black uppercase tracking-wider mb-1">Note du client</p>
+                                <p className="text-gray-700 text-sm leading-relaxed italic">
+                                    "{selectedRes.notes || "Aucun commentaire particulier pour ce rendez-vous."}"
+                                </p>
+                            </div>
                         </div>
-                      </div>
-                    </td>
-
-                    {/* Colonne Prestation */}
-                    <td className="px-6 py-4">
-                      <div className="text-gray-900 font-medium">{res.service}</div>
-                      <div className="text-xs text-indigo-600 font-bold">{res.price}€ <span className="text-gray-300 font-normal">|</span> {res.duration}</div>
-                      {res.notes && (
-                        <div className="mt-1 flex items-center gap-1 text-[11px] text-orange-600 italic">
-                          <MessageSquare className="size-3" /> {res.notes}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Colonne Date */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-700 font-medium">
-                        <Calendar className="size-4 text-gray-400" /> {res.date}
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-400 text-xs mt-1">
-                        <Clock className="size-4" /> {res.time}
-                      </div>
-                    </td>
-
-                    {/* Colonne Statut */}
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${STATUS_CONFIG[res.status].color}`}>
-                        <span className={`size-1.5 rounded-full ${res.status === 'confirmed' ? 'bg-green-600' : 'bg-yellow-600'}`}></span>
-                        {STATUS_CONFIG[res.status].label}
-                      </span>
-                    </td>
-
-                    {/* Colonne Actions */}
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
-                          onClick={() => handleStatusUpdate(res.db_id, res.status)}
-                          className={`p-2 rounded-xl transition-all shadow-sm border ${
-                            res.status === "pending" 
-                            ? "bg-green-600 text-white border-green-600 hover:bg-green-700" 
-                            : "bg-white text-orange-600 border-orange-200 hover:bg-orange-50"
-                          }`}
-                        >
-                          {res.status === "pending" ? <Check className="size-5" /> : <X className="size-5" />}
-                        </button>
-                        <button className="p-2 bg-white text-gray-400 border border-gray-200 rounded-xl hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
-                          <Eye className="size-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="px-6 py-20 text-center">
-                    <div className="flex flex-col items-center gap-2 text-gray-400">
-                      <Info className="size-10" />
-                      <p className="text-lg font-medium">Aucun résultat trouvé pour votre recherche</p>
                     </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                </div>
+            )}
         </div>
-      </div>
-    </div>
-  )
-}
+    );
+};
 
-export default ReservationsContent
+export default DashboardContent;

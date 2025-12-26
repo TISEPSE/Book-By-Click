@@ -1,39 +1,44 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
 from extension import db
-# On importe les modèles selon ton schéma
-from models import Reservation, Utilisateur, Prestation, Creneau, Entreprise
+# Importation de tous les modèles nécessaires
+from models import Reservation, Utilisateur, Prestation, Creneau, Entreprise, EventEmail
 from sqlalchemy.orm import joinedload
 
-# Définition du Blueprint pour organiser les routes
+# Définition du Blueprint
 reservation_bp = Blueprint('reservation_api', __name__)
 
-# --- 1. ROUTE POUR LE TABLEAU DES RÉSERVATIONS ---
+# --- 1. ROUTE POUR LE TABLEAU DES RÉSERVATIONS (AVEC DÉTAILS POUR L'OEIL) ---
 @reservation_bp.route('/api/entreprise/reservations', methods=['GET'])
 def get_dashboard_reservations():
     try:
-        # On récupère les réservations avec jointures pour éviter le problème N+1
-        # On charge le client et la prestation associée
+        # On charge le client, la prestation ET les logs d'emails associés
         reservations_db = Reservation.query.options(
             joinedload(Reservation.client),
-            joinedload(Reservation.prestation)
+            joinedload(Reservation.prestation),
+            joinedload(Reservation.EventEmails)
         ).order_by(Reservation.dateCreation.desc()).all()
         
         results = []
         for res in reservations_db:
+            # Vérification si un email de confirmation a été envoyé avec succès
+            mail_sent = any(e.statutEnvoi for e in res.EventEmails)
+            
             results.append({
                 "id": f"RDV-{res.idReservation:03d}",
                 "db_id": res.idReservation,
                 "clientName": f"{res.client.prenom} {res.client.nom}",
                 "clientEmail": res.client.email,
+                "clientPhone": res.client.telephone,                # Ajouté pour l'oeil
+                "clientSince": res.client.dateInscription.strftime('%d/%m/%Y'), # Ajouté pour l'oeil
                 "service": res.prestation.libelle,
                 "duration": f"{res.prestation.dureeMinutes} min",
                 "price": float(res.prestation.tarif) if res.prestation.tarif else 0,
-                # Formatage pour React
                 "date": res.dateCreation.strftime('%Y-%m-%d'),
                 "time": res.dateCreation.strftime('%H:%M'),
                 "status": "confirmed" if res.statut else "pending",
-                "notes": res.commentaireClient or ""
+                "notes": res.commentaireClient or "",
+                "mailStatus": mail_sent                        # Ajouté pour l'oeil
             })
         
         return jsonify(results), 200
@@ -44,12 +49,12 @@ def get_dashboard_reservations():
 @reservation_bp.route('/api/entreprise/calendrier', methods=['GET'])
 def get_calendar_events():
     try:
-        # On récupère tous les créneaux de la table Creneau
+        # On récupère tous les créneaux
         creneaux = Creneau.query.all()
         
         calendar_events = []
         for c in creneaux:
-            # Dans ton schéma : statut (Boolean) = True (Libre) / False (Occupé)
+            # statut True = Libre / False = Occupé
             is_taken = not c.statut
             
             calendar_events.append({
@@ -75,7 +80,7 @@ def update_reservation_status(id_res):
         data = request.json
         
         if 'status' in data:
-            # Conversion du texte React "confirmed" en Boolean SQL True
+            # "confirmed" -> True, autre -> False
             res.statut = (data['status'] == "confirmed")
             db.session.commit()
             return jsonify({"success": True}), 200
@@ -85,7 +90,7 @@ def update_reservation_status(id_res):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# --- 4. OPTIONNEL : AJOUTER UNE NOTE / COMMENTAIRE ---
+# --- 4. MODIFIER LE COMMENTAIRE ---
 @reservation_bp.route('/api/reservations/<int:id_res>/notes', methods=['PATCH'])
 def update_reservation_notes(id_res):
     try:
