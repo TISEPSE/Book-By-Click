@@ -24,7 +24,6 @@ function App() {
         <Route path="/fogot_password" element={<Forgot_password />} />
         <Route path="/dashboard_entreprise" element={<Dashboard_Entreprise />}/>
         <Route path="/contact" element={<Contact />} />
-        <Route path="/dashboard" element={<Dashboard_Entreprise />} />
         <Route path="/result" element={<ResultatRecherhce />} />
 
         <Route path="/teste" element={<Test />} />

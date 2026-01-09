@@ -1,44 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Mail, Phone, X, CheckCircle, Clock, Calendar as CalIcon } from 'lucide-react';
 
-const MOCK_RESERVATIONS = [
-    {
-        db_id: 1,
-        clientName: "Sophie Martin",
-        clientEmail: "sophie.m@email.com",
-        clientPhone: "06 12 34 56 78",
-        clientSince: "12/05/2023",
-        service: "Coupe & Brushing",
-        duration: "45 min",
-        price: 55,
-        date: "2025-12-26",
-        time: "14:30",
-        status: "confirmed",
-        notes: "Cheveux fragiles, éviter les produits trop agressifs.",
-        mailStatus: true
-    },
-    {
-        db_id: 2,
-        clientName: "Thomas Dubois",
-        clientEmail: "t.dubois@test.fr",
-        clientPhone: "07 88 99 00 11",
-        clientSince: "01/11/2024",
-        service: "Taille de Barbe",
-        duration: "20 min",
-        price: 25,
-        date: "2025-12-26",
-        time: "16:15",
-        status: "pending",
-        notes: "",
-        mailStatus: false
-    }
-];
-
 const DashboardContent = () => {
-    // On initialise avec les Mock Data pour ne pas avoir un tableau vide au début
-    const [reservations, setReservations] = useState(MOCK_RESERVATIONS);
+    const [reservations, setReservations] = useState([]);
     const [selectedRes, setSelectedRes] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetch("http://127.0.0.1:5000/api/entreprise/reservations")
@@ -51,7 +18,8 @@ const DashboardContent = () => {
                 setLoading(false);
             })
             .catch(err => {
-                console.warn("Utilisation des Mock Data (Le serveur Flask est probablement éteint)");
+                console.error("Erreur lors de la récupération des réservations :", err);
+                setError(err.message);
                 setLoading(false);
             });
     }, []);
@@ -59,6 +27,18 @@ const DashboardContent = () => {
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-bold text-gray-800">Gestion des Réservations</h1>
+
+            {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mb-6">
+                    <p>Erreur : {error}. Veuillez vérifier que le serveur backend est en cours d'exécution.</p>
+                </div>
+            )}
+
+            {!error && reservations.length === 0 && !loading && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700 mb-6">
+                    <p>Aucune réservation trouvée. Veuillez ajouter des réservations ou vérifier les données.</p>
+                </div>
+            )}
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <table className="w-full text-left border-collapse">
