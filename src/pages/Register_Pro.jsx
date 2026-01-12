@@ -34,6 +34,54 @@ export default function ProfessionalRegisterForm() {
           <form
             className="space-y-5"
           >
+            {/* Nom et Prénom */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-start">
+                <label className="font-medium block text-left">Prénom</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  required
+                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                  placeholder="Votre prénom"
+                />
+              </div>
+              
+              <div className="flex flex-col items-start">
+                <label className="font-medium block text-left">Nom</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  required
+                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                  placeholder="Votre Nom"
+                />
+              </div>
+            </div>
+
+            {/* Date de naissance */}
+            <div className="flex flex-col items-start">
+              <label className="font-medium block text-left">Date de naissance</label>
+              <input
+                type="date"
+                name="birthDate"
+                required
+                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+              />
+            </div>
+
+            {/* Téléphone */}
+            <div className="flex flex-col items-start">
+              <label className="font-medium block text-left">Téléphone</label>
+              <input
+                type="tel"
+                name="phone"
+                required
+                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                placeholder="06 12 34 56 78"
+              />
+            </div>
+
             {/* Nom de l'entreprise */}
             <div className="flex flex-col items-start">
               <label className="font-medium block text-left">Nom de l'entreprise *</label>
@@ -55,6 +103,18 @@ export default function ProfessionalRegisterForm() {
                 required
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
                 placeholder="contact@entreprise.com"
+              />
+            </div>
+
+            {/* Slug */}
+            <div className="flex flex-col items-start">
+              <label className="font-medium block text-left">Slug</label>
+              <input
+                type="text"
+                name="slug"
+                required
+                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                placeholder="Slug de l'entreprise"
               />
             </div>
 

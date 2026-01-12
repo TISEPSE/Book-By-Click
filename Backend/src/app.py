@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint
 from pages import pages_blueprint
+from reservation import reservation_bp
 import os
 from extension import db, cors
 
@@ -10,6 +11,7 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI", "postgresql://appuser:apppassword@localhost:5432/appdb")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.register_blueprint(pages_blueprint)
+    app.register_blueprint(reservation_bp)
     db.init_app(app)
     cors(app)
 
