@@ -9,11 +9,11 @@ from datetime import datetime
 
 pages_blueprint = Blueprint("pages", __name__)
 
-# -------------------------------------------
-# 1) REGISTER USER CLIENT
-# -------------------------------------------
+
+
 @pages_blueprint.route("/api/register/user", methods=["POST"])
 def register_form_user():
+    '''récupérer les informations du formulaire quand il POST sur l'endpoint /api/register/user'''
     email = request.form.get("email")
     password = generate_password_hash(request.form.get("password")) 
     nom = request.form.get("nom")
@@ -39,11 +39,10 @@ def register_form_user():
 
     return jsonify({"message":"utilisateur ajouté","id":u1.idClient})
 
-# -------------------------------------------
-# 2) REGISTER PRO
-# -------------------------------------------
+
 @pages_blueprint.route("/api/register/pro", methods=["POST"])
 def register_form_pro():
+    '''récupérer les informations du formulaire quand il POST sur l'endpoint /api/register/pro'''
     email = request.form.get("email")
     password = generate_password_hash(request.form.get("password"))
     nom = request.form.get("nom")
