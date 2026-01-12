@@ -100,7 +100,7 @@ def register_form_pro():
         return "Error adding entreprise"
 
     
-    return(jsonify({"message":"utilisateur ajouté","id":u1.idClient}))
+    return(jsonify({"message":"utilisateur et entreprise ajoutés","idClient":u1.idClient, "idPro":e1.idPro}))
     
    
 
