@@ -2,26 +2,25 @@ from flask import Blueprint, request, jsonify
 from extension import cors, db
 from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from mailer import send_contact_email
-from werkzeug import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
-
+from datetime import datetime
 
 pages_blueprint = Blueprint("pages", __name__)
 
-
-# récupérer les informations du formulaire quand il POST sur l'endpoint /register_form
+# -------------------------------------------
+# 1) REGISTER USER CLIENT
+# -------------------------------------------
 @pages_blueprint.route("/api/register/user", methods=["POST"])
 def register_form_user():
     email = request.form.get("email")
-    password = request.form.get("password")
+    password = generate_password_hash(request.form.get("password")) 
     nom = request.form.get("nom")
     prenom = request.form.get("prenom")
     dateNaissance = request.form.get("birthDate")
     telephone = request.form.get("phone")
-    password = generate_password_hash(request.form.get("password")) 
-    confirmPassword = request.form.get("confirmPassword")
-
+    
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
     id_type_client = client.idType
 
@@ -40,17 +39,17 @@ def register_form_user():
 
     return jsonify({"message":"utilisateur ajouté","id":u1.idClient})
 
-# récupérer les informations du formulaire quand il POST sur l'endpoint /register_form
+# -------------------------------------------
+# 2) REGISTER PRO
+# -------------------------------------------
 @pages_blueprint.route("/api/register/pro", methods=["POST"])
 def register_form_pro():
     email = request.form.get("email")
-    password = request.form.get("password")
+    password = generate_password_hash(request.form.get("password"))
     nom = request.form.get("nom")
     prenom = request.form.get("prenom")
     dateNaissance = request.form.get("birthDate")
     telephone = request.form.get("phone") 
-    password = generate_password_hash(request.form.get("password"))
-    confirmPassword = request.form.get("confirmPassword")
 
     pro = TypeUtilisateur.query.filter(TypeUtilisateur.role=="pro").first()
     id_type_pro = pro.idType
@@ -70,10 +69,9 @@ def register_form_pro():
         db.session.add(u1)
         db.session.commit()
     except:
-        return "Error adding user"
+        return jsonify({"error":"Error adding user"}), 500
     
     nomEntreprise = request.form.get("nomEntreprise")
-    nomSecteur = request.form.get("nomSecteur")
     nomSecteur = request.form.get("nomSecteur")
     slugPublic = request.form.get("slug")
     adresse = request.form.get("adresse")
@@ -81,7 +79,6 @@ def register_form_pro():
     ville = request.form.get("ville")
     pays = request.form.get("pays")
 
-    
     e1 = Entreprise(
         nomEntreprise=nomEntreprise,
         nomSecteur=nomSecteur,
@@ -97,51 +94,52 @@ def register_form_pro():
         db.session.add(e1)
         db.session.commit()
     except:
-        return "Error adding entreprise"
+        return jsonify({"error":"Error adding entreprise"}), 500
 
-    
-    return(jsonify({"message":"utilisateur et entreprise ajoutés","idClient":u1.idClient, "idPro":e1.idPro}))
-    
-   
-
-
-
+    return jsonify({"message":"utilisateur et entreprise ajoutés","idClient":u1.idClient, "idPro":e1.idPro})
 
 # -------------------------------------------
-# 1) LOGIN : renvoie un JSON propre
+# 3) LOGIN
 # -------------------------------------------
 @pages_blueprint.route("/login_form", methods=["POST"])
 def login_form():
     email = request.form.get("email")
     password = request.form.get("password")
-
     print(f"[LOGIN] Email: {email}  Password: {password}", flush=True)
     return jsonify({"email": email, "password": password})
 
-
+# -------------------------------------------
+# 4) GET USER INFO
+# -------------------------------------------
 @pages_blueprint.route("/teste", methods=["POST"])
 def recap():
     username = request.form.get("username")
     user = Utilisateur.query.filter(Utilisateur.nom == username).first()
-    return jsonify({"id": user.idClient,"nom":user.nom,"prenom":user.prenom,"dateNaissance":user.dateNaissance,"email":user.email,"motDePasseHash":user.motDePasseHash,"telephone":user.telephone} )
-
+    if not user:
+        return jsonify({"error":"Utilisateur non trouvé"}), 404
+    return jsonify({
+        "id": user.idClient,
+        "nom": user.nom,
+        "prenom": user.prenom,
+        "dateNaissance": user.dateNaissance,
+        "email": user.email,
+        "motDePasseHash": user.motDePasseHash,
+        "telephone": user.telephone
+    })
 
 # -------------------------------------------
-# 2) CONTACT : envoie un email
+# 5) CONTACT
 # -------------------------------------------
 @pages_blueprint.route("/contact", methods=["POST"])
 def contact():
     data = request.json
-
     name = data.get("name")
     email = data.get("email")
     phone = data.get("phone")
     message = data.get("message")
 
-
     if not name or not email or not message:
         return jsonify({"success": False, "error": "Tous les champs sont requis"}), 400
-
 
     success = send_contact_email(name, email, phone, message)
 
@@ -150,45 +148,38 @@ def contact():
     else:
         return jsonify({"success": False, "error": "Erreur lors de l'envoi du message"}), 500
 
-
 # -------------------------------------------
-# 3) AUTOCOMPLETE : Services disponibles
+# 6) AUTOCOMPLETE SERVICES
 # -------------------------------------------
 @pages_blueprint.route("/api/services", methods=["GET"])
 def get_services():
     try:
         data_dir = os.path.join(os.path.dirname(__file__), 'data')
         services_file = os.path.join(data_dir, 'services.json')
-
         with open(services_file, 'r', encoding='utf-8') as f:
             services = json.load(f)
 
         query = request.args.get('q', '').lower()
-
         if query:
             filtered = [s for s in services if query in s.lower()]
             return jsonify(filtered[:20])
-
         return jsonify(services)
     except Exception as e:
         print(f"Erreur lors du chargement des services: {e}")
         return jsonify([]), 500
 
-
-# Cache global pour les villes (chargé une seule fois)
+# -------------------------------------------
+# 7) AUTOCOMPLETE VILLES
+# -------------------------------------------
 _villes_cache = None
-
 def load_villes_cache():
     global _villes_cache
     if _villes_cache is None:
         try:
             data_dir = os.path.join(os.path.dirname(__file__), 'data')
             communes_file = os.path.join(data_dir, 'communes-france-avec-polygon-2025.json')
-
             with open(communes_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-
-            # Extraire uniquement les noms des villes (sans le reste des données)
             _villes_cache = [commune.get('nom_standard', '') for commune in data.get('data', [])]
             print(f"Cache des villes chargé : {len(_villes_cache)} communes")
         except Exception as e:
@@ -196,28 +187,21 @@ def load_villes_cache():
             _villes_cache = []
     return _villes_cache
 
-# -------------------------------------------
-# 4) AUTOCOMPLETE : Villes de France 
-# -------------------------------------------
 @pages_blueprint.route("/api/villes", methods=["GET"])
 def get_villes():
     try:
         villes_cache = load_villes_cache()
         query = request.args.get('q', '').lower()
-
         if not query:
             return jsonify(villes_cache[:100])
-
-      
         filtered = [v for v in villes_cache if v.lower().startswith(query)]
         return jsonify(filtered[:15])
     except Exception as e:
         print(f"Erreur lors de la recherche des villes: {e}")
         return jsonify([]), 500
 
-
 # -------------------------------------------
-# 5) LANCEMENT
+# 8) LANCEMENT DIRECT (test/debug)
 # -------------------------------------------
 if __name__ == "__main__":
     from app import create_app

@@ -1,6 +1,16 @@
 import { CalendarDaysIcon, UserIcon } from "@heroicons/react/24/outline"
+import { useRegister } from "../Hook/useSubmitForm";
 
 export default function UserRegistrationForm() {
+    const { registerUser } = useRegister();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    registerUser(data);
+  };
+
   return (
     <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
@@ -32,8 +42,7 @@ export default function UserRegistrationForm() {
 
         <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg text-left">
           <form
-            className="space-y-5"
-          >
+            className="space-y-5" onSubmit={handleSubmit}>
             {/* Email */}
             <div className="flex flex-col items-start">
               <label className="font-medium block text-left">Adresse email</label>
@@ -82,17 +91,6 @@ export default function UserRegistrationForm() {
               />
             </div>
 
-            {/* Téléphone */}
-            <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Téléphone</label>
-              <input
-                type="tel"
-                name="phone"
-                required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
-                placeholder="06 12 34 56 78"
-              />
-            </div>
 
             {/* Mot de passe */}
             <div className="flex flex-col items-start">
