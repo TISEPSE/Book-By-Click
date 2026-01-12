@@ -11,13 +11,14 @@ pages_blueprint = Blueprint("pages", __name__)
 
 @pages_blueprint.route("/api/register/user", methods=["POST"])
 def register_form_user():
-    data = request.get_json()  # <-- lire le JSON envoyé
+    data = request.get_json()
+    
     email = data.get("email")
     password_raw = data.get("password")
-    password = generate_password_hash(password_raw) if password_raw else None
+    password = generate_password_hash(password_raw)
     nom = data.get("nom")
     prenom = data.get("prenom")
-    dateNaissance = data.get("birthDate")
+    dateNaissance = datetime.fromisoformat(data.get("birthDate")).date()
     telephone = data.get("phone")
     
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
@@ -33,18 +34,37 @@ def register_form_user():
         dateInscription=datetime.now(),
         idTypeUtilisateur=id_type_client
     )
+    
     db.session.add(u1)
     db.session.commit()
-
+    
     return jsonify({"message":"utilisateur ajouté","id":u1.idClient})
 
 @pages_blueprint.route("/api/register/pro", methods=["POST"])
 def register_form_pro():
+    # Vérification des champs obligatoires
+    required_fields = ["email", "password", "nom", "prenom", "birthDate", "phone"]
+    missing_fields = [field for field in required_fields if field not in request.form or not request.form.get(field)]
+    
+    if missing_fields:
+        return jsonify({
+            "error": f"Champs manquants: {', '.join(missing_fields)}",
+            "required_fields": required_fields
+        }), 400
+    
     email = request.form.get("email")
     password = generate_password_hash(request.form.get("password"))
     nom = request.form.get("nom")
     prenom = request.form.get("prenom")
-    dateNaissance = request.form.get("birthDate")
+    
+    # Conversion de la date de naissance (supposée être au format ISO)
+    try:
+        dateNaissance = datetime.fromisoformat(request.form.get("birthDate")).date()
+    except (ValueError, TypeError):
+        return jsonify({
+            "error": "Format de date de naissance invalide. Utilisez le format ISO (YYYY-MM-DD)"
+        }), 400
+    
     telephone = request.form.get("phone") 
 
     pro = TypeUtilisateur.query.filter(TypeUtilisateur.role=="pro").first()
@@ -64,8 +84,11 @@ def register_form_pro():
     try:
         db.session.add(u1)
         db.session.commit()
-    except:
-        return jsonify({"error":"Error adding user"}), 500
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "error": f"Erreur lors de l'ajout de l'utilisateur: {str(e)}"
+        }), 500
     
     nomEntreprise = request.form.get("nomEntreprise")
     nomSecteur = request.form.get("nomSecteur")

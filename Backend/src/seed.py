@@ -14,7 +14,7 @@ with app.app_context():
     #  TYPE UTILISATEUR
     # ============================
     admin = TypeUtilisateur(role="admin", description="Administrateur du système")
-    pro = TypeUtilisateur(role="pro", decription="Gérant d'une entreprise")
+    pro = TypeUtilisateur(role="pro", description="Gérant d'une entreprise")
     client = TypeUtilisateur(role="client", description="Client de base")
     db.session.add_all([admin, pro, client])
     db.session.commit()
