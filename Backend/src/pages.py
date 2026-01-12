@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from extension import cors, db
 from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from mailer import send_contact_email
+from werkzeug import generate_password_hash
 import json
 import os
 
@@ -18,7 +19,7 @@ def register_form_user():
     prenom = request.form.get("prenom")
     dateNaissance = request.form.get("birthDate")
     telephone = request.form.get("phone")
-    password = request.form.get("password")
+    password = generate_password_hash(request.form.get("password")) 
     confirmPassword = request.form.get("confirmPassword")
 
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
@@ -38,6 +39,73 @@ def register_form_user():
     db.session.commit()
 
     return jsonify({"message":"utilisateur ajouté","id":u1.idClient})
+
+# récupérer les informations du formulaire quand il POST sur l'endpoint /register_form
+@pages_blueprint.route("/register_form_pro", methods=["POST"])
+def register_form_pro():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    nom = request.form.get("nom")
+    prenom = request.form.get("prenom")
+    dateNaissance = request.form.get("birthDate")
+    telephone = request.form.get("phone") 
+    password = generate_password_hash(request.form.get("password"))
+    confirmPassword = request.form.get("confirmPassword")
+
+    pro = TypeUtilisateur.query.filter(TypeUtilisateur.role=="pro").first()
+    id_type_pro = pro.idType
+
+    u1 = Utilisateur(
+        nom=nom,
+        prenom=prenom,
+        dateNaissance=dateNaissance,
+        email=email,
+        motDePasseHash=password,
+        telephone=telephone,
+        dateInscription=datetime.now(),
+        idTypeUtilisateur=id_type_pro
+    )
+
+    try:
+        db.session.add(u1)
+        db.session.commit()
+    except:
+        return "Error adding user"
+    
+    nomEntreprise = request.form.get("nomEntreprise")
+    nomSecteur = request.form.get("nomSecteur")
+    nomSecteur = request.form.get("nomSecteur")
+    slugPublic = request.form.get("slug")
+    adresse = request.form.get("adresse")
+    codePostal = request.form.get("codePostal")
+    ville = request.form.get("ville")
+    pays = request.form.get("pays")
+
+    
+    e1 = Entreprise(
+        nomEntreprise=nomEntreprise,
+        nomSecteur=nomSecteur,
+        idGerant=u1.idClient,
+        slugPublic=slugPublic,
+        adresse=adresse,
+        codePostal=codePostal,
+        ville=ville,
+        pays=pays
+    )
+
+    try:
+        db.session.add(e1)
+        db.session.commit()
+    except:
+        return "Error adding entreprise"
+
+    
+    return(jsonify({"message":"utilisateur ajouté","id":u1.idClient}))
+    
+   
+
+
+
 
 # -------------------------------------------
 # 1) LOGIN : renvoie un JSON propre
