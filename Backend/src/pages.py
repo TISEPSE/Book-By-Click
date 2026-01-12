@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from extension import cors, db
-from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
+from models import Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from mailer import send_contact_email
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
@@ -9,17 +9,16 @@ from datetime import datetime
 
 pages_blueprint = Blueprint("pages", __name__)
 
-
-
 @pages_blueprint.route("/api/register/user", methods=["POST"])
 def register_form_user():
-    '''récupérer les informations du formulaire quand il POST sur l'endpoint /api/register/user'''
-    email = request.form.get("email")
-    password = generate_password_hash(request.form.get("password")) 
-    nom = request.form.get("nom")
-    prenom = request.form.get("prenom")
-    dateNaissance = request.form.get("birthDate")
-    telephone = request.form.get("phone")
+    data = request.get_json()  # <-- lire le JSON envoyé
+    email = data.get("email")
+    password_raw = data.get("password")
+    password = generate_password_hash(password_raw) if password_raw else None
+    nom = data.get("nom")
+    prenom = data.get("prenom")
+    dateNaissance = data.get("birthDate")
+    telephone = data.get("phone")
     
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
     id_type_client = client.idType
@@ -39,10 +38,8 @@ def register_form_user():
 
     return jsonify({"message":"utilisateur ajouté","id":u1.idClient})
 
-
 @pages_blueprint.route("/api/register/pro", methods=["POST"])
 def register_form_pro():
-    '''récupérer les informations du formulaire quand il POST sur l'endpoint /api/register/pro'''
     email = request.form.get("email")
     password = generate_password_hash(request.form.get("password"))
     nom = request.form.get("nom")
@@ -97,9 +94,6 @@ def register_form_pro():
 
     return jsonify({"message":"utilisateur et entreprise ajoutés","idClient":u1.idClient, "idPro":e1.idPro})
 
-# -------------------------------------------
-# 3) LOGIN
-# -------------------------------------------
 @pages_blueprint.route("/login_form", methods=["POST"])
 def login_form():
     email = request.form.get("email")
@@ -107,9 +101,6 @@ def login_form():
     print(f"[LOGIN] Email: {email}  Password: {password}", flush=True)
     return jsonify({"email": email, "password": password})
 
-# -------------------------------------------
-# 4) GET USER INFO
-# -------------------------------------------
 @pages_blueprint.route("/teste", methods=["POST"])
 def recap():
     username = request.form.get("username")
@@ -126,9 +117,6 @@ def recap():
         "telephone": user.telephone
     })
 
-# -------------------------------------------
-# 5) CONTACT
-# -------------------------------------------
 @pages_blueprint.route("/contact", methods=["POST"])
 def contact():
     data = request.json
@@ -147,9 +135,6 @@ def contact():
     else:
         return jsonify({"success": False, "error": "Erreur lors de l'envoi du message"}), 500
 
-# -------------------------------------------
-# 6) AUTOCOMPLETE SERVICES
-# -------------------------------------------
 @pages_blueprint.route("/api/services", methods=["GET"])
 def get_services():
     try:
@@ -167,9 +152,6 @@ def get_services():
         print(f"Erreur lors du chargement des services: {e}")
         return jsonify([]), 500
 
-# -------------------------------------------
-# 7) AUTOCOMPLETE VILLES
-# -------------------------------------------
 _villes_cache = None
 def load_villes_cache():
     global _villes_cache
@@ -199,9 +181,6 @@ def get_villes():
         print(f"Erreur lors de la recherche des villes: {e}")
         return jsonify([]), 500
 
-# -------------------------------------------
-# 8) LANCEMENT DIRECT (test/debug)
-# -------------------------------------------
 if __name__ == "__main__":
     from app import create_app
     app = create_app()
