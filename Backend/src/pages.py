@@ -11,7 +11,7 @@ pages_blueprint = Blueprint("pages", __name__)
 
 
 # récupérer les informations du formulaire quand il POST sur l'endpoint /register_form
-@pages_blueprint.route("/register_form_user", methods=["POST"])
+@pages_blueprint.route("/api/register/user", methods=["POST"])
 def register_form_user():
     email = request.form.get("email")
     password = request.form.get("password")
@@ -41,7 +41,7 @@ def register_form_user():
     return jsonify({"message":"utilisateur ajouté","id":u1.idClient})
 
 # récupérer les informations du formulaire quand il POST sur l'endpoint /register_form
-@pages_blueprint.route("/register_form_pro", methods=["POST"])
+@pages_blueprint.route("/api/register/pro", methods=["POST"])
 def register_form_pro():
     email = request.form.get("email")
     password = request.form.get("password")
