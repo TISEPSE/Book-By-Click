@@ -53,14 +53,29 @@ const DayHeader = ({date}) => {
 }
 
 export default function WeekView({date, onNavigate, events = []}) {
-  const eventStyleGetter = event => ({
-    style: {
-      backgroundColor: event.color || "#6366f1",
-      color: "white",
-      padding: "4px 8px",
-      fontSize: "12px",
-    },
-  })
+  
+  // --- LA CORRECTION EST ICI ---
+  const eventStyleGetter = (event) => {
+    // On récupère les couleurs envoyées par CalendarContent
+    // Si elles n'existent pas, on met du gris par défaut
+    const backgroundColor = event.backgroundColor || "#e5e7eb";
+    const textColor = event.textColor || "#374151";
+    const borderColor = event.borderColor || "#9ca3af";
+
+    return {
+      style: {
+        backgroundColor: backgroundColor,
+        color: textColor,
+        borderRadius: '6px',
+        opacity: 0.9,
+        border: `1px solid ${borderColor}`,
+        borderLeft: `5px solid ${borderColor}`, // Petite barre colorée sur le côté
+        display: 'block',
+        fontSize: '12px',
+        fontWeight: '600'
+      },
+    }
+  }
 
   const minTime = new Date()
   minTime.setHours(6, 0, 0, 0)
@@ -90,8 +105,12 @@ export default function WeekView({date, onNavigate, events = []}) {
             header: DayHeader,
           },
           event: ({event}) => (
-            <div className="p-1">
-              <span className="text-white text-xs">{event.title}</span>
+            <div className="p-1 flex flex-col h-full">
+              <span className="font-bold truncate">{event.title}</span>
+              {/* On peut ajouter l'heure si on veut */}
+              <span className="text-[10px] opacity-80">
+                {format(event.start, "HH:mm")} - {format(event.end, "HH:mm")}
+              </span>
             </div>
           ),
           toolbar: () => null,

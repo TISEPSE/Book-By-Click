@@ -51,14 +51,14 @@ export default function Contact() {
   };
 
   return (
-    <main className="w-full min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-2xl space-y-6 text-gray-600 px-4 sm:px-6 lg:px-8">
+    <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 py-12">
+      <div className="w-full space-y-6 text-gray-600 sm:max-w-md px-4">
         <div className="text-center">
           <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">
             Formulaire de Contact
           </h3>
         </div>
-        <div className="bg-white shadow p-6 sm:rounded-lg">
+        <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg">
           <form className="space-y-5" onSubmit={handleSubmit}>
             <label htmlFor="name" className="block text-gray-700 font-medium mb-1">
               Nom / Prénom
@@ -69,7 +69,7 @@ export default function Contact() {
               type="text"
               required
               placeholder="Ex: Jean Dupont"
-              className="w-full h-12 px-4 border rounded-lg text-base sm:text-lg"
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
               value={formData.name}
               onChange={handleChange}
             />
@@ -83,7 +83,7 @@ export default function Contact() {
               type="email"
               required
               placeholder="Ex: jean.dupont@email.com"
-              className="w-full h-12 px-4 border rounded-lg text-base sm:text-lg"
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
               value={formData.email}
               onChange={handleChange}
             />
@@ -97,7 +97,7 @@ export default function Contact() {
               type="tel"
               required
               placeholder="Ex: 0612345678"
-              className="w-full h-12 px-4 border rounded-lg text-base sm:text-lg"
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
               inputMode="numeric"
               value={formData.phone}
               onChange={(e) => {
@@ -114,20 +114,46 @@ export default function Contact() {
               name="message"
               required
               placeholder="Ex: Bonjour, je souhaite avoir plus d'informations sur vos services."
-              rows="5"
-              className="w-full min-h-[120px] px-4 py-3 border rounded-lg text-base sm:text-lg"
+              rows="4"
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
               value={formData.message}
               onChange={handleChange}
             ></textarea>
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150 disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {loading ? 'Envoi en cours...' : 'Envoyer'}
             </button>
           </form>
+
+          <div className="mt-5">
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="text-center">
+                <a
+                  href="/"
+                  className="text-indigo-600 hover:text-indigo-500 font-medium inline-flex items-center gap-1"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                  </svg>
+                  Retour à l'accueil
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>

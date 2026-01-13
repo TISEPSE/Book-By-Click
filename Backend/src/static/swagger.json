@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Book-By-Click API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/register/user": {
+      "post": {
+        "summary": "Inscription d'un utilisateur client",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"},
+                  "password": {"type": "string"},
+                  "confirmPassword": {"type": "string"},
+                  "nom": {"type": "string"},
+                  "prenom": {"type": "string"},
+                  "birthDate": {"type": "string", "format": "date"},
+                  "phone": {"type": "string"}
+                },
+                "required": ["email","password","confirmPassword","nom","prenom"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Utilisateur ajouté avec succès"}
+        }
+      }
+    },
+    "/api/register/pro": {
+      "post": {
+        "summary": "Inscription d'un utilisateur pro et création de son entreprise",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"},
+                  "password": {"type": "string"},
+                  "confirmPassword": {"type": "string"},
+                  "nom": {"type": "string"},
+                  "prenom": {"type": "string"},
+                  "birthDate": {"type": "string", "format": "date"},
+                  "phone": {"type": "string"},
+                  "nomEntreprise": {"type": "string"},
+                  "nomSecteur": {"type": "string"},
+                  "slug": {"type": "string"},
+                  "adresse": {"type": "string"},
+                  "codePostal": {"type": "string"},
+                  "ville": {"type": "string"},
+                  "pays": {"type": "string"}
+                },
+                "required": ["email","password","confirmPassword","nom","prenom","nomEntreprise"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Utilisateur et entreprise ajoutés"}
+        }
+      }
+    },
+    "/login_form": {
+      "post": {
+        "summary": "Connexion utilisateur",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"},
+                  "password": {"type": "string"}
+                },
+                "required": ["email","password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Connexion réussie"}
+        }
+      }
+    },
+    "/teste": {
+      "post": {
+        "summary": "Récupérer un utilisateur par son nom",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {"type": "string"}
+                },
+                "required": ["username"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Utilisateur récupéré"}
+        }
+      }
+    },
+    "/contact": {
+      "post": {
+        "summary": "Envoyer un message depuis le formulaire de contact",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "email": {"type": "string"},
+                  "phone": {"type": "string"},
+                  "message": {"type": "string"}
+                },
+                "required": ["name","email","message"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Message envoyé avec succès"},
+          "400": {"description": "Champs manquants"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/services": {
+      "get": {
+        "summary": "Autocomplete des services",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {"type": "string"},
+            "description": "Texte à rechercher"
+          }
+        ],
+        "responses": {
+          "200": {"description": "Liste des services"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/villes": {
+      "get": {
+        "summary": "Autocomplete des villes",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {"type": "string"},
+            "description": "Texte à rechercher"
+          }
+        ],
+        "responses": {
+          "200": {"description": "Liste des villes"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    }
+  }
+}
