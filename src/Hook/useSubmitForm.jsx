@@ -1,10 +1,10 @@
 export default function useSubmitForm(url) {
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e) => { //Fonction qu'on va réutilisé
+    e.preventDefault() //Empêche le rechargement de la page
 
-    const formData = new FormData(e.target)
+    const formData = new FormData(e.target) //FormData extrait les donnée du formulaire => (e.target)
 
-    const data = {
+    const data = { //Objet qui récupère les données du formulaire
       nom: formData.get("nom"),
       prenom: formData.get("prenom"),
       birthDate: formData.get("dateNaissance"),
@@ -13,15 +13,15 @@ export default function useSubmitForm(url) {
       password: formData.get("password"),
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(url, { //On envoie les données au backend
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data), //Tranforme l'objet javascript en Json
     })
 
-    const result = await response.json()
+    const result = await response.json() //On récup la réponse du backend sous forme de Json et on la log direct
     console.log('Réponse du serveur:', result)
   }
 

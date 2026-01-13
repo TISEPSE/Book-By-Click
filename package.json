@@ -28,6 +28,7 @@
     "react": "^19.2.0",
     "react-big-calendar": "^1.19.4",
     "react-dom": "^19.2.0",
+    "react-password-checklist": "^1.8.1",
     "react-router-dom": "^7.10.1",
     "recharts": "^3.5.1",
     "styled-components": "^6.1.19",
