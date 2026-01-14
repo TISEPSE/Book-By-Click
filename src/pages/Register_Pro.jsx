@@ -1,6 +1,8 @@
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline"
+import useSubmitForm_pro from "../Hook/useSubmitForm_pro";
 
 export default function ProfessionalRegisterForm() {
+  const {handleSubmit} = useSubmitForm_pro("/api/register/pro")
   return (
     <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
@@ -33,6 +35,7 @@ export default function ProfessionalRegisterForm() {
         <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg text-left">
           <form
             className="space-y-5"
+            onSubmit={(e) => handleSubmit(e)}
           >
             {/* Nom et Prénom */}
             <div className="grid grid-cols-2 gap-4">
@@ -40,7 +43,7 @@ export default function ProfessionalRegisterForm() {
                 <label className="font-medium block text-left">Prénom</label>
                 <input
                   type="text"
-                  name="firstName"
+                  name="prenom"
                   required
                   className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
                   placeholder="Votre prénom"
@@ -51,7 +54,7 @@ export default function ProfessionalRegisterForm() {
                 <label className="font-medium block text-left">Nom</label>
                 <input
                   type="text"
-                  name="lastName"
+                  name="nom"
                   required
                   className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
                   placeholder="Votre Nom"
@@ -64,7 +67,7 @@ export default function ProfessionalRegisterForm() {
               <label className="font-medium block text-left">Date de naissance</label>
               <input
                 type="date"
-                name="birthDate"
+                name="dateNaissance"
                 required
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
               />
@@ -75,7 +78,7 @@ export default function ProfessionalRegisterForm() {
               <label className="font-medium block text-left">Téléphone</label>
               <input
                 type="tel"
-                name="phone"
+                name="telephone"
                 required
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
                 placeholder="06 12 34 56 78"

@@ -18,8 +18,9 @@ def register_form_user():
     password = generate_password_hash(password_raw)
     nom = data.get("nom")
     prenom = data.get("prenom")
-    dateNaissance = datetime.fromisoformat(data.get("birthDate")).date()
-    telephone = data.get("phone")
+    dateNaissance = datetime.fromisoformat(data.get("dateNaissance")).date()
+    telephone = data.get("telephone")
+
     
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
     id_type_client = client.idType
@@ -42,30 +43,31 @@ def register_form_user():
 
 @pages_blueprint.route("/api/register/pro", methods=["POST"])
 def register_form_pro():
-    # Vérification des champs obligatoires
-    required_fields = ["email", "password", "nom", "prenom", "birthDate", "phone"]
-    missing_fields = [field for field in required_fields if field not in request.form or not request.form.get(field)]
-    
+    data = request.get_json()
+
+    # Vérifie si tous les champs requis sont présents
+    required_fields = ["email", "password", "nom", "prenom", "dateNaissance", "telephone", "companyName", "sector", "slug", "address", "postalCode", "city", "country"]
+    missing_fields = [field for field in required_fields if not data.get(field)]
+
     if missing_fields:
         return jsonify({
             "error": f"Champs manquants: {', '.join(missing_fields)}",
             "required_fields": required_fields
         }), 400
+
+    password = generate_password_hash(data.get("password"))
+    email = data.get("email")
+    nom = data.get("nom")
+    prenom = data.get("prenom")
     
-    email = request.form.get("email")
-    password = generate_password_hash(request.form.get("password"))
-    nom = request.form.get("nom")
-    prenom = request.form.get("prenom")
-    
-    # Conversion de la date de naissance (supposée être au format ISO)
     try:
-        dateNaissance = datetime.fromisoformat(request.form.get("birthDate")).date()
+        dateNaissance = datetime.fromisoformat(data.get("dateNaissance")).date()
     except (ValueError, TypeError):
         return jsonify({
             "error": "Format de date de naissance invalide. Utilisez le format ISO (YYYY-MM-DD)"
         }), 400
     
-    telephone = request.form.get("phone") 
+    telephone = data.get("telephone") 
 
     pro = TypeUtilisateur.query.filter(TypeUtilisateur.role=="pro").first()
     id_type_pro = pro.idType
@@ -81,41 +83,27 @@ def register_form_pro():
         idTypeUtilisateur=id_type_pro
     )
 
-    try:
-        db.session.add(u1)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            "error": f"Erreur lors de l'ajout de l'utilisateur: {str(e)}"
-        }), 500
-    
-    nomEntreprise = request.form.get("nomEntreprise")
-    nomSecteur = request.form.get("nomSecteur")
-    slugPublic = request.form.get("slug")
-    adresse = request.form.get("adresse")
-    codePostal = request.form.get("codePostal")
-    ville = request.form.get("ville")
-    pays = request.form.get("pays")
+    db.session.add(u1)
+    db.session.commit()
 
+    # Pour l'entreprise, pareil : récupère depuis le JSON
     e1 = Entreprise(
-        nomEntreprise=nomEntreprise,
-        nomSecteur=nomSecteur,
-        idGerant=u1.idClient,
-        slugPublic=slugPublic,
-        adresse=adresse,
-        codePostal=codePostal,
-        ville=ville,
-        pays=pays
-    )
+    nomEntreprise=data.get("companyName"),
+    nomSecteur=data.get("sector"),
+    idGerant=u1.idClient,
+    slugPublic=data.get("slug"),
+    adresse=data.get("address"),
+    codePostal=data.get("postalCode"),
+    ville=data.get("city"),
+    pays=data.get("country")
+)
 
-    try:
-        db.session.add(e1)
-        db.session.commit()
-    except:
-        return jsonify({"error":"Error adding entreprise"}), 500
+
+    db.session.add(e1)
+    db.session.commit()
 
     return jsonify({"message":"utilisateur et entreprise ajoutés","idClient":u1.idClient, "idPro":e1.idPro})
+
 
 @pages_blueprint.route("/login_form", methods=["POST"])
 def login_form():

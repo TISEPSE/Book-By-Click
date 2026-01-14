@@ -1,4 +1,4 @@
-export default function useSubmitForm(url) {
+export default function useSubmitForm_user(url) {
   const handleSubmit = async (e) => { //Fonction qu'on va réutilisé
     e.preventDefault() //Empêche le rechargement de la page
 
