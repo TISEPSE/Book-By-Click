@@ -1,10 +1,10 @@
 import { UserIcon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
 import { useState } from "react"
-import useSubmitForm from "../Hook/useSubmitForm"
+import useSubmitForm_user from "../Hook/useSubmitForm_user"
 
 export default function Register_User() {
-  const { handleSubmit } = useSubmitForm("/api/register/user")
+  const { handleSubmit } = useSubmitForm_user("/api/register/user")
 
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
