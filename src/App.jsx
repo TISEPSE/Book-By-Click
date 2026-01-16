@@ -10,6 +10,7 @@ import Contact from "./pages/Contact.jsx"
 import ResultatRecherhce from "./pages/PageResultatRecherche.jsx"
 import Test from "./pages/Teste_form.jsx"
 import Recap from "./pages/Recap.jsx"
+import Profile from "./pages/Profile.jsx"
 import "./static/App.css"
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
 
         <Route path="/teste" element={<Test />} />
         <Route path="/recap" element={<Recap />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   )
