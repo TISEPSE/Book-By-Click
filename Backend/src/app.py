@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, Blueprint
 from pages import pages_blueprint
 from reservation import reservation_bp
@@ -27,8 +28,8 @@ def create_app():
             db.create_all()
             import seed
     except Exception as e:
-        print(f"Avertissement: Impossible de se connecter à la base de données: {e}")
-        print("Le serveur continuera sans connexion à la base de données.")
+        print(f"Avertissement: Impossible de se connecter a la base de donnees: {e}")
+        print("Le serveur continuera sans connexion a la base de donnees.")
 
     # Swagger
     SWAGGER_URL = "/swagger"
