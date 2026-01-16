@@ -7,15 +7,15 @@ app = create_app()
 
 with app.app_context():
 
-    print("🧹 Réinitialisation de la base…")
+    print("🧹 Reinitialisation de la base...")
     db.drop_all()
     db.create_all()
 
     # ============================
     #  TYPE UTILISATEUR
     # ============================
-    admin = TypeUtilisateur(role="admin", description="Administrateur du système")
-    pro = TypeUtilisateur(role="pro", description="Gérant d'une entreprise")
+    admin = TypeUtilisateur(role="admin", description="Administrateur du systeme")
+    pro = TypeUtilisateur(role="pro", description="Gerant d'une entreprise")
     client = TypeUtilisateur(role="client", description="Client de base")
     db.session.add_all([admin, pro, client])
     db.session.commit()
@@ -54,8 +54,8 @@ with app.app_context():
     #  ENTREPRISE
     # ============================
     e1 = Entreprise(
-        nomEntreprise="Salon Beauté Zen",
-        nomSecteur="Bien-être",
+        nomEntreprise="Salon Beaute Zen",
+        nomSecteur="Bien-etre",
         idGerant=u1.idClient,
         slugPublic="beaute-zen",
         adresse="12 rue de la Paix",
@@ -107,13 +107,13 @@ with app.app_context():
     db.session.commit()
 
     # ============================
-    #  RÉSERVATION
+    #  RESERVATION
     # ============================
     r1 = Reservation(
         idPro=e1.idPro,
         idClient=u2.idClient,
         idPrestation=p1.idPrestation,
-        commentaireClient="Super hâte de tester !",
+        commentaireClient="Super hate de tester !",
         statut=True,
         dateCreation=datetime.now()
     )
@@ -122,7 +122,7 @@ with app.app_context():
     db.session.commit()
 
     # ============================
-    #  EMAIL D'ÉVÈNEMENT
+    #  EMAIL D'EVENEMENT
     # ============================
     mail1 = EventEmail(
         idReservation=r1.idReservation,
@@ -135,12 +135,12 @@ with app.app_context():
     db.session.commit()
 
     # ============================
-    #  ÉVÈNEMENT
+    #  EVENEMENT
     # ============================
     ev1 = Evenement(
         idPro=e1.idPro,
-        titre="Journée Découverte",
-        description="Réductions sur toutes les prestations !",
+        titre="Journee Decouverte",
+        description="Reductions sur toutes les prestations !",
         dateDebut=datetime.now() + timedelta(days=7),
         dateFin=datetime.now() + timedelta(days=7, hours=4),
         typeEvenement="Promotion"
@@ -156,10 +156,10 @@ with app.app_context():
         idPro=e1.idPro,
         libelle="Semaine normale",
         description="Ouverture standard",
-        joursPattern="1111100"  # Lundi → Vendredi
+        joursPattern="1111100"  # Lundi - Vendredi
     )
 
     db.session.add(st1)
     db.session.commit()
 
-    print("🎉 Données de test insérées avec succès !")
+    print("🎉 Donnees de test inserees avec succes !")
