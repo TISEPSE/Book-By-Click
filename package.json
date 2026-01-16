@@ -10,7 +10,7 @@
     "dev": "vite",
     "db": "cd Backend/src && docker compose up -d",
     "api": "cd Backend/src && ../../venv/bin/python -m flask --app app run --no-debugger",
-    "api:win": "cd Backend/src && ..\\..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger",
+    "api:win": "cd Backend/src && set PYTHONUTF8=1 && ..\\..\\venv\\Scripts\\python.exe -m flask --app app run --no-debugger",
     "web": "vite",
     "dev:lin": "concurrently --kill-others-on-fail false \"npm run api\" \"npm run web\"",
     "dev:win": "concurrently --kill-others-on-fail false \"npm run api:win\" \"npm run web\"",
