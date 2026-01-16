@@ -102,3 +102,30 @@ def update_reservation_notes(id_res):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+# --- 5. ROUTE POUR RÉCUPÉRER UNIQUEMENT LES CLIENTS ---
+@reservation_bp.route('/api/entreprise/clients', methods=['GET'])
+def get_all_clients():
+    try:
+        # Récupère uniquement les clients (pas les gérants)
+        clients = Utilisateur.query.options(
+            joinedload(Utilisateur.reservations)
+        ).filter(Utilisateur.estGerant == False).all()
+
+        results = []
+        for client in clients:
+            nb_reservations = len(client.reservations)
+
+            results.append({
+                "id": client.idClient,
+                "nom": client.nom,
+                "prenom": client.prenom,
+                "email": client.email,
+                "telephone": client.telephone,
+                "dateInscription": client.dateInscription.strftime('%d/%m/%Y'),
+                "nbReservations": nb_reservations
+            })
+
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

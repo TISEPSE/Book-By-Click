@@ -30,7 +30,8 @@ with app.app_context():
         motDePasseHash="hash123",
         telephone="0601020304",
         dateInscription=datetime.now(),
-        idTypeUtilisateur=admin.idType
+        idTypeUtilisateur=admin.idType,
+        estGerant=False
     )
 
     u2 = Utilisateur(
@@ -41,7 +42,8 @@ with app.app_context():
         motDePasseHash="hash456",
         telephone="0605060708",
         dateInscription=datetime.now(),
-        idTypeUtilisateur=client.idType
+        idTypeUtilisateur=client.idType,
+        estGerant=False
     )
 
     db.session.add_all([u1, u2])

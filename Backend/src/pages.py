@@ -20,6 +20,7 @@ def register_form_user():
     prenom = data.get("prenom")
     dateNaissance = datetime.fromisoformat(data.get("dateNaissance")).date()
     telephone = data.get("telephone")
+    estGerant = False
 
     
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
@@ -33,7 +34,8 @@ def register_form_user():
         motDePasseHash=password,
         telephone=telephone,
         dateInscription=datetime.now(),
-        idTypeUtilisateur=id_type_client
+        idTypeUtilisateur=id_type_client,
+        estGerant=estGerant,
     )
     
     db.session.add(u1)
@@ -80,7 +82,8 @@ def register_form_pro():
         motDePasseHash=password,
         telephone=telephone,
         dateInscription=datetime.now(),
-        idTypeUtilisateur=id_type_pro
+        idTypeUtilisateur=id_type_pro,
+        estGerant=True
     )
 
     db.session.add(u1)
@@ -88,15 +91,15 @@ def register_form_pro():
 
     # Pour l'entreprise, pareil : récupère depuis le JSON
     e1 = Entreprise(
-    nomEntreprise=data.get("companyName"),
-    nomSecteur=data.get("sector"),
-    idGerant=u1.idClient,
-    slugPublic=data.get("slug"),
-    adresse=data.get("address"),
-    codePostal=data.get("postalCode"),
-    ville=data.get("city"),
-    pays=data.get("country")
-)
+        nomEntreprise=data.get("companyName"),
+        nomSecteur=data.get("sector"),
+        idGerant=u1.idClient,
+        slugPublic=data.get("slug"),
+        adresse=data.get("address"),
+        codePostal=data.get("postalCode"),
+        ville=data.get("city"),
+        pays=data.get("country")
+    )
 
 
     db.session.add(e1)

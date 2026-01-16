@@ -46,6 +46,7 @@ class Utilisateur(db.Model):
     dateNaissance = db.Column(db.Date, nullable=False)
     email = db.Column(db.String(), nullable=False)
     motDePasseHash = db.Column(db.String(), nullable=False)
+    estGerant = db.Column(db.Boolean, nullable=False)
     telephone = db.Column(db.String(), nullable=False)
     dateInscription = db.Column(db.DateTime, nullable=False)
     idTypeUtilisateur = db.Column(db.Integer, db.ForeignKey('typeutilisateur.idType'), nullable=False)
