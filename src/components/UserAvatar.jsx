@@ -9,16 +9,9 @@ export default function UserAvatarSimple() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // fetch la session
+  // fetch la session au montage et après login/logout
   useEffect(() => {
-    fetch("/api/session") // Route Flask pour récupérer la session
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setUser({ name: data.name, email: data.email });
-        }
-      })
-      .catch((err) => console.error("Erreur fetch session:", err));
+    fetchSession();
   }, []);
 
   // fermer le dropdown si on clique en dehors
@@ -47,20 +40,35 @@ export default function UserAvatarSimple() {
     { label: "Aide", icon: HelpCircle },
   ];
 
+  const fetchSession = () => {
+    fetch("/api/session")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setUser({ name: data.name, email: data.email });
+        } else {
+          setUser({ name: "", email: "" });
+        }
+      })
+      .catch((err) => {
+        console.error("Erreur fetch session:", err);
+        setUser({ name: "", email: "" });
+      });
+  };
+
   const handleLogout = async () => {
     setIsLoading(true);
     try {
       const response = await fetch("http://localhost:5000/logout", {
         method: "POST",
-        credentials: "include" // Important pour les cookies/session
+        credentials: "include"
       });
 
       if (response.ok) {
-        // Fermer le dropdown
+        // Réinitialiser immédiatement l'état utilisateur
+        setUser({ name: "", email: "" });
         setIsOpen(false);
-        // Rediriger vers la page d'accueil
         navigate("/");
-        // L'état utilisateur sera automatiquement mis à jour par le prochain fetch de /api/session
       }
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
