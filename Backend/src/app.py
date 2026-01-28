@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, Blueprint
+from dotenv import load_dotenv
 from pages import pages_blueprint
 from reservation import reservation_bp
 import os
+import secrets
 from extension import db, cors
 from flask_swagger_ui import get_swaggerui_blueprint
 
+load_dotenv()
+
 def create_app():
     app = Flask(__name__)
+    # Générer une clé secrète par défaut si elle n'est pas définie dans les variables d'environnement
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", secrets.token_hex(32))
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
         "SQLALCHEMY_DATABASE_URI", 
         "postgresql://appuser:apppassword@localhost:5432/appdb"
@@ -20,7 +26,7 @@ def create_app():
 
     # Extensions
     db.init_app(app)
-    cors(app)
+    cors(app, supports_credentials=True)
 
     # Essayer de créer les tables
     try:

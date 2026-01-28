@@ -168,6 +168,104 @@
           "500": {"description": "Erreur serveur"}
         }
       }
+    },
+    "/api/entreprise/reservations": {
+      "get": {
+        "summary": "Récupérer le tableau des réservations",
+        "responses": {
+          "200": {"description": "Liste des réservations avec détails"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/entreprise/calendrier": {
+      "get": {
+        "summary": "Récupérer les événements du calendrier",
+        "responses": {
+          "200": {"description": "Liste des créneaux et réservations"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/reservations/{id_res}/status": {
+      "patch": {
+        "summary": "Modifier le statut d'une réservation",
+        "parameters": [
+          {
+            "name": "id_res",
+            "in": "path",
+            "schema": {"type": "integer"},
+            "required": true,
+            "description": "ID de la réservation"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {"type": "string"}
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Statut mis à jour avec succès"},
+          "400": {"description": "Données manquantes"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/reservations/{id_res}/notes": {
+      "patch": {
+        "summary": "Modifier le commentaire d'une réservation",
+        "parameters": [
+          {
+            "name": "id_res",
+            "in": "path",
+            "schema": {"type": "integer"},
+            "required": true,
+            "description": "ID de la réservation"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "notes": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Commentaire mis à jour avec succès"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/entreprise/clients": {
+      "get": {
+        "summary": "Récupérer la liste des clients",
+        "responses": {
+          "200": {"description": "Liste des clients"},
+          "500": {"description": "Erreur serveur"}
+        }
+      }
+    },
+    "/api/session": {
+      "get": {
+        "summary": "Récupérer les informations de session",
+        "responses": {
+          "200": {"description": "Informations de session"},
+          "401": {"description": "Non connecté"}
+        }
+      }
     }
   }
 }

@@ -8,7 +8,9 @@ const ClientsContent = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:5000/api/entreprise/clients")
+        fetch("/api/entreprise/clients", {
+            credentials: "include"
+        })
             .then(res => {
                 if (!res.ok) throw new Error("Serveur non disponible");
                 return res.json();
