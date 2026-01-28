@@ -41,7 +41,9 @@ export default function UserAvatarSimple() {
   ];
 
   const fetchSession = () => {
-    fetch("/api/session")
+    fetch("/api/session", {
+      credentials: "include"
+    })
       .then((res) => res.json())
       .then((data) => {
         if (!data.error) {
@@ -59,7 +61,7 @@ export default function UserAvatarSimple() {
   const handleLogout = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/logout", {
+      const response = await fetch("/logout", {
         method: "POST",
         credentials: "include"
       });
