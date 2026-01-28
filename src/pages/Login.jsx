@@ -1,4 +1,41 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export default function Login() {
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Code 200 (connexion réussis), redirection vers le dashboard
+        navigate('/dashboard_entreprise');
+      } else {
+        // Afficher l'erreur
+        setError(data.error || 'Email ou mot de passe incorrect');
+      }
+    } catch (err) {
+      setError('Erreur de connexion au serveur. Veuillez réessayer.');
+      console.error('Erreur:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <main className="w-full h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
@@ -19,11 +56,16 @@ export default function Login() {
           </div>
         </div>
 
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
         <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg text-left">
           <form
             className="space-y-5"
-            action="http://localhost:5000/login"
-            method="POST"
+            onSubmit={handleSubmit}
           >
             <div className="flex flex-col items-start">
               <label className="font-medium block text-left">Email</label>
@@ -72,7 +114,17 @@ export default function Login() {
               className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
               type="submit"
             >
-              Se connecter
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Connexion en cours...
+                </span>
+              ) : (
+                'Se connecter'
+              )}
             </button>
           </form>
 
