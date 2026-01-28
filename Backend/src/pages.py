@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 from datetime import datetime
+from src.users import get_user
+
 
 pages_blueprint = Blueprint("pages", __name__)
 
@@ -109,12 +111,20 @@ def register_form_pro():
     return jsonify({"message":"utilisateur et entreprise ajoutés","idClient":u1.idClient, "idPro":e1.idPro})
 
 
-@pages_blueprint.route("/login_form", methods=["POST"])
-def login_form():
+@pages_blueprint.route("/login", methods=["POST"])
+def login():
     email = request.form.get("email")
     password = request.form.get("password")
-    print(f"[LOGIN] Email: {email}  Password: {password}", flush=True)
-    return jsonify({"email": email, "password": password})
+
+    user = get_user(email)
+
+    if user is None:
+        print("YA PAS D'UTILISATEURS POTOOOOOOOOOO !!!!!!")
+        return jsonify({"Message": "YA PAS D'UTILISATEURS POTOOOOOOOOOO !!!!!!"}, False)
+    else:
+        print(f"[LOGIN] Email: {email}  Password: {password}", flush=True)
+    return jsonify({"email": email, "password": password, "Messages" : "données bien récupérer"}, True)
+
 
 @pages_blueprint.route("/teste", methods=["POST"])
 def recap():

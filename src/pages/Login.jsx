@@ -22,7 +22,7 @@ export default function Login() {
         <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg text-left">
           <form
             className="space-y-5"
-            action="http://localhost:5000/login_form"
+            action="http://localhost:5000/login"
             method="POST"
           >
             <div className="flex flex-col items-start">
