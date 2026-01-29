@@ -9,7 +9,7 @@ export default function UserAvatarSimple() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // fetch la session au montage et après login/logout
+  // fetch la session après login/logout
   useEffect(() => {
     fetchSession();
   }, []);

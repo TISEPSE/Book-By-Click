@@ -18,7 +18,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login_form" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register_choice" element={<Choice_Register />} />
         <Route path="/register_form_user" element={<Resgister_user />} />
         <Route path="/register_form_pro" element={<Resgister_pro />} />

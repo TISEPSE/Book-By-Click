@@ -15,17 +15,15 @@ pages_blueprint = Blueprint("pages", __name__)
 @pages_blueprint.route("/api/register/user", methods=["POST"])
 def register_form_user():
     data = request.get_json()
-    
     email = data.get("email")
-    password_raw = data.get("password")
-    password = generate_password_hash(password_raw)
+    password = data.get("password")
     nom = data.get("nom")
     prenom = data.get("prenom")
     dateNaissance = datetime.fromisoformat(data.get("dateNaissance")).date()
     telephone = data.get("telephone")
     estGerant = False
 
-    
+   
     client = TypeUtilisateur.query.filter(TypeUtilisateur.role=="client").first()
     id_type_client = client.idType
 
