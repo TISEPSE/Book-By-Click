@@ -10,3 +10,13 @@ html, body {
   width: 100%;
   min-height: 100vh;
 }
+
+/* Toast animation */
+@keyframes shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}

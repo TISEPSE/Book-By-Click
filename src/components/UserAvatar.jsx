@@ -70,7 +70,7 @@ export default function UserAvatarSimple() {
         // Réinitialiser immédiatement l'état utilisateur
         setUser({ name: "", email: "" });
         setIsOpen(false);
-        navigate("/login_form");
+        navigate("/login");
       }
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);

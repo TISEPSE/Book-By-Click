@@ -139,7 +139,7 @@ def login():
     }
 
     session["user_email"] = json_user_data["email"]
-    session["user_name"] = json_user_data["nom"]
+    session["user_name"] = json_user_data["prenom"]
     
     # Retourner les données utilisateur avec indication de succès
     return jsonify({

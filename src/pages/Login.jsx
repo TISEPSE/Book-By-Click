@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast from '../components/Toast';
 
 export default function Login() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedToast = sessionStorage.getItem("toast");
+    if (savedToast) {
+      setToast({ show: true, ...JSON.parse(savedToast) });
+      sessionStorage.removeItem("toast");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +48,9 @@ export default function Login() {
   };
 
   return (
-    <main className="w-full h-screen flex items-center justify-center bg-gray-50">
+    <>
+      <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => setToast({ ...toast, show: false })} />
+      <main className="w-full h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="mt-5 space-y-2">
@@ -191,5 +203,6 @@ export default function Login() {
         </div>
       </div>
     </main>
+    </>
   )
 }

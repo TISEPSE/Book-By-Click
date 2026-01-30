@@ -1,4 +1,8 @@
-export default function useSubmitForm_user(url) {
+import { useState } from "react"
+
+export default function useSubmitForm_user(url, successMessage, errorMessage) {
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" })
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -7,27 +11,35 @@ export default function useSubmitForm_user(url) {
     const data = {
       nom: formData.get("nom"),
       prenom: formData.get("prenom"),
-      dateNaissance: formData.get("dateNaissance"), // doit correspondre au backend
+      dateNaissance: formData.get("dateNaissance"),
       email: formData.get("email"),
-      telephone: formData.get("telephone"),         // pareil
+      telephone: formData.get("telephone"),
       password: formData.get("password"),
     }
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
 
-    const result = await response.json()
-    console.log("Réponse du serveur:", result)
+      const result = await response.json()
 
-    if (response.ok) {
-      window.location.href = "/login_form"
+      if (response.ok) {
+        sessionStorage.setItem("toast", JSON.stringify({ message: successMessage, type: "success" }))
+        window.location.href = "/login"
+      } else {
+        setToast({ show: true, message: errorMessage, type: "error" })
+      }
+    } catch (error) {
+      setToast({ show: true, message: errorMessage, type: "error" })
     }
   }
 
-  return { handleSubmit }
+  const closeToast = () => setToast({ ...toast, show: false })
+
+  return { handleSubmit, toast, closeToast }
 }
