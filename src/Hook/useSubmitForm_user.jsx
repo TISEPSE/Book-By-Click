@@ -1,29 +1,45 @@
-export default function useSubmitForm_user(url) {
-  const handleSubmit = async (e) => { //Fonction qu'on va réutilisé
-    e.preventDefault() //Empêche le rechargement de la page
+import { useState } from "react"
 
-    const formData = new FormData(e.target) //FormData extrait les donnée du formulaire => (e.target)
+export default function useSubmitForm_user(url, successMessage, errorMessage) {
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" })
 
-    const data = { //Objet qui récupère les données du formulaire
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.target)
+
+    const data = {
       nom: formData.get("nom"),
       prenom: formData.get("prenom"),
-      birthDate: formData.get("dateNaissance"),
+      dateNaissance: formData.get("dateNaissance"),
       email: formData.get("email"),
-      phone: formData.get("telephone"),
+      telephone: formData.get("telephone"),
       password: formData.get("password"),
     }
 
-    const response = await fetch(url, { //On envoie les données au backend
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data), //Tranforme l'objet javascript en Json
-    })
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
 
-    const result = await response.json() //On récup la réponse du backend sous forme de Json et on la log direct
-    console.log('Réponse du serveur:', result)
+      const result = await response.json()
+
+      if (response.ok) {
+        sessionStorage.setItem("toast", JSON.stringify({ message: successMessage, type: "success" }))
+        window.location.href = "/login"
+      } else {
+        setToast({ show: true, message: errorMessage, type: "error" })
+      }
+    } catch (error) {
+      setToast({ show: true, message: errorMessage, type: "error" })
+    }
   }
 
-  return { handleSubmit }
+  const closeToast = () => setToast({ ...toast, show: false })
+
+  return { handleSubmit, toast, closeToast }
 }

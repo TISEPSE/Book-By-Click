@@ -149,7 +149,7 @@ export default function Home() {
             {/* Auth Buttons */}
             <div className="flex items-center gap-3">
               <a
-                href="login_form"
+                href="login"
                 className="hidden sm:block px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-300 hover:underline"
               >
                 Se connecter

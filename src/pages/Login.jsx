@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast from '../components/Toast';
 
 export default function Login() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const navigate = useNavigate();
+
+  //Affiche le toast stocker en sessionStorage puis le supprime de la session
+  useEffect(() => {
+    const savedToast = sessionStorage.getItem("toast");
+    if (savedToast) {
+      setToast({ show: true, ...JSON.parse(savedToast) });
+      sessionStorage.removeItem("toast");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +34,7 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Code 200 (connexion réussis), redirection vers le dashboard
+        // Code 200 (si connexion réussis), redirection vers le dashboard
         navigate('/dashboard_entreprise');
       } else {
         // Afficher l'erreur
@@ -38,7 +49,9 @@ export default function Login() {
   };
 
   return (
-    <main className="w-full h-screen flex items-center justify-center bg-gray-50">
+    <>
+      <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => setToast({ ...toast, show: false })} />
+      <main className="w-full h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="mt-5 space-y-2">
@@ -191,5 +204,6 @@ export default function Login() {
         </div>
       </div>
     </main>
+    </>
   )
 }

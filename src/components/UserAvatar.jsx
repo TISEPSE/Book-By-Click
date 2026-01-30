@@ -9,7 +9,7 @@ export default function UserAvatarSimple() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // fetch la session au montage et après login/logout
+  // fetch la session après login/logout
   useEffect(() => {
     fetchSession();
   }, []);
@@ -70,7 +70,7 @@ export default function UserAvatarSimple() {
         // Réinitialiser immédiatement l'état utilisateur
         setUser({ name: "", email: "" });
         setIsOpen(false);
-        navigate("/login_form");
+        navigate("/login");
       }
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);

@@ -2,17 +2,24 @@ import { UserIcon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
 import { useState } from "react"
 import useSubmitForm_user from "../Hook/useSubmitForm_user"
+import Toast from "../components/Toast"
 
 export default function Register_User() {
-  const { handleSubmit } = useSubmitForm_user("/api/register/user")
+  const { handleSubmit, toast, closeToast } = useSubmitForm_user(
+    "/api/register/user",
+    "Compte créé avec succès !",
+    "Erreur lors de la création du compte"
+  )
 
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isValid, setIsValid] = useState(false)
 
   return (
-    /* Conteneur principal : centre le formulaire verticalement et horizontalement */
-    <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <>
+      <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
+      {/* Conteneur principal : centre le formulaire verticalement et horizontalement */}
+      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         {/* En-tête du formulaire */}
         <div className="text-center">
@@ -246,5 +253,6 @@ export default function Register_User() {
         </div>
       </div>
     </main>
+    </>
   )
 }
