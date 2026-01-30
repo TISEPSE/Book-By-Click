@@ -8,6 +8,7 @@ export default function Login() {
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const navigate = useNavigate();
 
+  //Affiche le toast stocker en sessionStorage puis le supprime de la session
   useEffect(() => {
     const savedToast = sessionStorage.getItem("toast");
     if (savedToast) {
@@ -33,7 +34,7 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Code 200 (connexion réussis), redirection vers le dashboard
+        // Code 200 (si connexion réussis), redirection vers le dashboard
         navigate('/dashboard_entreprise');
       } else {
         // Afficher l'erreur
