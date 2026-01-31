@@ -4,11 +4,14 @@ from dotenv import load_dotenv
 from pages import pages_blueprint
 from reservation import reservation_bp
 import os
+from pathlib import Path
 import secrets
 from extension import db, cors
 from flask_swagger_ui import get_swaggerui_blueprint
 
-load_dotenv()
+# Charger le .env depuis la racine du projet
+env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+load_dotenv(env_path)
 
 def create_app():
     app = Flask(__name__)
