@@ -31,7 +31,7 @@ def create_app():
     db.init_app(app)
     cors(app, supports_credentials=True)
 
-    # Essayer de créer les tables
+    # Essaye de créer les tables
     try:
         with app.app_context():
             db.create_all()

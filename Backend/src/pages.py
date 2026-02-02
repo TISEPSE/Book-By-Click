@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, request, jsonify, session, redirect
+from flask import Blueprint, request, jsonify, session
 from extension import cors, db
 from models import Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from mailer import send_contact_email
@@ -58,11 +58,11 @@ def register_form_pro():
             "required_fields": required_fields
         }), 400
 
-    password = generate_password_hash(data.get("password"))
+    password = data.get("password")
     email = data.get("email")
     nom = data.get("nom")
     prenom = data.get("prenom")
-    
+
     try:
         dateNaissance = datetime.fromisoformat(data.get("dateNaissance")).date()
     except (ValueError, TypeError):
@@ -110,55 +110,50 @@ def register_form_pro():
 
 @pages_blueprint.route("/login", methods=["POST"])
 def login():
-    # Récup les inputs du form pour rrécupérer les données d'un user
     email = request.form.get("email")
     password = request.form.get("password")
     user = get_user(email)
 
-    # Si ya rien on retourne une erreur
-    if user is None:
-        print("Ya pas d'utilisateur ma gueule arrète de chercher des noise t ki enft ?")
+    if not user:
         return jsonify({"error": "Utilisateur non trouvé"}), 404
-    
-    print(f"[LOGIN] Email: {email}  Password: {password}", flush=True)
-    
-    # On crée un JSON si un user est trouvé et que le mot de passe est bon
-    if user.motDePasseHash:
-        json_user_data = {
+
+    if user.motDePasseHash != password:
+        return jsonify({"error": "Mot de passe incorrect"}), 401
+
+    session["user_id"] = user.idClient
+
+    return jsonify({"success": True, "message": "Connexion réussie"}), 200
+
+
+# Route pour vérifier si l'utilisateur est connecté
+@pages_blueprint.route("/api/session", methods=["GET"])
+def get_session():
+    if "user_id" in session:
+        return jsonify({"user_id": session["user_id"]})
+    return jsonify({"error": "Non connecté"}), 401
+
+#===================================================================
+# Route pour récupérer les informations d'un user
+@pages_blueprint.route("/api/user", methods=["GET"])
+
+def get_user_info():
+    if "user_id" not in session:
+        return jsonify({"error": "Utilisateur non connecté"}), 401
+    user = Utilisateur.query.get(session["user_id"])
+
+    if not user:
+        return jsonify({"error": "Utilisateur non trouvé"}), 404
+
+    return jsonify({
         "id": user.idClient,
         "nom": user.nom,
         "prenom": user.prenom,
         "email": user.email,
-        "mdp": user.motDePasseHash,
         "telephone": user.telephone,
-        "date_naissance": user.dateNaissance.isoformat() if user.dateNaissance else None,
-        "date_inscription": user.dateInscription.isoformat() if user.dateInscription else None,
-        "est_gerant": user.estGerant,
-        "id_Type_Utilisateur": user.idTypeUtilisateur,
-        "message": "données bien récupérées"
-    }
-
-    session["user_email"] = json_user_data["email"]
-    session["user_name"] = json_user_data["prenom"]
-    
-    # Retourner les données utilisateur avec indication de succès
-    return jsonify({
-        "success": True,
-        "user": json_user_data,
-        "message": "Connexion réussie"
-    }), 200
-
-
-# Route pour récupérer les informations en sessions
-@pages_blueprint.route("/api/session", methods=["GET"])
-def get_session():
-    if "user_name" in session:
-        return jsonify({
-            "name": session["user_name"],
-            "email": session["user_email"]
-        })
-    return jsonify({"error": "Non connecté"}), 401
-
+        "dateNaissance": user.dateNaissance.isoformat() if user.dateNaissance else None,
+        "dateInscription": user.dateInscription.isoformat() if user.dateInscription else None
+    })
+#===================================================================
 
 @pages_blueprint.route("/logout", methods=["POST"])
 def logout():

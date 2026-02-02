@@ -53,7 +53,7 @@ export default function Login() {
     <>
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => setToast({ ...toast, show: false })} />
-      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 pt-20">
+      <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="mt-5 space-y-2">
