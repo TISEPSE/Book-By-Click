@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect} from "react"
 import { useNavigate } from 'react-router-dom'
 import {CalendarDaysIcon} from "@heroicons/react/24/outline"
+import Navbar from "../components/Navbar"
 import {
   Search,
   MapPin,
@@ -106,64 +107,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {}
-      <nav className="relative bg-white border-b border-gray-100">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-8">
-          <div className="flex items-center justify-between py-4">
-            {/* Logo */}
-            <a href="/" className="flex items-center space-x-2 group">
-              <CalendarDaysIcon className="w-8 h-8 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-xl font-bold text-gray-900">
-                Book By Click
-              </span>
-            </a>
-
-            {/* Navigation Links - Desktop */}
-            <ul className="hidden md:flex items-center space-x-8">
-              <li>
-                <a
-                  href="https://tisepse.github.io/Documentation-BBC/"
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#how-it-works"
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
-                >
-                  Comment ça marche
-                </a>
-              </li>
-              <li>
-                <a
-                  href="contact"
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-
-            {/* Auth Buttons */}
-            <div className="flex items-center gap-3">
-              <a
-                href="login"
-                className="hidden sm:block px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-300 hover:underline"
-              >
-                Se connecter
-              </a>
-              <a
-                href="register_choice"
-                className="px-5 py-2.5 text-white font-medium bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                Créer un compte
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section - Planity-inspired with centered search bar */}
       <section className="relative h-screen flex items-start pt-20 overflow-hidden">
@@ -188,7 +132,7 @@ export default function Home() {
             <div className="max-w-5xl mx-auto">
               <form onSubmit={handleSearch}>
                 {/* Search Card Container */}
-                <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6 transition-shadow duration-300 hover:shadow-2xl">
+                <div className="bg-white rounded-lg sm:rounded-lg shadow-xl border border-gray-100 p-4 sm:p-6 transition-shadow duration-300 hover:shadow-2xl">
                   {/* Search Inputs Container - Responsive layout */}
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
                     {/* Service/Business Type Input */}
@@ -211,13 +155,13 @@ export default function Home() {
                             setShowServiceSuggestions(true)
                           }}
                           onFocus={() => setShowServiceSuggestions(true)}
-                          className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-0 outline-none transition-all duration-300 text-base"
+                          className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-0 outline-none transition-all duration-300 text-base"
                         />
 
                         {/* Dropdown des suggestions de services */}
                         {showServiceSuggestions &&
                           serviceSuggestions.length > 0 && (
-                            <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                               {serviceSuggestions
                                 .slice(0, 8)
                                 .map((service, index) => (
@@ -261,13 +205,13 @@ export default function Home() {
                             setShowLocationSuggestions(true)
                           }}
                           onFocus={() => setShowLocationSuggestions(true)}
-                          className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-0 outline-none transition-all duration-300 text-base"
+                          className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-0 outline-none transition-all duration-300 text-base"
                         />
 
                         {/* Dropdown des suggestions de villes */}
                         {showLocationSuggestions &&
                           citySuggestions.length > 0 && (
-                            <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                               {citySuggestions
                                 .slice(0, 8)
                                 .map((city, index) => (
@@ -295,7 +239,7 @@ export default function Home() {
                     <div className="lg:self-end">
                       <button
                         type="submit"
-                        className="w-full lg:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl focus:ring-0 focus:outline-none active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 group" 
+                        className="w-full lg:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl focus:ring-0 focus:outline-none active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 group" 
                       >
                         <Search className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                         <span>Rechercher</span>
@@ -326,7 +270,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
             {/* Step 1 */}
             <div className="text-center group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 group-hover:bg-indigo-600 rounded-2xl mb-6 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 group-hover:bg-indigo-600 rounded-lg mb-6 transition-all duration-300">
                 <Search className="w-10 h-10 text-indigo-600 group-hover:text-white transition-colors duration-300" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">
@@ -340,7 +284,7 @@ export default function Home() {
 
             {/* Step 2 */}
             <div className="text-center group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 group-hover:bg-purple-600 rounded-2xl mb-6 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 group-hover:bg-purple-600 rounded-lg mb-6 transition-all duration-300">
                 <Calendar className="w-10 h-10 text-purple-600 group-hover:text-white transition-colors duration-300" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Réservez</h3>
@@ -352,7 +296,7 @@ export default function Home() {
 
             {/* Step 3 */}
             <div className="text-center group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 group-hover:bg-green-600 rounded-2xl mb-6 transition-all duration-300">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 group-hover:bg-green-600 rounded-lg mb-6 transition-all duration-300">
                 <CheckCircle className="w-10 h-10 text-green-600 group-hover:text-white transition-colors duration-300" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">
@@ -369,7 +313,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <a
               href="register_choice"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <span>Commencer gratuitement</span>
               <svg
@@ -460,7 +404,7 @@ export default function Home() {
               return (
                 <button
                   key={category.name}
-                  className={`bg-white ${category.hoverBg} border border-gray-200 ${category.borderColor} p-6 rounded-xl transition-all duration-300 text-center group hover:shadow-lg hover:-translate-y-1`}
+                  className={`bg-white ${category.hoverBg} border border-gray-200 ${category.borderColor} p-6 rounded-lg transition-all duration-300 text-center group hover:shadow-lg hover:-translate-y-1`}
                 >
                   {/* Icon with colored accent - scales on hover */}
                   <div className="flex items-center justify-center mb-3">
@@ -488,7 +432,7 @@ export default function Home() {
               <img
                 src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
                 alt="Interface Book By Click"
-                className="rounded-2xl shadow-2xl"
+                className="rounded-lg shadow-2xl"
               />
             </div>
 
@@ -530,7 +474,7 @@ export default function Home() {
                   },
                 ].map((benefit, index) => (
                   <div key={index} className="flex gap-4 group">
-                    <div className="flex-shrink-0 w-12 h-12 bg-indigo-100 group-hover:bg-indigo-600 rounded-xl flex items-center justify-center transition-colors duration-300">
+                    <div className="flex-shrink-0 w-12 h-12 bg-indigo-100 group-hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors duration-300">
                       <benefit.icon className="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors duration-300" />
                     </div>
                     <div>
@@ -582,13 +526,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="register_choice"
-              className="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-300"
+              className="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-300"
             >
               Créer mon compte gratuitement
             </a>
             <a
               href="login_form"
-              className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-300 text-gray-900 font-bold rounded-xl shadow-md hover:shadow-lg hover:underline hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-0.5 transition-all duration-300"
+              className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-300 text-gray-900 font-bold rounded-lg shadow-md hover:shadow-lg hover:underline hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-0.5 transition-all duration-300"
             >
               Se connecter
             </a>

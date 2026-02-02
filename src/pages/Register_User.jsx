@@ -3,6 +3,7 @@ import PasswordChecklist from "react-password-checklist"
 import { useState } from "react"
 import useSubmitForm_user from "../Hook/useSubmitForm_user"
 import Toast from "../components/Toast"
+import Navbar from "../components/Navbar"
 
 export default function Register_User() {
   const { handleSubmit, toast, closeToast } = useSubmitForm_user(
@@ -17,9 +18,10 @@ export default function Register_User() {
 
   return (
     <>
+      <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
       {/* Conteneur principal : centre le formulaire verticalement et horizontalement */}
-      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4 pt-24">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         {/* En-tête du formulaire */}
         <div className="text-center">

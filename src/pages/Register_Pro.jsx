@@ -1,10 +1,13 @@
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline"
 import useSubmitForm_pro from "../Hook/useSubmitForm_pro";
+import Navbar from "../components/Navbar";
 
 export default function ProfessionalRegisterForm() {
   const {handleSubmit} = useSubmitForm_pro("/api/register/pro")
   return (
-    <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <>
+      <Navbar />
+      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4 pt-24">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="mt-5 space-y-4">
@@ -303,5 +306,6 @@ export default function ProfessionalRegisterForm() {
         </div>
       </div>
     </main>
+    </>
   );
 }

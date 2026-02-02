@@ -1,6 +1,10 @@
+import Navbar from "../components/Navbar";
+
 export default function Forgot_password() {
   return (
-    <main className="w-full h-screen flex items-center justify-center bg-gray-50">
+    <>
+      <Navbar />
+      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 pt-20">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="flex justify-center mb-4">
@@ -63,5 +67,6 @@ export default function Forgot_password() {
         </div>
       </div>
     </main>
+    </>
   )
 }

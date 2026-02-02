@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../components/Toast';
+import Navbar from '../components/Navbar';
 
 export default function Login() {
   const [error, setError] = useState(null);
@@ -50,8 +51,9 @@ export default function Login() {
 
   return (
     <>
+      <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => setToast({ ...toast, show: false })} />
-      <main className="w-full h-screen flex items-center justify-center bg-gray-50">
+      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 pt-20">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="mt-5 space-y-2">

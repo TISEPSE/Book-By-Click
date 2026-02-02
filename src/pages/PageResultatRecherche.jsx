@@ -1,4 +1,3 @@
-import { CalendarDaysIcon } from "@heroicons/react/24/outline"
 import {
   Search,
   MapPin,
@@ -11,6 +10,7 @@ import {
   Clock,
 } from "lucide-react"
 import { useState } from "react"
+import Navbar from "../components/Navbar"
 
 // ============= DONNÉES STATIQUES =============
 const businesses = [
@@ -226,61 +226,7 @@ export default function PageResultatRecherche() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50/30">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-8">
-          <div className="flex items-center justify-between py-4">
-            <a href="/" className="flex items-center space-x-2 group">
-              <CalendarDaysIcon className="w-8 h-8 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-xl font-bold text-gray-900">
-                Book By Click
-              </span>
-            </a>
-
-            <ul className="hidden md:flex items-center space-x-8">
-              <li>
-                <a
-                  href="https://tisepse.github.io/Documentation-BBC/"
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/#how-it-works"
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
-                >
-                  Comment ça marche
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contact"
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-300"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-
-            <div className="flex items-center gap-3">
-              <a
-                href="/login_form"
-                className="hidden sm:block px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-300 hover:underline"
-              >
-                Se connecter
-              </a>
-              <a
-                href="/register_choice"
-                className="px-5 py-2.5 text-white font-medium bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                Créer un compte
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <div className="max-w-screen-xl mx-auto px-4 sm:px-8 py-8">
