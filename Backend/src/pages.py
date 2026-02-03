@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request, jsonify, session
-from extension import cors, db
-from models import Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
-from mailer import send_contact_email
+from src.extension import cors, db
+from src.models import Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
+from src.mailer import send_contact_email
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os

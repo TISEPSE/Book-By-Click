@@ -1,0 +1,63 @@
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppassword
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  mail:
+    build:
+      context: Backend/src/mail
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      MAIL_DOMAIN: "gmail.com"
+      RELAY_HOST: "smtp.gmail.com"
+      RELAY_PORT: "587"
+      RELAY_USER: "arthuralternance.pro@gmail.com"
+      RELAY_PASS: "sfaj vcqj pxkh wmzs"
+    
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    restart: unless-stopped
+    depends_on:
+      - db
+      - mail
+    environment:
+      DATABASE_URL: postgresql://appuser:apppassword@db:5432/appdb
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend/src:/app/src
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.js:/app/vite.config.js
+
+volumes:
+  db_data:

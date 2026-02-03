@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from extension import db
+from src.extension import db
 
 
 class Entreprise(db.Model):

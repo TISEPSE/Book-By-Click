@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from app import create_app
-from models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
+from src.app import create_app
+from src.models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from datetime import datetime, date, timedelta
 
 app = create_app()
