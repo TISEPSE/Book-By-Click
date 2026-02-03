@@ -21,7 +21,7 @@ export default function Register_User() {
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
       {/* Conteneur principal : centre le formulaire verticalement et horizontalement */}
-      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4 pt-24">
+      <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 py-8 px-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         {/* En-tête du formulaire */}
         <div className="text-center">
@@ -151,7 +151,7 @@ export default function Register_User() {
                 type="tel"
                 name="telephone"
                 required
-                placeholder="0601020304"
+                placeholder="06 01 02 03 04"
                 className="
                   w-full mt-2 px-3 py-2
                   text-gray-500 bg-transparent
