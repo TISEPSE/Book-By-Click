@@ -1,31 +1,19 @@
-import { 
-  CalendarDaysIcon, 
-  UserIcon, 
+import {
+  UserIcon,
   BuildingOffice2Icon,
   ArrowRightIcon,
   CheckIcon,
   ArrowLeftIcon
 } from "@heroicons/react/24/outline";
+import Navbar from "../components/Navbar";
 
 export default function RoleSelectionPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* Header professionnel */}
-      <header className="absolute top-0 left-0 right-0 z-10 px-6 py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center space-x-2">
-              <CalendarDaysIcon className="w-8 h-8 text-indigo-600 " />
-              <a href="/" className="text-xl font-bold text-gray-900">
-                Book By Click
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
-      <main className="min-h-screen flex items-center justify-center px-6 py-20">
+      <main className="min-h-screen flex items-center justify-center px-6 py-20 pt-24">
         <div className="max-w-7xl w-full">
           {/* En-tête principal */}
           <div className="text-center mb-16">

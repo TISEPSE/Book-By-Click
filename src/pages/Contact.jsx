@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Navbar from '../components/Navbar';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -51,7 +52,9 @@ export default function Contact() {
   };
 
   return (
-    <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 py-12">
+    <>
+      <Navbar />
+      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 py-12 pt-24">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md px-4">
         <div className="text-center">
           <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">
@@ -157,5 +160,6 @@ export default function Contact() {
         </div>
       </div>
     </main>
+    </>
   );
 }

@@ -1,149 +1,324 @@
 import { useState, useEffect } from 'react';
-import { UserCircleIcon, EnvelopeIcon, PhoneIcon, CalendarIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
-
-// Données mockées pour le test - à remplacer par l'appel API
-const mockUserData = {
-  id: 1,
-  nom: "Jean Dupont",
-  email: "jean.dupont@email.com",
-  telephone: "06 12 34 56 78",
-  avatar: null, // URL de l'avatar ou null pour afficher l'icône par défaut
-  role: "Utilisateur",
-  date_inscription: "2024-03-15"
-};
+import { useNavigate } from 'react-router-dom';
+import { Edit3, LogOut, Mail, Bell, Lock, Eye, Globe, Smartphone, Clock, ChevronRight, Shield } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 function Profile() {
+  const [activeTab, setActiveTab] = useState('profile');
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Simulation d'un appel API
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-
-        // TODO: Remplacer par l'appel API réel
-        // const response = await fetch('/api/user', {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}` // Token à récupérer
-        //   }
-        // });
-        // if (!response.ok) throw new Error('Erreur de récupération');
-        // const data = await response.json();
-        // setUser(data);
-
-        // Simulation avec données mockées (délai pour simuler le réseau)
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setUser(mockUserData);
-
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // Formater la date d'inscription
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+  // Fonction pour se logout
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:5000/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      navigate('/login');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          Erreur: {error}
-        </div>
-      </div>
-    );
-  }
+  // Récupère les informations du user dans l'api 
+  useEffect(() => {
+    fetch("http://localhost:5000/api/user", {
+      credentials: "include"
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("Non connecté")
+      }
+      return res.json()
+    })
+    .then(data => setUser(data))
+    .catch(err => console.error("Erreur:", err))
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
-        {/* Carte profil utilisateur */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          {/* En-tête avec avatar */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8 text-center">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.nom}
-                className="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md object-cover"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md bg-white flex items-center justify-center">
-                <UserCircleIcon className="w-20 h-20 text-gray-400" />
-              </div>
-            )}
-            <h1 className="mt-4 text-2xl font-bold text-white">{user.nom}</h1>
-            <span className="inline-block mt-2 px-3 py-1 bg-white/20 rounded-full text-sm text-white">
-              {user.role}
-            </span>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
+      {/* Profile Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-xl font-semibold">
+              {user?.prenom?.charAt(0)}{user?.nom?.charAt(0)}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-xl font-semibold text-gray-900">{user?.prenom} {user?.nom}</h1>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Membre depuis {user?.dateInscription ? new Date(user.dateInscription).toLocaleDateString('fr-FR') : ''}
+              </p>
+            </div>
+            <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <Edit3 className="w-4 h-4" />
+              Modifier
+            </button>
           </div>
 
-          {/* Informations utilisateur */}
-          <div className="px-6 py-6 space-y-4">
-            {/* Email */}
-            <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-              <EnvelopeIcon className="w-6 h-6 text-blue-500" />
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
-                <p className="text-gray-800 font-medium">{user.email}</p>
-              </div>
-            </div>
-
-            {/* Téléphone */}
-            <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-              <PhoneIcon className="w-6 h-6 text-blue-500" />
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Téléphone</p>
-                <p className="text-gray-800 font-medium">{user.telephone}</p>
-              </div>
-            </div>
-
-            {/* Date d'inscription */}
-            <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-              <CalendarIcon className="w-6 h-6 text-blue-500" />
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Membre depuis</p>
-                <p className="text-gray-800 font-medium">{formatDate(user.date_inscription)}</p>
-              </div>
-            </div>
-
-            {/* Rôle */}
-            <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-              <ShieldCheckIcon className="w-6 h-6 text-blue-500" />
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Rôle</p>
-                <p className="text-gray-800 font-medium">{user.role}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* ID utilisateur (pour debug) */}
-          <div className="px-6 pb-6">
-            <p className="text-xs text-gray-400 text-center">ID: {user.id}</p>
+          {/* Tabs */}
+          <div className="flex gap-8 mt-6 -mb-px">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`pb-3 text-sm font-medium border-b-2 ${
+                activeTab === 'profile'
+                  ? 'border-indigo-600 text-indigo-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Profil
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`pb-3 text-sm font-medium border-b-2 ${
+                activeTab === 'settings'
+                  ? 'border-indigo-600 text-indigo-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Paramètres
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+
+        {/* Tab: Profil */}
+        {activeTab === 'profile' && (
+          <div className="space-y-6">
+
+            {/* Informations personnelles */}
+            <section className="bg-white border border-gray-200 rounded-lg">
+              <div className="px-5 py-4 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                  Informations personnelles
+                </h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Prénom</p>
+                  <p className="text-sm text-gray-900 mt-0.5">{user?.prenom}</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Nom</p>
+                  <p className="text-sm text-gray-900 mt-0.5">{user?.nom}</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Date de naissance</p>
+                  <p className="text-sm text-gray-900 mt-0.5">{user?.dateNaissance ? new Date(user.dateNaissance).toLocaleDateString('fr-FR') : ''}</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Type de compte</p>
+                  <p className="text-sm text-gray-900 mt-0.5">Client</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Coordonnées */}
+            <section className="bg-white border border-gray-200 rounded-lg">
+              <div className="px-5 py-4 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                  Coordonnées
+                </h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
+                  <p className="text-sm text-gray-900 mt-0.5">{user?.email}</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Téléphone</p>
+                  <p className="text-sm text-gray-900 mt-0.5">{user?.telephone}</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Adresse</p>
+                  <p className="text-sm text-gray-900 mt-0.5">-</p>
+                </div>
+              </div>
+            </section>
+
+            {/* ID */}
+            <div className="px-5 py-3 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-between">
+              <span className="text-xs text-gray-500">Identifiant</span>
+              <span className="text-xs text-gray-600 font-mono">#{user?.id}</span>
+            </div>
+
+            {/* Déconnexion */}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50"
+            >
+              <LogOut className="w-4 h-4" />
+              Se déconnecter
+            </button>
+
+          </div>
+        )}
+
+        {/* Tab: Paramètres */}
+        {activeTab === 'settings' && (
+          <div className="space-y-6">
+
+            {/* Notifications */}
+            <section className="bg-white border border-gray-200 rounded-lg">
+              <div className="px-5 py-4 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                  Notifications
+                </h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                <div className="px-5 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Notifications email</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Confirmations et rappels par email</p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex cursor-pointer">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:shadow after:transition-all peer-checked:after:translate-x-full"></div>
+                  </label>
+                </div>
+
+                <div className="px-5 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Notifications SMS</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Rappels par SMS avant vos rendez-vous</p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" />
+                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:shadow after:transition-all peer-checked:after:translate-x-full"></div>
+                  </label>
+                </div>
+
+                <div className="px-5 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Bell className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Notifications push</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Alertes en temps réel sur votre navigateur</p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex cursor-pointer">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:shadow after:transition-all peer-checked:after:translate-x-full"></div>
+                  </label>
+                </div>
+
+                <div className="px-5 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Délai de rappel</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Quand recevoir le rappel</p>
+                    </div>
+                  </div>
+                  <select className="text-sm text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5">
+                    <option>1 heure avant</option>
+                    <option>3 heures avant</option>
+                    <option>24 heures avant</option>
+                    <option>48 heures avant</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            {/* Préférences */}
+            <section className="bg-white border border-gray-200 rounded-lg">
+              <div className="px-5 py-4 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                  Préférences
+                </h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                <div className="px-5 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-5 h-5 text-gray-400" />
+                    <p className="text-sm font-medium text-gray-900">Langue</p>
+                  </div>
+                  <select className="text-sm text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5">
+                    <option>Français</option>
+                    <option>English</option>
+                    <option>Español</option>
+                  </select>
+                </div>
+
+                <div className="px-5 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Eye className="w-5 h-5 text-gray-400" />
+                    <p className="text-sm font-medium text-gray-900">Visibilité du profil</p>
+                  </div>
+                  <select className="text-sm text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5">
+                    <option>Public</option>
+                    <option>Privé</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            {/* Sécurité */}
+            <section className="bg-white border border-gray-200 rounded-lg">
+              <div className="px-5 py-4 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                  Sécurité
+                </h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                <button className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50">
+                  <div className="flex items-center gap-3">
+                    <Lock className="w-5 h-5 text-gray-400" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-gray-900">Modifier le mot de passe</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Dernière modification il y a 3 mois</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </button>
+
+                <button className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-gray-400" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-gray-900">Authentification à deux facteurs</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Non activée</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </button>
+              </div>
+            </section>
+
+            {/* Zone danger */}
+            <section className="bg-white border border-red-200 rounded-lg">
+              <div className="px-5 py-4 border-b border-red-200 bg-red-50">
+                <h2 className="text-sm font-semibold text-red-800 uppercase tracking-wide">
+                  Zone de danger
+                </h2>
+              </div>
+              <div className="px-5 py-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Supprimer mon compte</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Cette action est irréversible</p>
+                </div>
+                <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50">
+                  Supprimer
+                </button>
+              </div>
+            </section>
+
+          </div>
+        )}
+
+      </main>
     </div>
   );
 }

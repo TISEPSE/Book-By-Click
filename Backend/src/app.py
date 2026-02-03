@@ -4,11 +4,14 @@ from dotenv import load_dotenv
 from src.pages import pages_blueprint
 from src.reservation import reservation_bp
 import os
+from pathlib import Path
 import secrets
 from src.extension import db, cors
 from flask_swagger_ui import get_swaggerui_blueprint
 
-load_dotenv()
+# Charger le .env depuis la racine du projet
+env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+load_dotenv(env_path)
 
 def create_app():
     app = Flask(__name__)
@@ -28,7 +31,7 @@ def create_app():
     db.init_app(app)
     cors(app, supports_credentials=True)
 
-    # Essayer de créer les tables
+    # Essaye de créer les tables
     try:
         with app.app_context():
             db.create_all()
