@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from src.app import create_app
 from src.models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
+from werkzeug.security import generate_password_hash
 from datetime import datetime, date, timedelta
 
 app = create_app()
@@ -28,7 +29,7 @@ with app.app_context():
         prenom="Jean",
         dateNaissance=date(1990, 5, 20),
         email="jean.dupont@example.com",
-        motDePasseHash="hash123",
+        motDePasseHash=generate_password_hash("password123"),
         telephone="0601020304",
         dateInscription=datetime.now(),
         idTypeUtilisateur=admin.idType,
@@ -40,7 +41,7 @@ with app.app_context():
         prenom="Claire",
         dateNaissance=date(1995, 3, 15),
         email="claire.martin@example.com",
-        motDePasseHash="hash456",
+        motDePasseHash=generate_password_hash("password123"),
         telephone="0605060708",
         dateInscription=datetime.now(),
         idTypeUtilisateur=client.idType,

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from functools import wraps
 from flask import Blueprint, request, jsonify, session
 from src.extension import cors, db
 from src.models import Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
@@ -8,6 +9,15 @@ import json
 import os
 from datetime import datetime
 from src.users import get_user
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return jsonify({"error": "Connexion requise"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 pages_blueprint = Blueprint("pages", __name__)
@@ -32,7 +42,7 @@ def register_form_user():
         prenom=prenom,
         dateNaissance=dateNaissance,
         email=email,
-        motDePasseHash=password,
+        motDePasseHash=generate_password_hash(password),
         telephone=telephone,
         dateInscription=datetime.now(),
         idTypeUtilisateur=id_type_client,
@@ -80,7 +90,7 @@ def register_form_pro():
         prenom=prenom,
         dateNaissance=dateNaissance,
         email=email,
-        motDePasseHash=password,
+        motDePasseHash=generate_password_hash(password),
         telephone=telephone,
         dateInscription=datetime.now(),
         idTypeUtilisateur=id_type_pro,
@@ -117,7 +127,7 @@ def login():
     if not user:
         return jsonify({"error": "Utilisateur non trouvé"}), 404
 
-    if user.motDePasseHash != password:
+    if not check_password_hash(user.motDePasseHash, password):
         return jsonify({"error": "Mot de passe incorrect"}), 401
 
     session["user_id"] = user.idClient
@@ -135,10 +145,8 @@ def get_session():
 #===================================================================
 # Route pour récupérer les informations d'un user
 @pages_blueprint.route("/api/user", methods=["GET"])
-
+@login_required
 def get_user_info():
-    if "user_id" not in session:
-        return jsonify({"error": "Utilisateur non connecté"}), 401
     user = Utilisateur.query.get(session["user_id"])
 
     if not user:
@@ -156,6 +164,7 @@ def get_user_info():
 #===================================================================
 
 @pages_blueprint.route("/logout", methods=["POST"])
+@login_required
 def logout():
     """Déconnecte l'utilisateur et retourne un JSON pour que le frontend gère la redirection"""
     session.clear()

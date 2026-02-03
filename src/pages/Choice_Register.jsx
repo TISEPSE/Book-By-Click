@@ -13,7 +13,7 @@ export default function RoleSelectionPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <main className="min-h-screen flex items-center justify-center px-6 py-20 pt-24">
+      <main className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-6 py-8">
         <div className="max-w-7xl w-full">
           {/* En-tête principal */}
           <div className="text-center mb-16">

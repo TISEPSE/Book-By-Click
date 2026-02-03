@@ -21,7 +21,7 @@ function Profile() {
     }
   };
 
-  // Récupère les informations du user dans l'api 
+  // Récupère les informations du user dans l'api
   useEffect(() => {
     fetch("http://localhost:5000/api/user", {
       credentials: "include"
@@ -33,8 +33,8 @@ function Profile() {
       return res.json()
     })
     .then(data => setUser(data))
-    .catch(err => console.error("Erreur:", err))
-  }, [])
+    .catch(() => navigate("/login"))
+  }, [navigate])
 
   return (
     <div className="min-h-screen bg-gray-50">
