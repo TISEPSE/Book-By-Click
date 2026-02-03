@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from extension import db
+from src.extension import db
 # Importation de tous les modèles nécessaires
-from models import Reservation, Utilisateur, Prestation, Creneau, Entreprise, EventEmail
+from src.models import Reservation, Utilisateur, Prestation, Creneau, Entreprise, EventEmail
 from sqlalchemy.orm import joinedload
 
 # Définition du Blueprint

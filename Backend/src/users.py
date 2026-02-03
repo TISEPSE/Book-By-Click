@@ -1,5 +1,5 @@
-from extension import db
-from models import Utilisateur
+from src.extension import db
+from src.models import Utilisateur
 
 
 def get_user(email):

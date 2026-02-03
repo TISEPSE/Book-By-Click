@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, Blueprint
 from dotenv import load_dotenv
-from pages import pages_blueprint
-from reservation import reservation_bp
+from src.pages import pages_blueprint
+from src.reservation import reservation_bp
 import os
 import secrets
-from extension import db, cors
+from src.extension import db, cors
 from flask_swagger_ui import get_swaggerui_blueprint
 
 load_dotenv()
