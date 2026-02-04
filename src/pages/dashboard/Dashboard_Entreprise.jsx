@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import DashboardContent from './sections/Dashboard_Content'
 import CalendarContent from './sections/Calendar_Content'
@@ -8,6 +9,23 @@ import ReservationsContent from './sections/Reservations_Content'
 
 const Dashboard_entreprises = () => {
   const [activeSection, setActiveSection] = useState('dashboard')
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/session", {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          navigate("/login");
+        }
+      } catch (error) {
+        navigate("/login");
+      }
+    };
+    checkAuth();
+  }, [navigate]);
 
   const renderContent = () => {
     switch(activeSection) {
