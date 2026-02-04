@@ -23,13 +23,17 @@ def create_app():
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    # Configuration des cookies de session pour CORS
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_SECURE'] = False  # True en production avec HTTPS
+
     # Blueprints
     app.register_blueprint(pages_blueprint)
     app.register_blueprint(reservation_bp)
 
     # Extensions
     db.init_app(app)
-    cors(app, supports_credentials=True)
+    cors(app, supports_credentials=True, origins=["http://localhost:5173", "http://localhost:3000"])
 
     # Essaye de créer les tables
     try:

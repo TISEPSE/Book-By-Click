@@ -28,7 +28,7 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 COPY Backend/src /app/src
 ENV PYTHONPATH=/app
 
-EXPOSE 8000
+EXPOSE 5000
 
 # ⚠️ Si ton backend n'est pas FastAPI/uvicorn, remplace cette ligne par ta commande réelle.
 CMD ["flask", "--app", "src.app:create_app", "run", "--host=0.0.0.0", "--port=5000"]
