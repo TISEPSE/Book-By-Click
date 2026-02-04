@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-from src.app import create_app
 from src.models import db, Utilisateur, TypeUtilisateur, Entreprise, Creneau, Prestation, Reservation, EventEmail, Evenement, SemaineType
 from werkzeug.security import generate_password_hash
 from datetime import datetime, date, timedelta
 
-app = create_app()
 
-with app.app_context():
+def run_seed():
+    """Initialise les donnees de base si la DB est vide"""
 
-    print("🧹 Reinitialisation de la base...")
-    db.drop_all()
-    db.create_all()
+    # Verifie si les donnees existent deja
+    if TypeUtilisateur.query.count() > 0:
+        print("Donnees deja presentes, seed ignore")
+        return
+
+    print("Initialisation des donnees de base...")
 
     # ============================
     #  TYPE UTILISATEUR
@@ -164,3 +166,13 @@ with app.app_context():
     db.session.commit()
 
     print("🎉 Donnees de test inserees avec succes !")
+
+
+# Permet d'executer le seed manuellement: python -m src.seed
+if __name__ == "__main__":
+    from src.app import create_app
+    app = create_app()
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        run_seed()

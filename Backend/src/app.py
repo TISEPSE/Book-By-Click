@@ -35,11 +35,12 @@ def create_app():
     db.init_app(app)
     cors(app, supports_credentials=True, origins=["http://localhost:5173", "http://localhost:3000"])
 
-    # Essaye de créer les tables
+    # Essaye de créer les tables et initialiser les données de base
     try:
         with app.app_context():
             db.create_all()
-            import seed
+            from src.seed import run_seed
+            run_seed()
     except Exception as e:
         print(f"Avertissement: Impossible de se connecter a la base de donnees: {e}")
         print("Le serveur continuera sans connexion a la base de donnees.")
