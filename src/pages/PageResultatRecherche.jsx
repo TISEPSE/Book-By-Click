@@ -91,23 +91,23 @@ function FilterAccordion({ title, icon: IconComponent, defaultOpen = true, child
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <div className="border-b border-gray-200 last:border-b-0">
+    <div className="border-b border-gray-100 last:border-b-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-4 px-2 hover:bg-indigo-50 rounded-lg transition-colors duration-200"
+        className="w-full flex items-center justify-between py-3 px-1 text-left"
       >
-        <div className="flex items-center gap-3">
-          <IconComponent className="w-5 h-5 text-indigo-600" />
-          <span className="font-semibold text-gray-900">{title}</span>
+        <div className="flex items-center gap-2">
+          <IconComponent className="w-4 h-4 text-gray-400" />
+          <span className="text-sm font-semibold text-gray-900">{title}</span>
         </div>
         {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-gray-400" />
+          <ChevronUp className="w-4 h-4 text-gray-400" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-4 h-4 text-gray-400" />
         )}
       </button>
       {isOpen && (
-        <div className="pb-4 px-2 space-y-3">
+        <div className="pb-3 px-1 space-y-1">
           {children}
         </div>
       )}
@@ -118,18 +118,18 @@ function FilterAccordion({ title, icon: IconComponent, defaultOpen = true, child
 // ============= COMPOSANT CHECKBOX =============
 function FilterCheckbox({ label, count }) {
   return (
-    <label className="flex items-center justify-between cursor-pointer group hover:bg-indigo-50 rounded-lg px-2 py-2 transition-colors duration-150">
-      <div className="flex items-center gap-3">
+    <label className="flex items-center justify-between cursor-pointer group px-2 py-1.5 rounded hover:bg-gray-50">
+      <div className="flex items-center gap-2.5">
         <input
           type="checkbox"
-          className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+          className="w-3.5 h-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
         />
-        <span className="text-sm text-gray-700 group-hover:text-gray-900">
+        <span className="text-sm text-gray-600 group-hover:text-gray-900">
           {label}
         </span>
       </div>
       {count && (
-        <span className="text-xs text-gray-400 font-medium">({count})</span>
+        <span className="text-xs text-gray-400">{count}</span>
       )}
     </label>
   )
@@ -138,19 +138,19 @@ function FilterCheckbox({ label, count }) {
 // ============= COMPOSANT BUSINESS CARD =============
 function BusinessCard({ business }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 overflow-hidden group">
-      <div className="p-6">
-        <div className="flex gap-5">
+    <div className="bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+      <div className="px-5 py-4">
+        <div className="flex gap-4">
           {/* Image */}
           <div className="flex-shrink-0">
-            <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 relative ring-2 ring-gray-100 group-hover:ring-indigo-200 transition-all duration-300">
+            <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 relative">
               <img
                 src={business.image}
                 alt={business.name}
                 className="w-full h-full object-cover"
               />
               {business.discount && (
-                <span className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-md shadow-sm">
+                <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-green-600 text-white text-xs font-medium rounded">
                   {business.discount}
                 </span>
               )}
@@ -160,59 +160,49 @@ function BusinessCard({ business }) {
           {/* Info */}
           <div className="flex-1 min-w-0">
             {/* Name + Verified */}
-            <div className="flex items-start gap-2 mb-2">
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+            <div className="flex items-center gap-1.5 mb-1">
+              <h3 className="text-sm font-semibold text-gray-900">
                 {business.name}
               </h3>
               {business.verified && (
-                <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-4 h-4 text-indigo-600 flex-shrink-0" />
               )}
             </div>
 
-            {/* Rating + Category */}
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex items-center gap-1.5 bg-yellow-50 px-2.5 py-1 rounded-lg">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-bold text-gray-900">
-                  {business.rating}
-                </span>
-                <span className="text-sm text-gray-500">
-                  ({business.reviewCount})
-                </span>
+            {/* Category + Rating */}
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-xs text-gray-500">{business.category}</span>
+              <div className="flex items-center gap-1">
+                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs font-medium text-gray-900">{business.rating}</span>
+                <span className="text-xs text-gray-400">({business.reviewCount})</span>
               </div>
-              <span className="text-sm bg-gray-50 px-2.5 py-1 rounded-lg text-gray-700 font-medium">
-                {business.category}
-              </span>
+              <span className="text-xs font-medium text-gray-600">{business.priceRange}</span>
             </div>
 
-            {/* Price + Distance + Availability */}
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-sm font-semibold text-gray-900">
-                {business.priceRange}
-              </span>
-              <span className="text-gray-300">•</span>
-              <span className="text-sm text-gray-600 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5" />
+            {/* Address + Distance + Availability */}
+            <div className="flex items-center gap-3 text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
                 {business.distance} km
               </span>
-              <span className="text-gray-300">•</span>
-              <span className="text-sm bg-green-50 px-2.5 py-1 rounded-lg text-green-700 font-medium flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
+              <span className="text-gray-300">|</span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
                 {business.nextSlot}
               </span>
             </div>
+          </div>
 
-            {/* Buttons */}
-            <div className="flex gap-3 pt-3 border-t border-gray-100">
-              <button className="flex-1 px-4 py-2.5 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg hover:border-indigo-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-200 flex items-center justify-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm">Voir les disponibilités</span>
-              </button>
-              <button className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-sm">Réserver</span>
-              </button>
-            </div>
+          {/* Actions */}
+          <div className="flex-shrink-0 flex flex-col gap-2 justify-center">
+            <button className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+              Réserver
+            </button>
+            <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1.5 justify-center">
+              <Calendar className="w-3.5 h-3.5" />
+              Disponibilités
+            </button>
           </div>
         </div>
       </div>
@@ -223,32 +213,68 @@ function BusinessCard({ business }) {
 // ============= COMPOSANT PRINCIPAL =============
 export default function PageResultatRecherche() {
   const [maxPrice, setMaxPrice] = useState(150)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchLocation, setSearchLocation] = useState("")
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50/30">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      {/* Main Content */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-8 py-8">
-        <div className="flex gap-8">
+      {/* Barre de recherche */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <form onSubmit={handleSearch} className="flex items-center gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Quel service recherchez-vous ?"
+                className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 rounded-lg"
+              />
+            </div>
+            <div className="flex-1 relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchLocation}
+                onChange={(e) => setSearchLocation(e.target.value)}
+                placeholder="Ville ou adresse"
+                className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 rounded-lg"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center gap-2"
+            >
+              <Search className="w-4 h-4" />
+              Rechercher
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Contenu principal */}
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex gap-6">
+
           {/* Sidebar Filtres */}
-          <aside className="w-80 flex-shrink-0 hidden lg:block">
-            <div className="sticky top-24 bg-gradient-to-br from-indigo-50/50 to-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden max-h-[calc(100vh-7rem)]">
+          <aside className="w-64 flex-shrink-0 hidden lg:block">
+            <div className="sticky top-24 bg-white border border-gray-200 rounded-lg overflow-hidden">
               {/* Header */}
-              <div className="bg-white border-b border-gray-200 px-6 py-5">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
-                    <SlidersHorizontal className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-gray-900">Filtres</h2>
-                    <p className="text-xs text-gray-500">Affiner votre recherche</p>
-                  </div>
-                </div>
+              <div className="px-5 py-4 border-b border-gray-200">
+                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                  Filtres
+                </h2>
               </div>
 
               {/* Filtres */}
-              <div className="p-4 overflow-y-auto max-h-[calc(100vh-16rem)]">
+              <div className="px-4 py-2">
                 {/* Catégories */}
                 <FilterAccordion title="Catégories" icon={SlidersHorizontal} defaultOpen={true}>
                   <FilterCheckbox label="Restaurant" count={42} />
@@ -263,10 +289,10 @@ export default function PageResultatRecherche() {
 
                 {/* Prix */}
                 <FilterAccordion title="Budget maximum" icon={SlidersHorizontal} defaultOpen={true}>
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Prix maximum par prestation</span>
-                      <span className="font-semibold text-indigo-600">{maxPrice}€</span>
+                      <span className="text-gray-500">Par prestation</span>
+                      <span className="font-medium text-indigo-600">{maxPrice}€</span>
                     </div>
                     <input
                       type="range"
@@ -275,7 +301,7 @@ export default function PageResultatRecherche() {
                       value={maxPrice}
                       step="10"
                       onChange={(e) => setMaxPrice(e.target.value)}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                     />
                     <div className="flex justify-between text-xs text-gray-400">
                       <span>0€</span>
@@ -288,8 +314,8 @@ export default function PageResultatRecherche() {
                 <FilterAccordion title="Note minimum" icon={Star} defaultOpen={false}>
                   <FilterCheckbox
                     label={
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <div className="flex items-center gap-1.5">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                         <span>5 étoiles</span>
                       </div>
                     }
@@ -297,8 +323,8 @@ export default function PageResultatRecherche() {
                   />
                   <FilterCheckbox
                     label={
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <div className="flex items-center gap-1.5">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                         <span>4+ étoiles</span>
                       </div>
                     }
@@ -306,8 +332,8 @@ export default function PageResultatRecherche() {
                   />
                   <FilterCheckbox
                     label={
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <div className="flex items-center gap-1.5">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                         <span>3+ étoiles</span>
                       </div>
                     }
@@ -317,17 +343,17 @@ export default function PageResultatRecherche() {
 
                 {/* Distance */}
                 <FilterAccordion title="Distance" icon={MapPin} defaultOpen={true}>
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Rayon de recherche</span>
-                      <span className="font-semibold text-indigo-600">5 km</span>
+                      <span className="text-gray-500">Rayon</span>
+                      <span className="font-medium text-indigo-600">5 km</span>
                     </div>
                     <input
                       type="range"
                       min="1"
                       max="20"
                       defaultValue="5"
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                     />
                     <div className="flex justify-between text-xs text-gray-400">
                       <span>1 km</span>
@@ -338,8 +364,8 @@ export default function PageResultatRecherche() {
               </div>
 
               {/* Footer */}
-              <div className="border-t border-gray-200 px-6 py-4 bg-gray-50">
-                <button className="w-full px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors duration-200">
+              <div className="border-t border-gray-200 px-5 py-3">
+                <button className="w-full text-sm font-medium text-indigo-600 hover:text-indigo-700">
                   Réinitialiser les filtres
                 </button>
               </div>
@@ -348,47 +374,23 @@ export default function PageResultatRecherche() {
 
           {/* Résultats */}
           <main className="flex-1 min-w-0">
-            {/* Header */}
-            <div className="mb-8 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Search className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Vous recherchez</p>
-                    <p className="text-xl font-bold text-gray-900">
-                      Toutes catégories à Paris
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.history.back()}
-                  className="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-white hover:bg-indigo-600 border border-indigo-600 rounded-lg transition-all duration-200"
-                >
-                  Modifier la recherche
-                </button>
-              </div>
-            </div>
-
             {/* Nombre de résultats */}
-            <div className="mb-6">
-              <p className="text-gray-600">
-                <span className="font-semibold text-gray-900">
-                  {businesses.length} résultats
-                </span>{" "}
-                trouvés
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">
+                <span className="font-semibold text-gray-900">{businesses.length} résultats</span> trouvés
               </p>
             </div>
 
             {/* Liste des résultats */}
-            <div className="space-y-5">
+            <div className="space-y-3">
               {businesses.map((business) => (
                 <BusinessCard key={business.id} business={business} />
               ))}
             </div>
 
             {/* Load More */}
-            <div className="mt-12 text-center">
-              <button className="px-8 py-3 bg-white border-2 border-gray-200 hover:border-indigo-500 hover:bg-gray-50 text-gray-900 font-semibold rounded-lg transition-all duration-200">
+            <div className="mt-8 text-center">
+              <button className="px-6 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
                 Voir plus de résultats
               </button>
             </div>

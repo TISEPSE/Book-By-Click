@@ -125,21 +125,23 @@ def login():
     user = get_user(email)
 
     if not user:
-        return jsonify({"error": "Utilisateur non trouvé"}), 404
+        return jsonify({"error": "Identifiant ou mot de passe incorrect"}), 401
 
     if not check_password_hash(user.motDePasseHash, password):
-        return jsonify({"error": "Mot de passe incorrect"}), 401
+        return jsonify({"error": "Identifiant ou mot de passe incorrect"}), 401
 
     session["user_id"] = user.idClient
 
-    return jsonify({"success": True, "message": "Connexion réussie"}), 200
+    return jsonify({"success": True, "message": "Connexion réussie", "estGerant": user.estGerant}), 200
 
 
 # Route pour vérifier si l'utilisateur est connecté
 @pages_blueprint.route("/api/session", methods=["GET"])
 def get_session():
     if "user_id" in session:
-        return jsonify({"user_id": session["user_id"]})
+        user = Utilisateur.query.get(session["user_id"])
+        if user:
+            return jsonify({"user_id": session["user_id"], "estGerant": user.estGerant})
     return jsonify({"error": "Non connecté"}), 401
 
 #===================================================================
@@ -172,6 +174,54 @@ def logout():
         "success": True,
         "message": "Déconnexion réussie"
     }), 200
+
+
+@pages_blueprint.route("/api/user/delete", methods=["DELETE"])
+@login_required
+def delete_account():
+    """Supprime le compte de l'utilisateur connecté et toutes ses données associées"""
+    user = Utilisateur.query.get(session["user_id"])
+
+    if not user:
+        return jsonify({"error": "Utilisateur non trouvé"}), 404
+
+    try:
+        # Si l'utilisateur est gérant, supprimer ses entreprises et données liées
+        if user.estGerant:
+            for entreprise in user.entreprises:
+                # Supprimer les EventEmails liés aux réservations de l'entreprise
+                for reservation in entreprise.reservations:
+                    EventEmail.query.filter_by(idReservation=reservation.idReservation).delete()
+                # Supprimer les réservations de l'entreprise
+                Reservation.query.filter_by(idPro=entreprise.idPro).delete()
+                # Supprimer les créneaux
+                Creneau.query.filter_by(idPro=entreprise.idPro).delete()
+                # Supprimer les prestations
+                Prestation.query.filter_by(idPro=entreprise.idPro).delete()
+                # Supprimer les événements
+                Evenement.query.filter_by(idPro=entreprise.idPro).delete()
+                # Supprimer les semaines type
+                SemaineType.query.filter_by(idPro=entreprise.idPro).delete()
+                # Supprimer l'entreprise
+                db.session.delete(entreprise)
+
+        # Supprimer les réservations du client (si c'est un client)
+        for reservation in user.reservations:
+            EventEmail.query.filter_by(idReservation=reservation.idReservation).delete()
+        Reservation.query.filter_by(idClient=user.idClient).delete()
+
+        # Supprimer l'utilisateur
+        db.session.delete(user)
+        db.session.commit()
+
+        # Déconnecter l'utilisateur
+        session.clear()
+
+        return jsonify({"success": True, "message": "Compte supprimé avec succès"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erreur lors de la suppression: {str(e)}"}), 500
 
 
 @pages_blueprint.route("/contact", methods=["POST"])
