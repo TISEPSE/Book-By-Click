@@ -58,7 +58,7 @@ def run_seed():
     # ============================
     e1 = Entreprise(
         nomEntreprise="Salon Beaute Zen",
-        nomSecteur="Bien-etre",
+        nomSecteur="Spa",
         idGerant=u1.idClient,
         slugPublic="beaute-zen",
         adresse="12 rue de la Paix",

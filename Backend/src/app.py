@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, Blueprint
 from dotenv import load_dotenv
-from src.pages import pages_blueprint
+from src.routes.pages import pages_blueprint
+from src.routes.entreprise import entreprise_blueprint
 from src.reservation import reservation_bp
 import os
 from pathlib import Path
@@ -30,6 +31,8 @@ def create_app():
     # Blueprints
     app.register_blueprint(pages_blueprint)
     app.register_blueprint(reservation_bp)
+    app.register_blueprint(entreprise_blueprint)
+
 
     # Extensions
     db.init_app(app)

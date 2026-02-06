@@ -28,7 +28,7 @@ const ClientsContent = () => {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-800">Gestion des Clients</h1>
+            <h1 className="text-2xl font-bold text-gray-800">Clients enregistrés</h1>
 
             {error && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mb-6">

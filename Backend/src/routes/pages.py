@@ -245,7 +245,7 @@ def contact():
 @pages_blueprint.route("/api/services", methods=["GET"])
 def get_services():
     try:
-        data_dir = os.path.join(os.path.dirname(__file__), 'data')
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
         services_file = os.path.join(data_dir, 'services.json')
         with open(services_file, 'r', encoding='utf-8') as f:
             services = json.load(f)
@@ -264,7 +264,7 @@ def load_villes_cache():
     global _villes_cache
     if _villes_cache is None:
         try:
-            data_dir = os.path.join(os.path.dirname(__file__), 'data')
+            data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
             communes_file = os.path.join(data_dir, 'communes-france-avec-polygon-2025.json')
             with open(communes_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)

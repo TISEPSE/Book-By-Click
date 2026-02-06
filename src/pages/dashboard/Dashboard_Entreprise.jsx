@@ -6,6 +6,7 @@ import CalendarContent from './sections/Calendar_Content'
 import ClientsContent from './sections/Clients_Content'
 import StatisticsContent from './sections/Statistics_Content'
 import ReservationsContent from './sections/Reservations_Content'
+import CreneauxContent from './sections/Creneaux_Content'
 
 const Dashboard_entreprises = () => {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -31,6 +32,7 @@ const Dashboard_entreprises = () => {
     switch(activeSection) {
       case 'dashboard': return <DashboardContent />
       case 'calendar': return <CalendarContent />
+      case 'creneaux': return <CreneauxContent />
       case 'reservations': return <ReservationsContent />
       case 'clients': return <ClientsContent />
       case 'statistics': return <StatisticsContent />
@@ -65,6 +67,16 @@ const Dashboard_entreprises = () => {
               }`}
             >
               Calendrier
+            </button>
+            <button
+              onClick={() => setActiveSection('creneaux')}
+              className={`py-4 px-2 text-sm font-medium border-b-2 whitespace-nowrap ${
+                activeSection === 'creneaux'
+                  ? 'border-indigo-600 text-indigo-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Créneaux
             </button>
             <button
               onClick={() => setActiveSection('reservations')}

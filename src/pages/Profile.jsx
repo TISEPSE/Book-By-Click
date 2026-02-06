@@ -170,12 +170,6 @@ function Profile() {
               </div>
             </section>
 
-            {/* ID */}
-            <div className="px-5 py-3 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-between">
-              <span className="text-xs text-gray-500">Identifiant</span>
-              <span className="text-xs text-gray-600 font-mono">#{user?.id}</span>
-            </div>
-
             {/* Déconnexion */}
             <button
               onClick={handleLogout}

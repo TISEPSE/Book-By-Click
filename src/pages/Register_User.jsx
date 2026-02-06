@@ -40,7 +40,7 @@ export default function Register_User() {
             <p>
               Déjà un compte ?{" "}
               <a
-                href="/login_form"
+                href="/login"
                 className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
               >
                 Se connecter
