@@ -10,81 +10,16 @@ import {
   Clock,
 } from "lucide-react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
+import { entreprises } from "../data/mockEntreprises"
 
-// ============= DONNÉES STATIQUES =============
-const businesses = [
-  {
-    id: 1,
-    name: "Restaurant Le Gourmet",
-    category: "Restaurant",
-    distance: 2.3,
-    rating: 4.8,
-    reviewCount: 234,
-    priceRange: "€€",
-    address: "15 Rue de Rivoli, 75001 Paris",
-    nextSlot: "Aujourd'hui à 19h30",
-    verified: true,
-    discount: "-20%",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200",
-  },
-  {
-    id: 2,
-    name: "Garage Auto Expert",
-    category: "Garage automobile",
-    distance: 1.8,
-    rating: 4.9,
-    reviewCount: 189,
-    priceRange: "€€€",
-    address: "28 Avenue des Champs-Élysées, 75008 Paris",
-    nextSlot: "Demain à 10h00",
-    verified: true,
-    discount: null,
-    image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=200",
-  },
-  {
-    id: 3,
-    name: "Cabinet Dr. Martin",
-    category: "Médecin généraliste",
-    distance: 3.1,
-    rating: 4.7,
-    reviewCount: 156,
-    priceRange: "€€",
-    address: "42 Rue du Temple, 75003 Paris",
-    nextSlot: "Aujourd'hui à 16h00",
-    verified: true,
-    discount: null,
-    image: "https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=200",
-  },
-  {
-    id: 4,
-    name: "Fitness Club Paris",
-    category: "Salle de sport",
-    distance: 4.2,
-    rating: 4.6,
-    reviewCount: 312,
-    priceRange: "€€",
-    address: "8 Boulevard Haussmann, 75009 Paris",
-    nextSlot: "Demain à 15h30",
-    verified: true,
-    discount: "-15%",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=200",
-  },
-  {
-    id: 5,
-    name: "Salon Le Parisien",
-    category: "Coiffeur",
-    distance: 2.7,
-    rating: 4.9,
-    reviewCount: 421,
-    priceRange: "€€",
-    address: "12 Rue de la Paix, 75002 Paris",
-    nextSlot: "Aujourd'hui à 14h30",
-    verified: true,
-    discount: null,
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200",
-  },
-]
+// Données enrichies pour la liste (distance et nextSlot sont spécifiques à la recherche)
+const businesses = entreprises.map((e) => ({
+  ...e,
+  distance: [2.3, 1.8, 3.1, 4.2, 2.7][e.id - 1] || 1.0,
+  nextSlot: ["Aujourd'hui à 19h30", "Demain à 10h00", "Aujourd'hui à 16h00", "Demain à 15h30", "Aujourd'hui à 14h30"][e.id - 1] || "Demain",
+}))
 
 // ============= COMPOSANT ACCORDION FILTRE =============
 function FilterAccordion({ title, icon: IconComponent, defaultOpen = true, children }) {
@@ -136,7 +71,7 @@ function FilterCheckbox({ label, count }) {
 }
 
 // ============= COMPOSANT BUSINESS CARD =============
-function BusinessCard({ business }) {
+function BusinessCard({ business, onNavigate }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
       <div className="px-5 py-4">
@@ -195,13 +130,13 @@ function BusinessCard({ business }) {
           </div>
 
           {/* Actions */}
-          <div className="flex-shrink-0 flex flex-col gap-2 justify-center">
-            <button className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
-              Réserver
-            </button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1.5 justify-center">
-              <Calendar className="w-3.5 h-3.5" />
-              Disponibilités
+          <div className="flex-shrink-0 flex items-center">
+            <button
+              onClick={onNavigate}
+              className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              Prestations
             </button>
           </div>
         </div>
@@ -212,6 +147,7 @@ function BusinessCard({ business }) {
 
 // ============= COMPOSANT PRINCIPAL =============
 export default function PageResultatRecherche() {
+  const navigate = useNavigate()
   const [maxPrice, setMaxPrice] = useState(150)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchLocation, setSearchLocation] = useState("")
@@ -384,7 +320,11 @@ export default function PageResultatRecherche() {
             {/* Liste des résultats */}
             <div className="space-y-3">
               {businesses.map((business) => (
-                <BusinessCard key={business.id} business={business} />
+                <BusinessCard
+                  key={business.id}
+                  business={business}
+                  onNavigate={() => navigate(`/entreprise/${business.slug}`)}
+                />
               ))}
             </div>
 

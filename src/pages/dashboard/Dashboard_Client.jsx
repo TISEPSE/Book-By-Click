@@ -28,7 +28,7 @@ const Dashboard_Client = () => {
   const renderContent = () => {
     switch(activeSection) {
       case 'dashboard': return <DashboardContent />
-      case 'calendar': return <CalendarContent />
+      case 'calendar': return <CalendarContent showLegend={false} />
       case 'reservations': return <ReservationsContent />
       default: return <DashboardContent />
     }
