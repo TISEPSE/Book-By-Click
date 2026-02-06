@@ -80,6 +80,7 @@ class Creneau(db.Model):
     dateHeureDebut = db.Column(db.DateTime, nullable=False)
     dateHeureFin = db.Column(db.DateTime, nullable=False)
     statut = db.Column(db.Boolean, nullable=False)
+    nbMaxReservations = db.Column(db.Integer, nullable=False, default=1, server_default='1')
 
 
 

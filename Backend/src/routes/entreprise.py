@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, request, jsonify
 from src.extension import db
+from src.models import Entreprise
 
 
 
@@ -20,7 +21,7 @@ def search():
         return jsonify({"error": "No data"}),400
     
     if service_entreprise and localisation:
-        entreprises = Entreprise.query.filter(Entreprise.ville.like(f"%{localisation}%")).filter(Entreprise.service.like(f"%{service}%")).all()
+        entreprises = Entreprise.query.filter(Entreprise.ville.ilike(f"%{localisation}%")).filter(Entreprise.nomSecteur.ilike(f"%{service_entreprise}%")).all()
 
         ret_dict = {}
         for entreprise in entreprises:
@@ -37,7 +38,7 @@ def search():
 
     
     if not service_entreprise:
-        entreprises = Entreprise.query.filter(Entreprise.ville.like(f'%{localisation}%')).all()
+        entreprises = Entreprise.query.filter(Entreprise.ville.ilike(f'%{localisation}%')).all()
         ret_dict = {}
         for entreprise in entreprises:
             ret_dict[entreprise.nomEntreprise] = {
@@ -52,7 +53,7 @@ def search():
         return jsonify(ret_dict), 203
 
     if not localisation:
-        entreprises = Entreprise.query.filter(Entreprise.ville.like(f'%{service_entreprise}%')).all()
+        entreprises = Entreprise.query.filter(Entreprise.nomSecteur.ilike(f'%{service_entreprise}%')).all()
         ret_dict = {}
         for entreprise in entreprises:
             ret_dict[entreprise.nomEntreprise] = {

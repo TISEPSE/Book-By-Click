@@ -1,6 +1,6 @@
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import useSubmitForm_pro from "../Hook/useSubmitForm_pro"
 import Toast from "../components/Toast"
 import Navbar from "../components/Navbar"
@@ -15,6 +15,59 @@ export default function ProfessionalRegisterForm() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isValid, setIsValid] = useState(false)
+
+  // Auto-suggestion secteur
+  const [sectorInput, setSectorInput] = useState("")
+  const [sectorSuggestions, setSectorSuggestions] = useState([])
+  const [showSectorSuggestions, setShowSectorSuggestions] = useState(false)
+  const sectorRef = useRef(null)
+
+  // Auto-suggestion ville
+  const [cityInput, setCityInput] = useState("")
+  const [citySuggestions, setCitySuggestions] = useState([])
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false)
+  const cityRef = useRef(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (sectorInput.length > 0) {
+        fetch(`http://127.0.0.1:5000/api/services?q=${encodeURIComponent(sectorInput)}`)
+          .then(res => res.json())
+          .then(data => setSectorSuggestions(data))
+          .catch(() => setSectorSuggestions([]))
+      } else {
+        setSectorSuggestions([])
+      }
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [sectorInput])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (cityInput.length > 0) {
+        fetch(`http://127.0.0.1:5000/api/villes?q=${encodeURIComponent(cityInput)}`)
+          .then(res => res.json())
+          .then(data => setCitySuggestions(data))
+          .catch(() => setCitySuggestions([]))
+      } else {
+        setCitySuggestions([])
+      }
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [cityInput])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sectorRef.current && !sectorRef.current.contains(event.target)) {
+        setShowSectorSuggestions(false)
+      }
+      if (cityRef.current && !cityRef.current.contains(event.target)) {
+        setShowCitySuggestions(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <>
@@ -144,21 +197,39 @@ export default function ProfessionalRegisterForm() {
             </div>
 
             {/* Secteur d'activité */}
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start relative" ref={sectorRef}>
               <label className="font-medium block text-left">Secteur d'activité *</label>
-              <select
+              <input
+                type="text"
                 name="sector"
                 required
+                value={sectorInput}
+                onChange={(e) => {
+                  setSectorInput(e.target.value)
+                  setShowSectorSuggestions(true)
+                }}
+                onFocus={() => setShowSectorSuggestions(true)}
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
-              >
-                <option value="">Sélectionnez un secteur</option>
-                <option value="restauration">Restauration</option>
-                <option value="sante">Santé & Bien-être</option>
-                <option value="beaute">Beauté & Coiffure</option>
-                <option value="sport">Sport & Fitness</option>
-                <option value="consulting">Consulting</option>
-                <option value="autre">Autre</option>
-              </select>
+                placeholder="Restauration, Coiffeur, Médecin..."
+                autoComplete="off"
+              />
+              {showSectorSuggestions && sectorSuggestions.length > 0 && (
+                <div className="absolute z-50 w-full top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  {sectorSuggestions.slice(0, 8).map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => {
+                        setSectorInput(s)
+                        setShowSectorSuggestions(false)
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 border-b border-gray-100 last:border-b-0"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Adresse */}
@@ -186,15 +257,39 @@ export default function ProfessionalRegisterForm() {
                 />
               </div>
               
-              <div className="flex flex-col items-start">
+              <div className="flex flex-col items-start relative" ref={cityRef}>
                 <label className="font-medium block text-left">Ville *</label>
                 <input
                   type="text"
                   name="city"
                   required
+                  value={cityInput}
+                  onChange={(e) => {
+                    setCityInput(e.target.value)
+                    setShowCitySuggestions(true)
+                  }}
+                  onFocus={() => setShowCitySuggestions(true)}
                   className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
                   placeholder="Paris"
+                  autoComplete="off"
                 />
+                {showCitySuggestions && citySuggestions.length > 0 && (
+                  <div className="absolute z-50 w-full top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {citySuggestions.slice(0, 8).map((v, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          setCityInput(v)
+                          setShowCitySuggestions(false)
+                        }}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 border-b border-gray-100 last:border-b-0"
+                      >
+                        {v}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

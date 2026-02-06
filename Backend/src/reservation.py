@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from datetime import datetime
 from src.extension import db
 # Importation de tous les modèles nécessaires
@@ -129,4 +129,129 @@ def get_all_clients():
 
         return jsonify(results), 200
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# --- 6. LISTER LES CRÉNEAUX DE L'ENTREPRISE ---
+@reservation_bp.route('/api/entreprise/creneaux', methods=['GET'])
+def get_creneaux():
+    if "user_id" not in session:
+        return jsonify({"error": "Non connecté"}), 401
+    try:
+        entreprise = Entreprise.query.filter_by(idGerant=session["user_id"]).first()
+        if not entreprise:
+            return jsonify({"error": "Entreprise non trouvée"}), 404
+
+        creneaux = Creneau.query.filter_by(idPro=entreprise.idPro).all()
+
+        results = []
+        for c in creneaux:
+            results.append({
+                "id": c.idCreneau,
+                "dateHeureDebut": c.dateHeureDebut.isoformat(),
+                "dateHeureFin": c.dateHeureFin.isoformat(),
+                "statut": c.statut,
+                "nbMaxReservations": c.nbMaxReservations
+            })
+
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# --- 7. CRÉER UN CRÉNEAU ---
+@reservation_bp.route('/api/entreprise/creneaux', methods=['POST'])
+def create_creneau():
+    if "user_id" not in session:
+        return jsonify({"error": "Non connecté"}), 401
+    try:
+        entreprise = Entreprise.query.filter_by(idGerant=session["user_id"]).first()
+        if not entreprise:
+            return jsonify({"error": "Entreprise non trouvée"}), 404
+
+        data = request.json
+        debut = datetime.fromisoformat(data['dateHeureDebut'])
+        fin = datetime.fromisoformat(data['dateHeureFin'])
+        nb_max = data.get('nbMaxReservations', 1)
+
+        creneau = Creneau(
+            idPro=entreprise.idPro,
+            dateHeureDebut=debut,
+            dateHeureFin=fin,
+            statut=True,
+            nbMaxReservations=nb_max
+        )
+        db.session.add(creneau)
+        db.session.commit()
+
+        return jsonify({
+            "id": creneau.idCreneau,
+            "dateHeureDebut": creneau.dateHeureDebut.isoformat(),
+            "dateHeureFin": creneau.dateHeureFin.isoformat(),
+            "statut": creneau.statut,
+            "nbMaxReservations": creneau.nbMaxReservations
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+# --- 8. MODIFIER UN CRÉNEAU ---
+@reservation_bp.route('/api/entreprise/creneaux/<int:id_creneau>', methods=['PUT'])
+def update_creneau(id_creneau):
+    if "user_id" not in session:
+        return jsonify({"error": "Non connecté"}), 401
+    try:
+        entreprise = Entreprise.query.filter_by(idGerant=session["user_id"]).first()
+        if not entreprise:
+            return jsonify({"error": "Entreprise non trouvée"}), 404
+
+        creneau = Creneau.query.get_or_404(id_creneau)
+        if creneau.idPro != entreprise.idPro:
+            return jsonify({"error": "Non autorisé"}), 403
+
+        data = request.json
+        if 'dateHeureDebut' in data:
+            creneau.dateHeureDebut = datetime.fromisoformat(data['dateHeureDebut'])
+        if 'dateHeureFin' in data:
+            creneau.dateHeureFin = datetime.fromisoformat(data['dateHeureFin'])
+        if 'statut' in data:
+            creneau.statut = data['statut']
+        if 'nbMaxReservations' in data:
+            creneau.nbMaxReservations = data['nbMaxReservations']
+
+        db.session.commit()
+
+        return jsonify({
+            "id": creneau.idCreneau,
+            "dateHeureDebut": creneau.dateHeureDebut.isoformat(),
+            "dateHeureFin": creneau.dateHeureFin.isoformat(),
+            "statut": creneau.statut,
+            "nbMaxReservations": creneau.nbMaxReservations
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+# --- 9. SUPPRIMER UN CRÉNEAU ---
+@reservation_bp.route('/api/entreprise/creneaux/<int:id_creneau>', methods=['DELETE'])
+def delete_creneau(id_creneau):
+    if "user_id" not in session:
+        return jsonify({"error": "Non connecté"}), 401
+    try:
+        entreprise = Entreprise.query.filter_by(idGerant=session["user_id"]).first()
+        if not entreprise:
+            return jsonify({"error": "Entreprise non trouvée"}), 404
+
+        creneau = Creneau.query.get_or_404(id_creneau)
+        if creneau.idPro != entreprise.idPro:
+            return jsonify({"error": "Non autorisé"}), 403
+
+        db.session.delete(creneau)
+        db.session.commit()
+
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 500

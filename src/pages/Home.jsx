@@ -87,8 +87,10 @@ export default function Home() {
 // Navigation vers la page de résultats
   const handleSearch = e => {
     e.preventDefault()
-
-    navigate('/result')
+    const params = new URLSearchParams()
+    if (serviceInput) params.set("service", serviceInput)
+    if (locationInput) params.set("localisation", locationInput)
+    navigate(`/result?${params.toString()}`)
   }
 
   useEffect(() => {
