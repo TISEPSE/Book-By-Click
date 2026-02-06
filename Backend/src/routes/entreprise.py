@@ -73,7 +73,6 @@ def search():
 @entreprise_blueprint.get("/api/entreprise/<string:nom>")
 def get_entreprise(nom):
     entreprise = Entreprise.query.filter_by(nomEntreprise=nom).first()
-nom
     if not entreprise:
         return jsonify({"error": "Entreprise not found"}), 404
 
