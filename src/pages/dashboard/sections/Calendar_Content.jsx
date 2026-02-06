@@ -34,7 +34,7 @@ const CALENDAR_MOCK_DATA = [
   }
 ];
 
-const CalendarContent = () => {
+const CalendarContent = ({ showLegend = true }) => {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -82,16 +82,18 @@ const CalendarContent = () => {
   return (
     <div className="space-y-6">
       {/* Section Légende Améliorée */}
-      <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="size-4 rounded-md bg-green-500 border-2 border-green-600 shadow-sm"></div>
-          <span className="text-sm font-bold text-gray-700">Créneaux Disponibles (Libre)</span>
+      {showLegend && (
+        <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="size-4 rounded-md bg-green-500 border-2 border-green-600 shadow-sm"></div>
+            <span className="text-sm font-bold text-gray-700">Créneaux Disponibles (Libre)</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="size-4 rounded-md bg-red-500 border-2 border-red-600 shadow-sm"></div>
+            <span className="text-sm font-bold text-gray-700">Réservations Clients (Occupé)</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="size-4 rounded-md bg-red-500 border-2 border-red-600 shadow-sm"></div>
-          <span className="text-sm font-bold text-gray-700">Réservations Clients (Occupé)</span>
-        </div>
-      </div>
+      )}
 
       {/* Zone Calendrier */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-8 w-full min-h-[700px]">

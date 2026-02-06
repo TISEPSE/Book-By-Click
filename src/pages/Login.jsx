@@ -35,11 +35,15 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Code 200 (si connexion réussis), redirection vers le dashboard
-        navigate('/dashboard_entreprise');
+        // Code 200 (si connexion réussis), redirection vers le dashboard approprié
+        if (data.estGerant) {
+          navigate('/dashboard_entreprise');
+        } else {
+          navigate('/dashboard_client');
+        }
       } else {
         // Afficher l'erreur
-        setError(data.error || 'Email ou mot de passe incorrect');
+        setError(data.error || 'Identifiant ou mot de passe incorrect');
       }
     } catch (err) {
       setError('Erreur de connexion au serveur. Veuillez réessayer.');

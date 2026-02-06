@@ -6,11 +6,15 @@ import Resgister_pro from "./pages/Register_Pro.jsx"
 import Choice_Register from "./pages/Choice_Register.jsx"
 import Forgot_password from "./pages/Forgot_password.jsx"
 import Dashboard_Entreprise from "./pages/dashboard/Dashboard_Entreprise.jsx"
+import Dashboard_Client from "./pages/dashboard/Dashboard_Client.jsx"
 import Contact from "./pages/Contact.jsx"
 import ResultatRecherhce from "./pages/PageResultatRecherche.jsx"
 import Test from "./pages/Teste_form.jsx"
 import Recap from "./pages/Recap.jsx"
 import Profile from "./pages/Profile.jsx"
+import EntrepriseDetail from "./pages/EntrepriseDetail.jsx"
+import BookingCalendar from "./pages/BookingCalendar.jsx"
+import BookingConfirmation from "./pages/BookingConfirmation.jsx"
 import "./static/App.css"
 
 function App() {
@@ -24,8 +28,12 @@ function App() {
         <Route path="/register_form_pro" element={<Resgister_pro />} />
         <Route path="/fogot_password" element={<Forgot_password />} />
         <Route path="/dashboard_entreprise" element={<Dashboard_Entreprise />}/>
+        <Route path="/dashboard_client" element={<Dashboard_Client />}/>
         <Route path="/contact" element={<Contact />} />
         <Route path="/result" element={<ResultatRecherhce />} />
+        <Route path="/entreprise/:slug" element={<EntrepriseDetail />} />
+        <Route path="/reservation/confirmation" element={<BookingConfirmation />} />
+        <Route path="/reservation/:slug" element={<BookingCalendar />} />
 
         <Route path="/teste" element={<Test />} />
         <Route path="/recap" element={<Recap />} />

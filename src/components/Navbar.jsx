@@ -7,6 +7,8 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // État qui stocke si l'utilisateur est connecté (true/false)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // État qui stocke si l'utilisateur est gérant
+  const [estGerant, setEstGerant] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,22 +19,50 @@ export default function Navbar() {
         const response = await fetch("http://localhost:5000/api/session", {
           credentials: "include", // Envoie les cookies de session
         });
-        setIsLoggedIn(response.ok); // 200 = connecté, 401 = pas connecté
+        if (response.ok) {
+          const data = await response.json();
+          setIsLoggedIn(true);
+          setEstGerant(data.estGerant);
+        } else {
+          setIsLoggedIn(false);
+          setEstGerant(false);
+        }
       } catch (error) {
         setIsLoggedIn(false);
+        setEstGerant(false);
       }
     };
     checkAuth();
   }, [location.pathname]); // Re-vérifie quand la page change
 
   // Quand on clique sur "Mon compte"
-  const handleAccountClick = (e) => {
+  const handleAccountClick = async (e) => {
     e.preventDefault();
     setIsMenuOpen(false);
-    if (isLoggedIn) {
-      navigate("/profile"); // Connecté → page profil
+    try {
+      const response = await fetch("http://localhost:5000/api/session", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        navigate("/profile"); // Connecté → page profil
+      } else {
+        navigate("/login"); // Pas connecté → page login
+      }
+    } catch (error) {
+      navigate("/login"); // Erreur → page login
+    }
+  };
+
+  // Quand on clique sur "Dashboard"
+  const handleDashboardClick = (e) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    if (!isLoggedIn) {
+      navigate("/login");
+    } else if (estGerant) {
+      navigate("/dashboard_entreprise");
     } else {
-      navigate("/login"); // Pas connecté → page login
+      navigate("/dashboard_client");
     }
   };
 
@@ -63,10 +93,10 @@ export default function Navbar() {
               <Mail className="w-4 h-4" />
               Contact
             </Link>
-            <Link to="/dashboard_entreprise" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+            <button onClick={handleDashboardClick} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
-            </Link>
+            </button>
           </div>
 
           {/* Bouton Mon compte Desktop */}
@@ -106,10 +136,10 @@ export default function Navbar() {
               <Mail className="w-5 h-5" />
               Contact
             </Link>
-            <Link to="/dashboard_entreprise" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+            <button onClick={handleDashboardClick} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
-            </Link>
+            </button>
 
             <div className="border-t border-gray-100 my-2"></div>
 

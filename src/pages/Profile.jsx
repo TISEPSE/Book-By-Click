@@ -15,9 +15,37 @@ function Profile() {
         method: 'POST',
         credentials: 'include',
       });
+      sessionStorage.setItem("toast", JSON.stringify({ message: "Déconnexion réussie", type: "success" }));
       navigate('/login');
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
+    }
+  };
+
+  // Fonction pour supprimer le compte
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et toutes vos données seront perdues."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/user/delete', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        sessionStorage.setItem("toast", JSON.stringify({ message: "Compte supprimé avec succès", type: "success" }));
+        navigate('/login');
+      } else {
+        const data = await response.json();
+        alert(data.error || "Erreur lors de la suppression du compte");
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      alert("Erreur de connexion au serveur");
     }
   };
 
@@ -309,7 +337,10 @@ function Profile() {
                   <p className="text-sm font-medium text-gray-900">Supprimer mon compte</p>
                   <p className="text-xs text-gray-500 mt-0.5">Cette action est irréversible</p>
                 </div>
-                <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50">
+                <button
+                  onClick={handleDeleteAccount}
+                  className="px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50"
+                >
                   Supprimer
                 </button>
               </div>

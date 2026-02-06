@@ -1,9 +1,12 @@
-export default function useSubmitForm_pro(url) {
-  const handleSubmit = async e => {
-    //Fonction qu'on va réutilisé
-    e.preventDefault() //Empêche le rechargement de la page
+import { useState } from "react"
 
-    const formData = new FormData(e.target) //FormData extrait les donnée du formulaire => (e.target)
+export default function useSubmitForm_pro(url, successMessage, errorMessage) {
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.target)
 
     const data = {
       nom: formData.get("nom"),
@@ -21,18 +24,29 @@ export default function useSubmitForm_pro(url) {
       country: formData.get("country"),
     }
 
-    const response = await fetch(url, {
-      //On envoie les données au backend
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data), //Tranforme l'objet javascript en Json
-    })
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
 
-    const result = await response.json() //On récup la réponse du backend sous forme de Json et on la log direct
-    console.log("Réponse du serveur:", result)
+      const result = await response.json()
+
+      if (response.ok) {
+        sessionStorage.setItem("toast", JSON.stringify({ message: successMessage, type: "success" }))
+        window.location.href = "/login"
+      } else {
+        setToast({ show: true, message: result.error || errorMessage, type: "error" })
+      }
+    } catch (error) {
+      setToast({ show: true, message: errorMessage, type: "error" })
+    }
   }
 
-  return {handleSubmit}
+  const closeToast = () => setToast({ ...toast, show: false })
+
+  return { handleSubmit, toast, closeToast }
 }

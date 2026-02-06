@@ -1,13 +1,26 @@
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline"
-import useSubmitForm_pro from "../Hook/useSubmitForm_pro";
-import Navbar from "../components/Navbar";
+import PasswordChecklist from "react-password-checklist"
+import { useState } from "react"
+import useSubmitForm_pro from "../Hook/useSubmitForm_pro"
+import Toast from "../components/Toast"
+import Navbar from "../components/Navbar"
 
 export default function ProfessionalRegisterForm() {
-  const {handleSubmit} = useSubmitForm_pro("/api/register/pro")
+  const { handleSubmit, toast, closeToast } = useSubmitForm_pro(
+    "/api/register/pro",
+    "Compte professionnel créé avec succès !",
+    "Erreur lors de la création du compte"
+  )
+
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [isValid, setIsValid] = useState(false)
+
   return (
     <>
       <Navbar />
-      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4 pt-24">
+      <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
+      <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
           <div className="mt-5 space-y-4">
@@ -26,7 +39,7 @@ export default function ProfessionalRegisterForm() {
             <p>
               Déjà un compte ?{" "}
               <a
-                href="/login_pro"
+                href="/login"
                 className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
               >
                 Se connecter
@@ -38,7 +51,13 @@ export default function ProfessionalRegisterForm() {
         <div className="bg-white shadow p-4 py-6 sm:p-6 sm:rounded-lg text-left">
           <form
             className="space-y-5"
-            onSubmit={(e) => handleSubmit(e)}
+            onSubmit={(e) => {
+              if (!isValid) {
+                e.preventDefault()
+                return
+              }
+              handleSubmit(e)
+            }}
           >
             {/* Nom et Prénom */}
             <div className="grid grid-cols-2 gap-4">
@@ -203,6 +222,8 @@ export default function ProfessionalRegisterForm() {
                 type="password"
                 name="password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
                 placeholder="••••••••"
               />
@@ -218,10 +239,27 @@ export default function ProfessionalRegisterForm() {
                 type="password"
                 name="confirmPassword"
                 required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
                 placeholder="••••••••"
               />
             </div>
+
+            {/* Vérification mot de passe */}
+            <PasswordChecklist
+              rules={["match", "minLength", "capital"]}
+              value={password}
+              minLength={10}
+              valueAgain={confirmPassword}
+              messages={{
+                match: "Les mots de passe doivent être identiques",
+                minLength: "Les mots de passe doivent contenir au moins 10 caractères",
+                capital: "Le mot de passe doit contenir au moins une lettre majuscule"
+              }}
+              onChange={(valid) => setIsValid(valid)}
+              className="text-xxl"
+            />
 
             {/* Checkbox conditions */}
             <div className="flex items-center justify-between text-sm">
@@ -246,8 +284,11 @@ export default function ProfessionalRegisterForm() {
             </div>
 
             <button
-              className="w-full px-4 py-2 text-white font-medium bg-blue-600 hover:bg-blue-500 active:bg-blue-600 rounded-lg duration-150"
               type="submit"
+              disabled={!isValid}
+              className={`w-full px-4 py-2 text-white font-medium rounded-lg duration-150 ${
+                isValid ? "bg-blue-600 hover:bg-blue-500" : "bg-gray-400 cursor-not-allowed"
+              }`}
             >
               Créer mon compte Pro
             </button>
