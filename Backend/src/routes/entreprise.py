@@ -70,6 +70,44 @@ def search():
 
 
 
+@entreprise_blueprint.get("/api/entreprise/slug/<string:slug>")
+def get_entreprise_by_slug(slug):
+    entreprise = Entreprise.query.filter_by(slugPublic=slug).first()
+    if not entreprise:
+        return jsonify({"error": "Entreprise not found"}), 404
+
+    data = {
+        "idPro": entreprise.idPro,
+        "nomEntreprise": entreprise.nomEntreprise,
+        "nomSecteur": entreprise.nomSecteur,
+        "slugPublic": entreprise.slugPublic,
+        "adresse": entreprise.adresse,
+        "codePostal": entreprise.codePostal,
+        "ville": entreprise.ville,
+        "pays": entreprise.pays,
+
+        "creneaux": [
+            {
+                "idCreneau": c.idCreneau,
+                "dateHeureDebut": c.dateHeureDebut.isoformat(),
+                "dateHeureFin": c.dateHeureFin.isoformat(),
+                "statut": c.statut
+            } for c in entreprise.creneaus
+        ],
+
+        "prestations": [
+            {
+                "idPrestation": p.idPrestation,
+                "libelle": p.libelle,
+                "dureeMinutes": p.dureeMinutes,
+                "tarif": float(p.tarif) if p.tarif else None
+            } for p in entreprise.prestations
+        ],
+    }
+
+    return jsonify(data), 200
+
+
 @entreprise_blueprint.get("/api/entreprise/<string:nom>")
 def get_entreprise(nom):
     entreprise = Entreprise.query.filter_by(nomEntreprise=nom).first()

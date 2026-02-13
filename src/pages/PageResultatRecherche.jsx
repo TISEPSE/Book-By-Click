@@ -81,11 +81,10 @@ export default function PageResultatRecherche() {
     setHasSearched(true)
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/entreprise/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ service, localisation }),
-      })
+      const params = new URLSearchParams()
+      if (service) params.append("service", service)
+      if (localisation) params.append("localisation", localisation)
+      const response = await fetch(`http://127.0.0.1:5000/api/entreprise/search?${params}`)
 
       if (!response.ok) {
         const errData = await response.json()
