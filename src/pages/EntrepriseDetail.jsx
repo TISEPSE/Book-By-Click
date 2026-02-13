@@ -1,27 +1,55 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import {
   MapPin,
-  Star,
   Clock,
-  Phone,
   CheckCircle,
   Calendar,
   ArrowLeft,
-  ImageIcon,
+  Building2,
+  Loader2,
 } from "lucide-react"
 import Navbar from "../components/Navbar"
-import { getEntrepriseBySlug } from "../data/mockEntreprises"
-import { format } from "date-fns"
-import { fr } from "date-fns/locale"
 
 export default function EntrepriseDetail() {
   const { slug } = useParams()
   const navigate = useNavigate()
-  const entreprise = getEntrepriseBySlug(slug)
+  const [entreprise, setEntreprise] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState("prestations")
 
-  if (!entreprise) {
+  useEffect(() => {
+    const fetchEntreprise = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/entreprise/slug/${slug}`)
+        if (!response.ok) {
+          throw new Error("Entreprise non trouvée")
+        }
+        const data = await response.json()
+        setEntreprise(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchEntreprise()
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+          <span className="ml-3 text-gray-500">Chargement...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !entreprise) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
@@ -37,6 +65,8 @@ export default function EntrepriseDetail() {
       </div>
     )
   }
+
+  const address = `${entreprise.adresse}, ${entreprise.codePostal} ${entreprise.ville}, ${entreprise.pays}`
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,46 +84,24 @@ export default function EntrepriseDetail() {
           </button>
 
           <div className="flex items-start gap-4">
-            <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-              <img
-                src={entreprise.image}
-                alt={entreprise.name}
-                className="w-full h-full object-cover"
-              />
+            <div className="w-20 h-20 rounded-lg overflow-hidden bg-indigo-50 flex-shrink-0 flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-indigo-400" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 mb-1">
                 <h1 className="text-xl font-semibold text-gray-900">
-                  {entreprise.name}
+                  {entreprise.nomEntreprise}
                 </h1>
-                {entreprise.verified && (
-                  <CheckCircle className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-                )}
+                <CheckCircle className="w-5 h-5 text-indigo-600 flex-shrink-0" />
               </div>
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-sm text-gray-500">
-                  {entreprise.category}
+                  {entreprise.nomSecteur}
                 </span>
-                <div className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium text-gray-900">
-                    {entreprise.rating}
-                  </span>
-                  <span className="text-sm text-gray-400">
-                    ({entreprise.reviewCount} avis)
-                  </span>
-                </div>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5" />
-                  {entreprise.address}
-                </span>
-                <span className="hidden sm:inline text-gray-300">|</span>
-                <span className="flex items-center gap-1">
-                  <Phone className="w-3.5 h-3.5" />
-                  {entreprise.phone}
-                </span>
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>{address}</span>
               </div>
             </div>
           </div>
@@ -110,36 +118,6 @@ export default function EntrepriseDetail() {
             >
               Prestations
             </button>
-            <button
-              onClick={() => setActiveTab("about")}
-              className={`pb-3 text-sm font-medium border-b-2 ${
-                activeTab === "about"
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              À propos
-            </button>
-            <button
-              onClick={() => setActiveTab("avis")}
-              className={`pb-3 text-sm font-medium border-b-2 ${
-                activeTab === "avis"
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Avis
-            </button>
-            <button
-              onClick={() => setActiveTab("photos")}
-              className={`pb-3 text-sm font-medium border-b-2 ${
-                activeTab === "photos"
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Photos
-            </button>
           </div>
         </div>
       </div>
@@ -149,35 +127,31 @@ export default function EntrepriseDetail() {
 
         {/* Tab: Prestations */}
         {activeTab === "prestations" && (
-          <>
-            {/* Nos prestations */}
-            <section className="bg-white border border-gray-200 rounded-lg">
-              <div className="px-5 py-4 border-b border-gray-200">
-                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                  Nos prestations
-                </h2>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {entreprise.prestations.map((prestation) => (
+          <section className="bg-white border border-gray-200 rounded-lg">
+            <div className="px-5 py-4 border-b border-gray-200">
+              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                Nos prestations
+              </h2>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {entreprise.prestations && entreprise.prestations.length > 0 ? (
+                entreprise.prestations.map((prestation) => (
                   <div
-                    key={prestation.id}
+                    key={prestation.idPrestation}
                     className="px-5 py-5 flex items-center justify-between gap-4"
                   >
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-gray-900">
-                        {prestation.name}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {prestation.description}
+                        {prestation.libelle}
                       </p>
                       <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
-                          {prestation.duration} min
+                          {prestation.dureeMinutes} min
                         </span>
                         <span className="text-gray-300">|</span>
                         <span className="font-semibold text-gray-900">
-                          {prestation.price} €
+                          {prestation.tarif} €
                         </span>
                       </div>
                     </div>
@@ -185,11 +159,16 @@ export default function EntrepriseDetail() {
                       onClick={() =>
                         navigate(`/reservation/${slug}`, {
                           state: {
-                            prestation,
+                            prestation: {
+                              id: prestation.idPrestation,
+                              name: prestation.libelle,
+                              duration: prestation.dureeMinutes,
+                              price: prestation.tarif,
+                            },
                             entreprise: {
-                              name: entreprise.name,
-                              slug: entreprise.slug,
-                              address: entreprise.address,
+                              name: entreprise.nomEntreprise,
+                              slug: entreprise.slugPublic,
+                              address: address,
                             },
                           },
                         })
@@ -200,104 +179,12 @@ export default function EntrepriseDetail() {
                       Choisir un créneau
                     </button>
                   </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Horaires d'ouverture */}
-            <section className="bg-white border border-gray-200 rounded-lg">
-              <div className="px-5 py-4 border-b border-gray-200">
-                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                  Horaires d'ouverture
-                </h2>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {Object.entries(entreprise.horaires).map(([jour, horaire]) => (
-                  <div
-                    key={jour}
-                    className="px-5 py-4 flex items-center justify-between"
-                  >
-                    <span className="text-[15px] font-medium text-gray-700">{jour}</span>
-                    <span
-                      className={`text-[15px] ${horaire === "Fermé" ? "text-red-500 font-semibold" : "font-medium text-gray-900"}`}
-                    >
-                      {horaire}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </>
-        )}
-
-        {/* Tab: À propos */}
-        {activeTab === "about" && (
-          <section className="bg-white border border-gray-200 rounded-lg">
-            <div className="px-5 py-4 border-b border-gray-200">
-              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                À propos
-              </h2>
-            </div>
-            <div className="px-5 py-4">
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {entreprise.description}
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* Tab: Avis */}
-        {activeTab === "avis" && (
-          <section className="bg-white border border-gray-200 rounded-lg">
-            <div className="px-5 py-4 border-b border-gray-200">
-              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                Avis clients
-              </h2>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {entreprise.avis.map((avis) => (
-                <div key={avis.id} className="px-5 py-4">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-900">
-                        {avis.auteur}
-                      </span>
-                      <div className="flex items-center gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3 h-3 ${
-                              i < avis.note
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-200"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {format(new Date(avis.date), "d MMM yyyy", { locale: fr })}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600">{avis.commentaire}</p>
+                ))
+              ) : (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-sm text-gray-500">Aucune prestation disponible</p>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Tab: Photos */}
-        {activeTab === "photos" && (
-          <section className="bg-white border border-gray-200 rounded-lg">
-            <div className="px-5 py-4 border-b border-gray-200">
-              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                Photos
-              </h2>
-            </div>
-            <div className="px-5 py-12 text-center">
-              <ImageIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500">Aucune photo pour le moment</p>
-              <p className="text-xs text-gray-400 mt-1">Les photos seront bientôt disponibles</p>
+              )}
             </div>
           </section>
         )}

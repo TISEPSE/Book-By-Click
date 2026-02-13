@@ -57,10 +57,10 @@ def run_seed():
     #  ENTREPRISE
     # ============================
     e1 = Entreprise(
-        nomEntreprise="Salon Beaute Zen",
-        nomSecteur="Spa",
+        nomEntreprise="Chez Marie Coiffure",
+        nomSecteur="Coiffeur",
         idGerant=u1.idClient,
-        slugPublic="beaute-zen",
+        slugPublic="chez-marie-coiffure",
         adresse="12 rue de la Paix",
         codePostal="75001",
         ville="Paris",
@@ -75,38 +75,54 @@ def run_seed():
     # ============================
     p1 = Prestation(
         idPro=e1.idPro,
-        libelle="Massage relaxant",
-        dureeMinutes=60,
-        tarif=59.90
+        libelle="Coupe femme",
+        dureeMinutes=45,
+        tarif=35.00
     )
 
     p2 = Prestation(
         idPro=e1.idPro,
-        libelle="Soin visage complet",
-        dureeMinutes=45,
-        tarif=39.90
+        libelle="Coupe homme",
+        dureeMinutes=30,
+        tarif=20.00
     )
 
-    db.session.add_all([p1, p2])
+    p3 = Prestation(
+        idPro=e1.idPro,
+        libelle="Coloration complete",
+        dureeMinutes=90,
+        tarif=65.00
+    )
+
+    db.session.add_all([p1, p2, p3])
     db.session.commit()
 
     # ============================
-    #  CRENEAUX
+    #  CRENEAUX (2 prochaines semaines, du lundi au samedi)
     # ============================
-    c1 = Creneau(
-        idPro=e1.idPro,
-        dateHeureDebut=datetime.now() + timedelta(days=1),
-        dateHeureFin=datetime.now() + timedelta(days=1, hours=1),
-        statut=True
-    )
-    c2 = Creneau(
-        idPro=e1.idPro,
-        dateHeureDebut=datetime.now() + timedelta(days=2),
-        dateHeureFin=datetime.now() + timedelta(days=2, hours=1),
-        statut=True
-    )
+    creneaux = []
+    now = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    for day_offset in range(1, 15):
+        jour = now + timedelta(days=day_offset)
+        # Pas de creneaux le dimanche (weekday 6)
+        if jour.weekday() == 6:
+            continue
+        # Samedi : 9h-13h, sinon 9h-18h
+        start_hour = 9
+        end_hour = 13 if jour.weekday() == 5 else 18
+        hour = start_hour
+        while hour < end_hour:
+            debut = jour.replace(hour=hour, minute=0)
+            fin = jour.replace(hour=hour + 1, minute=0)
+            creneaux.append(Creneau(
+                idPro=e1.idPro,
+                dateHeureDebut=debut,
+                dateHeureFin=fin,
+                statut=True
+            ))
+            hour += 1
 
-    db.session.add_all([c1, c2])
+    db.session.add_all(creneaux)
     db.session.commit()
 
     # ============================

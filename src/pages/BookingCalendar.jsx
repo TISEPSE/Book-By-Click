@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useLocation, useNavigate } from "react-router-dom"
-import { Clock, MapPin, ArrowLeft, ChevronLeft, ChevronRight, Euro, Calendar } from "lucide-react"
+import { Clock, ArrowLeft, ChevronLeft, ChevronRight, Euro, Calendar, Loader2 } from "lucide-react"
 import Navbar from "../components/Navbar"
 import Modal from "../components/Modal"
-import { getEntrepriseBySlug, generateMockSlots } from "../data/mockEntreprises"
-import { format, addDays, startOfWeek, isSameDay, isBefore, startOfDay } from "date-fns"
+import { generateMockSlots } from "../data/mockEntreprises"
+import { format, addDays, startOfWeek, isSameDay, isBefore, startOfDay, parseISO } from "date-fns"
 import { fr } from "date-fns/locale"
 
 export default function BookingCalendar() {
@@ -12,17 +12,47 @@ export default function BookingCalendar() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const entrepriseData = getEntrepriseBySlug(slug)
-  const prestation = location.state?.prestation || entrepriseData?.prestations?.[0]
-  const entreprise = location.state?.entreprise || (entrepriseData ? { name: entrepriseData.name, slug: entrepriseData.slug, address: entrepriseData.address } : null)
+  const prestation = location.state?.prestation
+  const entreprise = location.state?.entreprise
 
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }))
   const [selectedSlot, setSelectedSlot] = useState(null)
+  const [allSlots, setAllSlots] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const allSlots = useMemo(
-    () => (prestation ? generateMockSlots(prestation.duration) : []),
-    [prestation]
-  )
+  useEffect(() => {
+    const fetchCreneaux = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/entreprise/slug/${slug}`)
+        if (!response.ok) throw new Error("Erreur")
+        const data = await response.json()
+        const dbSlots = (data.creneaux || []).filter((c) => c.statut)
+
+        if (dbSlots.length > 0) {
+          setAllSlots(dbSlots.map((c) => {
+            const dateDebut = parseISO(c.dateHeureDebut)
+            return {
+              id: c.idCreneau,
+              date: startOfDay(dateDebut),
+              time: format(dateDebut, "HH'h'mm"),
+              start: dateDebut,
+            }
+          }))
+        } else if (prestation) {
+          // Pas de créneaux en BDD → générer des créneaux par défaut
+          setAllSlots(generateMockSlots(prestation.duration))
+        }
+      } catch {
+        // En cas d'erreur API, fallback sur les créneaux générés
+        if (prestation) {
+          setAllSlots(generateMockSlots(prestation.duration))
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCreneaux()
+  }, [slug, prestation])
 
   if (!entreprise || !prestation) {
     return (
@@ -151,68 +181,77 @@ export default function BookingCalendar() {
           </button>
         </div>
 
-        {/* Grille créneaux */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-          {days.map((day, i) => {
-            const isToday = isSameDay(day, today)
-            const isPast = isBefore(day, today)
-            const daySlots = getSlotsForDay(day)
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+            <span className="ml-3 text-gray-500">Chargement des créneaux...</span>
+          </div>
+        ) : (
+          <>
+            {/* Grille créneaux */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+              {days.map((day, i) => {
+                const isToday = isSameDay(day, today)
+                const isPast = isBefore(day, today)
+                const daySlots = getSlotsForDay(day)
 
-            return (
-              <div
-                key={i}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-              >
-                {/* Header jour */}
-                <div
-                  className={`px-3 py-2.5 border-b border-gray-200 text-center ${
-                    isToday ? "bg-indigo-50" : ""
-                  }`}
-                >
-                  <p className="text-xs text-gray-500 uppercase">
-                    {format(day, "EEE", { locale: fr })}
-                  </p>
-                  <p
-                    className={`text-sm font-semibold ${
-                      isToday ? "text-indigo-600" : "text-gray-900"
-                    }`}
+                return (
+                  <div
+                    key={i}
+                    className="bg-white border border-gray-200 rounded-lg overflow-hidden"
                   >
-                    {format(day, "d MMM", { locale: fr })}
-                  </p>
-                </div>
-
-                {/* Créneaux */}
-                <div className="p-2.5 space-y-2 min-h-[280px]">
-                  {isPast ? (
-                    <p className="text-xs text-gray-400 text-center pt-8">
-                      Passé
-                    </p>
-                  ) : daySlots.length === 0 ? (
-                    <p className="text-xs text-gray-400 text-center pt-8">
-                      Aucun créneau
-                    </p>
-                  ) : (
-                    daySlots.map((slot, j) => (
-                      <button
-                        key={j}
-                        onClick={() => handleSlotClick(slot)}
-                        className="w-full px-3 py-2 text-sm font-medium text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-400 transition-colors"
+                    {/* Header jour */}
+                    <div
+                      className={`px-3 py-2.5 border-b border-gray-200 text-center ${
+                        isToday ? "bg-indigo-50" : ""
+                      }`}
+                    >
+                      <p className="text-xs text-gray-500 uppercase">
+                        {format(day, "EEE", { locale: fr })}
+                      </p>
+                      <p
+                        className={`text-sm font-semibold ${
+                          isToday ? "text-indigo-600" : "text-gray-900"
+                        }`}
                       >
-                        {slot.time}
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+                        {format(day, "d MMM", { locale: fr })}
+                      </p>
+                    </div>
 
-        {/* Légende */}
-        <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
-          <div className="w-3 h-3 border border-indigo-200 rounded" />
-          <span>Créneau disponible</span>
-        </div>
+                    {/* Créneaux */}
+                    <div className="p-2.5 space-y-2 min-h-[280px]">
+                      {isPast ? (
+                        <p className="text-xs text-gray-400 text-center pt-8">
+                          Passé
+                        </p>
+                      ) : daySlots.length === 0 ? (
+                        <p className="text-xs text-gray-400 text-center pt-8">
+                          Aucun créneau
+                        </p>
+                      ) : (
+                        daySlots.map((slot) => (
+                          <button
+                            key={slot.id}
+                            onClick={() => handleSlotClick(slot)}
+                            className="w-full px-3 py-2 text-sm font-medium text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-400 transition-colors"
+                          >
+                            {slot.time}
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Légende */}
+            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
+              <div className="w-3 h-3 border border-indigo-200 rounded" />
+              <span>Créneau disponible</span>
+            </div>
+          </>
+        )}
       </main>
 
       {/* Modal confirmation */}
