@@ -15,6 +15,7 @@ import Profile from "./pages/Profile.jsx"
 import EntrepriseDetail from "./pages/EntrepriseDetail.jsx"
 import BookingCalendar from "./pages/BookingCalendar.jsx"
 import BookingConfirmation from "./pages/BookingConfirmation.jsx"
+import Admin from "./pages/Admin.jsx"
 import "./static/App.css"
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route path="/teste" element={<Test />} />
         <Route path="/recap" element={<Recap />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   )

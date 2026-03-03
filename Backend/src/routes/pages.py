@@ -14,8 +14,19 @@ from src.users import get_user
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "user_id" not in session:
+        user_id = session.get("user_id")
+        if not user_id:
             return jsonify({"error": "Connexion requise"}), 401
+
+        user = Utilisateur.query.get(user_id)
+        if not user:
+            session.clear()
+            return jsonify({"error": "Non connecté"}), 401
+
+        if user.estBloque:
+            session.clear()
+            return jsonify({"error": "Compte bloqué"}), 403
+
         return f(*args, **kwargs)
     return decorated_function
 
@@ -47,6 +58,7 @@ def register_form_user():
         dateInscription=datetime.now(),
         idTypeUtilisateur=id_type_client,
         estGerant=estGerant,
+        estBloque=False,
     )
     
     db.session.add(u1)
@@ -94,7 +106,8 @@ def register_form_pro():
         telephone=telephone,
         dateInscription=datetime.now(),
         idTypeUtilisateur=id_type_pro,
-        estGerant=True
+        estGerant=True,
+        estBloque=False
     )
 
     db.session.add(u1)
@@ -130,6 +143,9 @@ def login():
     if not check_password_hash(user.motDePasseHash, password):
         return jsonify({"error": "Identifiant ou mot de passe incorrect"}), 401
 
+    if user.estBloque:
+        return jsonify({"error": "Compte bloqué. Contactez un administrateur."}), 403
+
     session["user_id"] = user.idClient
 
     return jsonify({"success": True, "message": "Connexion réussie", "estGerant": user.estGerant}), 200
@@ -141,6 +157,9 @@ def get_session():
     if "user_id" in session:
         user = Utilisateur.query.get(session["user_id"])
         if user:
+            if user.estBloque:
+                session.clear()
+                return jsonify({"error": "Compte bloqué"}), 403
             return jsonify({"user_id": session["user_id"], "estGerant": user.estGerant})
     return jsonify({"error": "Non connecté"}), 401
 

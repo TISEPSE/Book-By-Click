@@ -3,8 +3,10 @@ from flask import Flask, Blueprint
 from dotenv import load_dotenv
 from src.routes.pages import pages_blueprint
 from src.routes.entreprise import entreprise_blueprint
+from src.routes.admin import admin_blueprint
 from src.reservation import reservation_bp
 import os
+import time
 from pathlib import Path
 import secrets
 from src.extension import db, cors
@@ -32,21 +34,29 @@ def create_app():
     app.register_blueprint(pages_blueprint)
     app.register_blueprint(reservation_bp)
     app.register_blueprint(entreprise_blueprint)
+    app.register_blueprint(admin_blueprint)
 
 
     # Extensions
     db.init_app(app)
     cors(app, supports_credentials=True, origins=["http://localhost:5173", "http://localhost:3000"])
 
-    # Essaye de créer les tables et initialiser les données de base
-    try:
-        with app.app_context():
-            db.create_all()
-            from src.seed import run_seed
-            run_seed()
-    except Exception as e:
-        print(f"Avertissement: Impossible de se connecter a la base de donnees: {e}")
-        print("Le serveur continuera sans connexion a la base de donnees.")
+    # Essaye de créer les tables et initialiser les données de base (avec retry)
+    max_attempts = 10
+    for attempt in range(1, max_attempts + 1):
+        try:
+            with app.app_context():
+                db.create_all()
+                from src.seed import run_seed
+                run_seed()
+            break
+        except Exception as e:
+            if attempt == max_attempts:
+                print(f"Avertissement: Impossible de se connecter a la base de donnees apres {max_attempts} tentatives: {e}")
+                print("Le serveur continuera sans connexion a la base de donnees.")
+            else:
+                print(f"Connexion DB echouee (tentative {attempt}/{max_attempts}): {e}")
+                time.sleep(2)
 
     # Swagger
     SWAGGER_URL = "/swagger"
