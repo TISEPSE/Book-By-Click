@@ -148,7 +148,16 @@ def login():
 
     session["user_id"] = user.idClient
 
-    return jsonify({"success": True, "message": "Connexion réussie", "estGerant": user.estGerant}), 200
+    user_role = user.type.role if user.type else None
+    is_admin = user_role == "admin"
+
+    return jsonify({
+        "success": True,
+        "message": "Connexion réussie",
+        "estGerant": user.estGerant,
+        "role": user_role,
+        "isAdmin": is_admin
+    }), 200
 
 
 # Route pour vérifier si l'utilisateur est connecté
@@ -160,7 +169,13 @@ def get_session():
             if user.estBloque:
                 session.clear()
                 return jsonify({"error": "Compte bloqué"}), 403
-            return jsonify({"user_id": session["user_id"], "estGerant": user.estGerant})
+            user_role = user.type.role if user.type else None
+            return jsonify({
+                "user_id": session["user_id"],
+                "estGerant": user.estGerant,
+                "role": user_role,
+                "isAdmin": user_role == "admin"
+            })
     return jsonify({"error": "Non connecté"}), 401
 
 #===================================================================

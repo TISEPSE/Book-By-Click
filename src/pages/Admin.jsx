@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 
 export default function Admin() {
@@ -6,10 +7,26 @@ export default function Admin() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [blockingId, setBlockingId] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchEntreprises = async () => {
+    const fetchData = async () => {
       try {
+        const sessionResponse = await fetch("/api/session", {
+          credentials: "include",
+        })
+
+        if (!sessionResponse.ok) {
+          navigate("/login")
+          return
+        }
+
+        const sessionData = await sessionResponse.json()
+        if (!sessionData.isAdmin) {
+          navigate("/login")
+          return
+        }
+
         const response = await fetch("/api/admin/entreprises", {
           credentials: "include",
         })
@@ -27,8 +44,8 @@ export default function Admin() {
       }
     }
 
-    fetchEntreprises()
-  }, [])
+    fetchData()
+  }, [navigate])
 
   const handleBlock = async idPro => {
     setBlockingId(idPro)
@@ -56,11 +73,31 @@ export default function Admin() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/logout", {
+        method: "POST",
+        credentials: "include",
+      })
+    } finally {
+      navigate("/login")
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Administration - Entreprises</h1>
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h1 className="text-2xl font-bold text-gray-900">Administration - Entreprises</h1>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-black"
+          >
+            Se déconnecter
+          </button>
+        </div>
 
         {loading && <p className="text-gray-500">Chargement des entreprises...</p>}
 

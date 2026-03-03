@@ -9,6 +9,8 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   // État qui stocke si l'utilisateur est gérant
   const [estGerant, setEstGerant] = useState(false);
+  // État qui stocke si l'utilisateur est admin
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -23,13 +25,16 @@ export default function Navbar() {
           const data = await response.json();
           setIsLoggedIn(true);
           setEstGerant(data.estGerant);
+          setIsAdmin(Boolean(data.isAdmin));
         } else {
           setIsLoggedIn(false);
           setEstGerant(false);
+          setIsAdmin(false);
         }
       } catch (error) {
         setIsLoggedIn(false);
         setEstGerant(false);
+        setIsAdmin(false);
       }
     };
     checkAuth();
@@ -44,7 +49,12 @@ export default function Navbar() {
         credentials: "include",
       });
       if (response.ok) {
-        navigate("/profile"); // Connecté → page profil
+        const data = await response.json();
+        if (data.isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/profile"); // Connecté → page profil
+        }
       } else {
         navigate("/login"); // Pas connecté → page login
       }
@@ -59,6 +69,8 @@ export default function Navbar() {
     setIsMenuOpen(false);
     if (!isLoggedIn) {
       navigate("/login");
+    } else if (isAdmin) {
+      navigate("/admin");
     } else if (estGerant) {
       navigate("/dashboard_entreprise");
     } else {

@@ -36,7 +36,9 @@ export default function Login() {
 
       if (response.ok) {
         // Code 200 (si connexion réussis), redirection vers le dashboard approprié
-        if (data.estGerant) {
+        if (data.isAdmin) {
+          navigate('/admin');
+        } else if (data.estGerant) {
           navigate('/dashboard_entreprise');
         } else {
           navigate('/dashboard_client');
