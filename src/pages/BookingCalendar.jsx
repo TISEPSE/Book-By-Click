@@ -56,9 +56,9 @@ export default function BookingCalendar() {
 
   if (!entreprise || !prestation) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
+        <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
           <p className="text-sm text-gray-500 mb-4">Données de réservation manquantes</p>
           <button
             onClick={() => navigate("/result")}
@@ -128,7 +128,7 @@ export default function BookingCalendar() {
   const today = startOfDay(new Date())
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Barre résumé prestation */}
@@ -162,7 +162,7 @@ export default function BookingCalendar() {
       </div>
 
       {/* Contenu */}
-      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {apiError === "Entreprise indisponible" && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
             Cette entreprise est indisponible.

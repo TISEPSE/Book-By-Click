@@ -84,9 +84,9 @@ function FaqItem({ question, answer }) {
 
 export default function Aide() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+      <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-gray-900">Centre d'aide</h1>
           <p className="text-gray-500 mt-2">Trouvez les réponses aux questions les plus fréquentes.</p>

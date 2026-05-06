@@ -18,7 +18,7 @@ export default function Register_User() {
   const [isValid, setIsValid] = useState(false)
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
       {/* Conteneur principal : centre le formulaire verticalement et horizontalement */}
@@ -257,6 +257,6 @@ export default function Register_User() {
       </div>
     </main>
       <Footer />
-    </>
+    </div>
   )
 }

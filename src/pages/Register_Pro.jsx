@@ -71,7 +71,7 @@ export default function ProfessionalRegisterForm() {
   }, [])
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
       <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 p-4">
@@ -444,6 +444,6 @@ export default function ProfessionalRegisterForm() {
       </div>
     </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -43,7 +43,7 @@ export default function EntrepriseDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
@@ -55,9 +55,9 @@ export default function EntrepriseDetail() {
 
   if (error || !entreprise) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
+        <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
           <p className="text-sm text-gray-500 mb-4">{error || "Entreprise non trouvée"}</p>
           <button
             onClick={() => navigate("/result")}
@@ -74,7 +74,7 @@ export default function EntrepriseDetail() {
   const address = `${entreprise.adresse}, ${entreprise.codePostal} ${entreprise.ville}, ${entreprise.pays}`
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Header entreprise */}
@@ -128,7 +128,7 @@ export default function EntrepriseDetail() {
       </div>
 
       {/* Contenu */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* Tab: Prestations */}
         {activeTab === "prestations" && (

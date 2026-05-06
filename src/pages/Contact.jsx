@@ -50,7 +50,7 @@ export default function Contact() {
   }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <main className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center bg-gray-50 py-12">
         <div className="w-full space-y-6 text-gray-600 sm:max-w-lg px-4">
@@ -174,6 +174,6 @@ export default function Contact() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   )
 }

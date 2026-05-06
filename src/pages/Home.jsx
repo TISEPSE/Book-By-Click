@@ -127,7 +127,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section - Planity-inspired with centered search bar */}
-      <section className="relative h-screen flex items-start pt-20 overflow-hidden">
+      <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-100 rounded-full blur-3xl opacity-30"></div>

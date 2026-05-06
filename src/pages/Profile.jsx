@@ -109,7 +109,7 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Profile Header */}
@@ -161,7 +161,7 @@ function Profile() {
       </div>
 
       {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Tab: Profil */}
         {activeTab === 'profile' && (

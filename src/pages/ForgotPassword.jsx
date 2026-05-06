@@ -27,7 +27,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 pt-20 px-4">
         <div className="w-full max-w-md space-y-6">
@@ -93,6 +93,6 @@ export default function ForgotPassword() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   )
 }

@@ -29,7 +29,7 @@ const VALEURS = [
 
 export default function APropos() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Hero */}
@@ -46,7 +46,7 @@ export default function APropos() {
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-14">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-14">
 
         {/* Notre mission */}
         <section>

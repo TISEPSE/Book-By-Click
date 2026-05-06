@@ -57,7 +57,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => setToast({ ...toast, show: false })} />
       <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 px-4">
@@ -214,6 +214,6 @@ export default function Login() {
       </div>
     </main>
       <Footer />
-    </>
+    </div>
   )
 }

@@ -66,7 +66,7 @@ export default function BookingConfirmation() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex flex-col items-center justify-center py-32 gap-4">
           <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
@@ -78,9 +78,9 @@ export default function BookingConfirmation() {
 
   if (status === "error") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
-        <main className="max-w-lg mx-auto px-4 sm:px-6 py-12">
+        <main className="flex-1 max-w-lg mx-auto px-4 sm:px-6 py-12">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
@@ -114,10 +114,10 @@ export default function BookingConfirmation() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
-      <main className="max-w-lg mx-auto px-4 sm:px-6 py-12">
+      <main className="flex-1 max-w-lg mx-auto px-4 sm:px-6 py-12">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
