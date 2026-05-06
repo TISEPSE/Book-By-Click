@@ -51,20 +51,28 @@ export default function Admin() {
     setBlockingId(idPro)
     try {
       const response = await fetch(`/api/admin/entreprises/${idPro}/bloquer`, {
-        method: "PATCH",
-        credentials: "include",
+        method: "PATCH", credentials: "include",
       })
-
-      if (!response.ok) {
-        throw new Error("Impossible de bloquer l'utilisateur")
-      }
-
+      if (!response.ok) throw new Error("Impossible de bloquer l'utilisateur")
       setEntreprises(prev =>
-        prev.map(entreprise =>
-          entreprise.idPro === idPro
-            ? { ...entreprise, estBloque: true }
-            : entreprise
-        )
+        prev.map(e => e.idPro === idPro ? { ...e, estBloque: true } : e)
+      )
+    } catch (err) {
+      setError(err.message || "Erreur inconnue")
+    } finally {
+      setBlockingId(null)
+    }
+  }
+
+  const handleUnblock = async idPro => {
+    setBlockingId(idPro)
+    try {
+      const response = await fetch(`/api/admin/entreprises/${idPro}/debloquer`, {
+        method: "PATCH", credentials: "include",
+      })
+      if (!response.ok) throw new Error("Impossible de débloquer l'utilisateur")
+      setEntreprises(prev =>
+        prev.map(e => e.idPro === idPro ? { ...e, estBloque: false } : e)
       )
     } catch (err) {
       setError(err.message || "Erreur inconnue")
@@ -141,19 +149,26 @@ export default function Admin() {
                       <td className="px-4 py-3 text-gray-700">
                         {entreprise.estBloque ? "Bloqué" : "Actif"}
                       </td>
-                      <td className="px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => handleBlock(entreprise.idPro)}
-                          disabled={entreprise.estBloque || blockingId === entreprise.idPro}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                            entreprise.estBloque
-                              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                              : "bg-red-600 text-white hover:bg-red-700"
-                          }`}
-                        >
-                          {blockingId === entreprise.idPro ? "Blocage..." : "Bloquer"}
-                        </button>
+                      <td className="px-4 py-3 flex gap-2">
+                        {!entreprise.estBloque ? (
+                          <button
+                            type="button"
+                            onClick={() => handleBlock(entreprise.idPro)}
+                            disabled={blockingId === entreprise.idPro}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                          >
+                            {blockingId === entreprise.idPro ? "…" : "Bloquer"}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleUnblock(entreprise.idPro)}
+                            disabled={blockingId === entreprise.idPro}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
+                          >
+                            {blockingId === entreprise.idPro ? "…" : "Débloquer"}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))

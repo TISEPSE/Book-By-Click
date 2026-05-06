@@ -1,9 +1,10 @@
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
 import { useState, useEffect, useRef } from "react"
-import useSubmitForm_pro from "../Hook/useSubmitForm_pro"
+import useSubmitForm_pro from "../hooks/useSubmitForm_pro"
 import Toast from "../components/Toast"
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 export default function ProfessionalRegisterForm() {
   const { handleSubmit, toast, closeToast } = useSubmitForm_pro(
@@ -442,6 +443,7 @@ export default function ProfessionalRegisterForm() {
         </div>
       </div>
     </main>
+      <Footer />
     </>
   );
 }

@@ -1,75 +1,108 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, Blueprint
-from dotenv import load_dotenv
-from src.routes.pages import pages_blueprint
-from src.routes.entreprise import entreprise_blueprint
-from src.routes.admin import admin_blueprint
-from src.reservation import reservation_bp
+"""
+Fabrique d'application Flask (Application Factory Pattern).
+
+L'utilisation d'une fonction create_app() permet d'instancier plusieurs
+configurations de l'application (test, développement, production) sans
+modifier le code source, et évite les imports circulaires en retardant
+l'association des extensions à l'instance Flask.
+"""
+
 import os
 import time
-from pathlib import Path
 import secrets
-from src.extension import db, cors
+from pathlib import Path
+from flask import Flask
+from dotenv import load_dotenv
+
+from src.extension       import db, cors, migrate
+from src.routes.auth     import auth_bp
+from src.routes.user     import user_bp
+from src.routes.contact  import contact_bp
+from src.routes.static_data  import static_bp
+from src.routes.entreprise   import entreprise_blueprint
+from src.routes.admin        import admin_blueprint
+from src.routes.reservations import reservations_bp
+from src.routes.creneaux     import creneaux_bp
+from src.routes.evenements   import evenements_bp
+from src.routes.semainetype  import semainetype_bp
+from src.routes.statistiques import statistiques_bp
+from src.routes.clients      import clients_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 
-# Charger le .env depuis la racine du projet
-env_path = Path(__file__).resolve().parent.parent.parent / '.env'
-load_dotenv(env_path)
+# Chargement des variables d'environnement depuis la racine du projet
+load_dotenv(Path(__file__).resolve().parent.parent.parent / '.env')
+
 
 def create_app():
+    """
+    Crée et configure l'instance Flask.
+
+    Enregistre les extensions, les blueprints et initialise la base de données
+    avec une logique de retry pour absorber le délai de démarrage du container
+    PostgreSQL en environnement Docker.
+
+    Returns:
+        Flask: L'instance de l'application configurée et prête à servir.
+    """
     app = Flask(__name__)
-    # Générer une clé secrète par défaut si elle n'est pas définie dans les variables d'environnement
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", secrets.token_hex(32))
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "SQLALCHEMY_DATABASE_URI", 
+
+    # --- Configuration ---
+    app.config["SECRET_KEY"]                  = os.getenv("SECRET_KEY", secrets.token_hex(32))
+    app.config["SQLALCHEMY_DATABASE_URI"]     = os.getenv(
+        "SQLALCHEMY_DATABASE_URI",
         "postgresql://appuser:apppassword@localhost:5432/appdb"
     )
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    # SameSite=Lax autorise l'envoi du cookie de session lors des requêtes cross-site
+    # initiées par navigation (liens), tout en bloquant les requêtes de tiers (CSRF).
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    app.config["SESSION_COOKIE_SECURE"]   = False  # Passer à True en production (HTTPS)
 
-    # Configuration des cookies de session pour CORS
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-    app.config['SESSION_COOKIE_SECURE'] = False  # True en production avec HTTPS
-
-    # Blueprints
-    app.register_blueprint(pages_blueprint)
-    app.register_blueprint(reservation_bp)
-    app.register_blueprint(entreprise_blueprint)
-    app.register_blueprint(admin_blueprint)
-
-
-    # Extensions
+    # --- Extensions ---
     db.init_app(app)
+    migrate.init_app(app, db)
     cors(app, supports_credentials=True, origins=["http://localhost:5173", "http://localhost:3000"])
 
-    # Essaye de créer les tables et initialiser les données de base (avec retry)
+    # --- Blueprints ---
+    # Chaque blueprint encapsule un domaine fonctionnel distinct de l'API.
+    for bp in [
+        auth_bp, user_bp, contact_bp, static_bp,
+        entreprise_blueprint, admin_blueprint,
+        reservations_bp, creneaux_bp, evenements_bp,
+        semainetype_bp, statistiques_bp, clients_bp,
+    ]:
+        app.register_blueprint(bp)
+
+    # Interface Swagger disponible sur /swagger pour l'exploration de l'API
+    app.register_blueprint(
+        get_swaggerui_blueprint(
+            "/swagger", "/static/swagger.json",
+            config={"app_name": "Book-By-Click API"}
+        ),
+        url_prefix="/swagger"
+    )
+
+    # --- Initialisation de la base de données ---
+    # Retry nécessaire : PostgreSQL peut mettre quelques secondes à accepter
+    # des connexions après le démarrage du container Docker.
     max_attempts = 10
     for attempt in range(1, max_attempts + 1):
         try:
             with app.app_context():
-                db.create_all()
+                db.create_all()  # Crée les tables absentes sans écraser l'existant
                 from src.seed import run_seed
                 run_seed()
             break
         except Exception as e:
             if attempt == max_attempts:
-                print(f"Avertissement: Impossible de se connecter a la base de donnees apres {max_attempts} tentatives: {e}")
-                print("Le serveur continuera sans connexion a la base de donnees.")
+                print(f"Avertissement : DB inaccessible après {max_attempts} tentatives : {e}")
             else:
-                print(f"Connexion DB echouee (tentative {attempt}/{max_attempts}): {e}")
+                print(f"Connexion DB échouée (tentative {attempt}/{max_attempts}) : {e}")
                 time.sleep(2)
-
-    # Swagger
-    SWAGGER_URL = "/swagger"
-    API_URL = "/static/swagger.json"  # place ton swagger.json ici : Backend/static/swagger.json
-    swaggerui_blueprint = get_swaggerui_blueprint(
-        SWAGGER_URL,
-        API_URL,
-        config={"app_name": "Book-By-Click API"}
-    )
-    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
     return app
 
+
 if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True, port=5000)
+    create_app().run(debug=True, port=5000)

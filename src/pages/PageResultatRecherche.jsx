@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 // ============= COMPOSANT BUSINESS CARD =============
 function BusinessCard({ name, business, onNavigate }) {
@@ -218,6 +219,7 @@ export default function PageResultatRecherche() {
             </div>
           )}
         </main>
+      <Footer />
       </div>
     </div>
   )

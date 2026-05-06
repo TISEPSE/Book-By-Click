@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { Menu, X, Search, Home, Mail, User, LayoutDashboard } from "lucide-react";
+import { Menu, X, Search, Home, User, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -101,10 +101,6 @@ export default function Navbar() {
               <Search className="w-4 h-4" />
               Recherche
             </Link>
-            <Link to="/contact" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
-              <Mail className="w-4 h-4" />
-              Contact
-            </Link>
             <button onClick={handleDashboardClick} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
@@ -118,7 +114,9 @@ export default function Navbar() {
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700"
             >
               <User className="w-4 h-4" />
-              <span className="hidden lg:inline">Mon compte</span>
+              <span className="hidden lg:inline">
+                {isLoggedIn ? "Mon compte" : "Se connecter"}
+              </span>
             </button>
           </div>
 
@@ -144,10 +142,6 @@ export default function Navbar() {
               <Search className="w-5 h-5" />
               Recherche
             </Link>
-            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
-              <Mail className="w-5 h-5" />
-              Contact
-            </Link>
             <button onClick={handleDashboardClick} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
               <LayoutDashboard className="w-5 h-5" />
               Dashboard
@@ -160,7 +154,7 @@ export default function Navbar() {
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-indigo-600 text-white"
             >
               <User className="w-5 h-5" />
-              Mon compte
+              {isLoggedIn ? "Mon compte" : "Se connecter"}
             </button>
           </div>
         </div>

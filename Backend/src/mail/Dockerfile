@@ -1,20 +1,15 @@
-FROM ubuntu:22.04
-
+FROM debian:bullseye-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     postfix \
     mailutils \
     libsasl2-modules \
     ca-certificates \
-    dnsutils \
-    iputils-ping \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
 
 RUN postconf -e "myhostname = mail.${MAIL_DOMAIN:-localhost}" \
     && postconf -e "mydestination = localhost" \
@@ -22,12 +17,9 @@ RUN postconf -e "myhostname = mail.${MAIL_DOMAIN:-localhost}" \
     && postconf -e "inet_interfaces = all" \
     && postconf -e "inet_protocols = ipv4"
 
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-
 EXPOSE 25
-
 
 ENTRYPOINT ["/entrypoint.sh"]

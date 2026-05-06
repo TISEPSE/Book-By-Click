@@ -1,11 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Edit3, LogOut, Mail, Bell, Lock, Eye, Globe, Smartphone, Clock, ChevronRight, Shield } from "lucide-react";
-import Navbar from "../components/Navbar";
+import { Edit3, Save, X, LogOut, Mail, Bell, Lock, Eye, Globe, Smartphone, Clock, ChevronRight, Shield } from "lucide-react";
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer";
 
 function Profile() {
-  const [activeTab, setActiveTab] = useState('profile');
-  const [user, setUser] = useState(null);
+  const [activeTab,    setActiveTab]    = useState('profile');
+  const [user,         setUser]         = useState(null);
+  const [editing,      setEditing]      = useState(false);
+  const [editForm,     setEditForm]     = useState({});
+  const [editError,    setEditError]    = useState('');
+  const [editSaving,   setEditSaving]   = useState(false);
+  const [showPwdForm,  setShowPwdForm]  = useState(false);
+  const [pwdForm,      setPwdForm]      = useState({ oldPassword: '', newPassword: '', confirm: '' });
+  const [pwdError,     setPwdError]     = useState('');
+  const [pwdSaving,    setPwdSaving]    = useState(false);
+  const [pwdSuccess,   setPwdSuccess]   = useState(false);
   const navigate = useNavigate();
 
   // Fonction pour se logout
@@ -60,9 +70,43 @@ function Profile() {
       }
       return res.json()
     })
-    .then(data => setUser(data))
+    .then(data => { setUser(data); setEditForm({ nom: data.nom, prenom: data.prenom, email: data.email, telephone: data.telephone }); })
     .catch(() => navigate("/login"))
   }, [navigate])
+
+  const saveProfile = async () => {
+    setEditSaving(true); setEditError('');
+    try {
+      const res = await fetch('http://localhost:5000/api/user', {
+        method: 'PATCH', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur');
+      setUser(prev => ({ ...prev, ...editForm }));
+      setEditing(false);
+    } catch (e) { setEditError(e.message); }
+    finally { setEditSaving(false); }
+  };
+
+  const changePassword = async (e) => {
+    e.preventDefault(); setPwdError(''); setPwdSuccess(false);
+    if (pwdForm.newPassword !== pwdForm.confirm) { setPwdError('Les mots de passe ne correspondent pas.'); return; }
+    setPwdSaving(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/user/password', {
+        method: 'PATCH', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldPassword: pwdForm.oldPassword, newPassword: pwdForm.newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur');
+      setPwdSuccess(true);
+      setPwdForm({ oldPassword: '', newPassword: '', confirm: '' });
+    } catch (e) { setPwdError(e.message); }
+    finally { setPwdSaving(false); }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -81,9 +125,12 @@ function Profile() {
                 Membre depuis {user?.dateInscription ? new Date(user.dateInscription).toLocaleDateString('fr-FR') : ''}
               </p>
             </div>
-            <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <button
+              onClick={() => setEditing(!editing)}
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
               <Edit3 className="w-4 h-4" />
-              Modifier
+              {editing ? 'Annuler' : 'Modifier'}
             </button>
           </div>
 
@@ -120,55 +167,70 @@ function Profile() {
         {activeTab === 'profile' && (
           <div className="space-y-6">
 
-            {/* Informations personnelles */}
-            <section className="bg-white border border-gray-200 rounded-lg">
-              <div className="px-5 py-4 border-b border-gray-200">
-                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                  Informations personnelles
-                </h2>
-              </div>
-              <div className="divide-y divide-gray-100">
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Prénom</p>
-                  <p className="text-sm text-gray-900 mt-0.5">{user?.prenom}</p>
+            {/* Formulaire d'édition */}
+            {editing ? (
+              <section className="bg-white border border-indigo-200 rounded-lg">
+                <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Modifier le profil</h2>
+                  <button onClick={() => setEditing(false)}><X className="w-4 h-4 text-gray-400" /></button>
                 </div>
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Nom</p>
-                  <p className="text-sm text-gray-900 mt-0.5">{user?.nom}</p>
+                <div className="p-5 space-y-4">
+                  {editError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">{editError}</p>}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[['Prénom', 'prenom'], ['Nom', 'nom']].map(([label, key]) => (
+                      <div key={key}>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+                        <input value={editForm[key] || ''} onChange={e => setEditForm({ ...editForm, [key]: e.target.value })}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" />
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
+                    <input type="email" value={editForm.email || ''} onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Téléphone</label>
+                    <input value={editForm.telephone || ''} onChange={e => setEditForm({ ...editForm, telephone: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" />
+                  </div>
+                  <button onClick={saveProfile} disabled={editSaving}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+                    <Save className="w-4 h-4" />{editSaving ? 'Enregistrement…' : 'Enregistrer'}
+                  </button>
                 </div>
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Date de naissance</p>
-                  <p className="text-sm text-gray-900 mt-0.5">{user?.dateNaissance ? new Date(user.dateNaissance).toLocaleDateString('fr-FR') : ''}</p>
-                </div>
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Type de compte</p>
-                  <p className="text-sm text-gray-900 mt-0.5">Client</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Coordonnées */}
-            <section className="bg-white border border-gray-200 rounded-lg">
-              <div className="px-5 py-4 border-b border-gray-200">
-                <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                  Coordonnées
-                </h2>
-              </div>
-              <div className="divide-y divide-gray-100">
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
-                  <p className="text-sm text-gray-900 mt-0.5">{user?.email}</p>
-                </div>
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Téléphone</p>
-                  <p className="text-sm text-gray-900 mt-0.5">{user?.telephone}</p>
-                </div>
-                <div className="px-5 py-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Adresse</p>
-                  <p className="text-sm text-gray-900 mt-0.5">-</p>
-                </div>
-              </div>
-            </section>
+              </section>
+            ) : (
+              <>
+                <section className="bg-white border border-gray-200 rounded-lg">
+                  <div className="px-5 py-4 border-b border-gray-200">
+                    <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Informations personnelles</h2>
+                  </div>
+                  <div className="divide-y divide-gray-100">
+                    {[['Prénom', user?.prenom], ['Nom', user?.nom], ['Date de naissance', user?.dateNaissance ? new Date(user.dateNaissance).toLocaleDateString('fr-FR') : '']].map(([label, val]) => (
+                      <div key={label} className="px-5 py-4">
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">{label}</p>
+                        <p className="text-sm text-gray-900 mt-0.5">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <section className="bg-white border border-gray-200 rounded-lg">
+                  <div className="px-5 py-4 border-b border-gray-200">
+                    <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Coordonnées</h2>
+                  </div>
+                  <div className="divide-y divide-gray-100">
+                    {[['Email', user?.email], ['Téléphone', user?.telephone]].map(([label, val]) => (
+                      <div key={label} className="px-5 py-4">
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">{label}</p>
+                        <p className="text-sm text-gray-900 mt-0.5">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
+            )}
 
             {/* Déconnexion */}
             <button
@@ -295,16 +357,34 @@ function Profile() {
                 </h2>
               </div>
               <div className="divide-y divide-gray-100">
-                <button className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <Lock className="w-5 h-5 text-gray-400" />
-                    <div className="text-left">
+                <div>
+                  <button onClick={() => { setShowPwdForm(!showPwdForm); setPwdError(''); setPwdSuccess(false); }}
+                    className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <Lock className="w-5 h-5 text-gray-400" />
                       <p className="text-sm font-medium text-gray-900">Modifier le mot de passe</p>
-                      <p className="text-xs text-gray-500 mt-0.5">Dernière modification il y a 3 mois</p>
                     </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </button>
+                    <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${showPwdForm ? 'rotate-90' : ''}`} />
+                  </button>
+                  {showPwdForm && (
+                    <form onSubmit={changePassword} className="px-5 pb-5 space-y-3 border-t border-gray-100">
+                      {pwdError   && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-3">{pwdError}</p>}
+                      {pwdSuccess && <p className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 rounded px-3 py-2 mt-3">Mot de passe modifié !</p>}
+                      {[['Mot de passe actuel', 'oldPassword'], ['Nouveau mot de passe', 'newPassword'], ['Confirmer', 'confirm']].map(([label, key]) => (
+                        <div key={key} className="mt-3">
+                          <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+                          <input type="password" required value={pwdForm[key]}
+                            onChange={e => setPwdForm({ ...pwdForm, [key]: e.target.value })}
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" />
+                        </div>
+                      ))}
+                      <button type="submit" disabled={pwdSaving}
+                        className="mt-1 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+                        {pwdSaving ? 'Enregistrement…' : 'Changer le mot de passe'}
+                      </button>
+                    </form>
+                  )}
+                </div>
 
                 <button className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50">
                   <div className="flex items-center gap-3">
@@ -344,6 +424,7 @@ function Profile() {
         )}
 
       </main>
+      <Footer />
     </div>
   );
 }

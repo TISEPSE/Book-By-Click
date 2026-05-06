@@ -1,9 +1,10 @@
 import { UserIcon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
 import { useState } from "react"
-import useSubmitForm_user from "../Hook/useSubmitForm_user"
+import useSubmitForm_user from "../hooks/useSubmitForm_user"
 import Toast from "../components/Toast"
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 export default function Register_User() {
   const { handleSubmit, toast, closeToast } = useSubmitForm_user(
@@ -255,6 +256,7 @@ export default function Register_User() {
         </div>
       </div>
     </main>
+      <Footer />
     </>
   )
 }
