@@ -25,9 +25,7 @@ from sqlalchemy.orm import joinedload
 reservations_bp = Blueprint('reservations', __name__)
 
 
-# ─────────────────────────────────────────────────────────
 #  Fonctions utilitaires internes
-# ─────────────────────────────────────────────────────────
 
 def _block_overlapping(creneau, prestation):
     """
@@ -98,9 +96,7 @@ def _serialize_res_status(res):
     return "pending"
 
 
-# ─────────────────────────────────────────────────────────
 #  Routes client
-# ─────────────────────────────────────────────────────────
 
 @reservations_bp.route('/api/reservations', methods=['POST'])
 @login_required
@@ -235,9 +231,7 @@ def get_client_reservations():
         return jsonify({"error": str(e)}), 500
 
 
-# ─────────────────────────────────────────────────────────
 #  Routes partagées (client + pro)
-# ─────────────────────────────────────────────────────────
 
 @reservations_bp.route('/api/reservations/<int:id_res>/status', methods=['PATCH'])
 @login_required
@@ -341,9 +335,7 @@ def update_reservation_notes(id_res):
         return jsonify({"error": str(e)}), 500
 
 
-# ─────────────────────────────────────────────────────────
 #  Routes professionnel
-# ─────────────────────────────────────────────────────────
 
 @reservations_bp.route('/api/entreprise/reservations', methods=['GET'])
 @login_required
