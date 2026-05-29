@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 // ============= COMPOSANT BUSINESS CARD =============
 function BusinessCard({ name, business, onNavigate }) {
@@ -123,7 +124,7 @@ export default function PageResultatRecherche() {
   const resultEntries = Object.entries(results)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Barre de recherche */}
@@ -162,7 +163,8 @@ export default function PageResultatRecherche() {
       </div>
 
       {/* Contenu principal */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex-1">
+        <div className="max-w-screen-xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
         <main className="w-full">
           {/* Nombre de résultats */}
           {hasSearched && !loading && (
@@ -218,7 +220,9 @@ export default function PageResultatRecherche() {
             </div>
           )}
         </main>
+        </div>
       </div>
+      <Footer />
     </div>
   )
 }

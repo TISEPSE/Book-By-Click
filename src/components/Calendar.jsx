@@ -1,6 +1,6 @@
 "use client"
 
-import { useCalendar } from "../Hook/useCalendar"
+import { useCalendar } from "../hooks/useCalendar"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import NavigationButtons from "./NavigationButtons"

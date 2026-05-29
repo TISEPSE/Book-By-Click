@@ -31,4 +31,4 @@ ENV PYTHONPATH=/app
 EXPOSE 5000
 
 # ⚠️ Si ton backend n'est pas FastAPI/uvicorn, remplace cette ligne par ta commande réelle.
-CMD ["flask", "--app", "src.app:create_app", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["flask", "--app", "src.app:create_app", "run", "--host=0.0.0.0", "--port=5000", "--reload"]

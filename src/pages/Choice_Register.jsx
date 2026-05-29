@@ -5,7 +5,8 @@ import {
   CheckIcon,
   ArrowLeftIcon
 } from "@heroicons/react/24/outline";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer";
 
 export default function RoleSelectionPage() {
   return (
@@ -134,6 +135,7 @@ export default function RoleSelectionPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

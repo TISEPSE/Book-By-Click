@@ -2,8 +2,9 @@ import { useState, useEffect } from "react"
 import { useParams, useLocation, useNavigate } from "react-router-dom"
 import { Clock, ArrowLeft, ChevronLeft, ChevronRight, Euro, Calendar, Loader2 } from "lucide-react"
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 import Modal from "../components/Modal"
-import { generateMockSlots } from "../data/mockEntreprises"
+
 import { format, addDays, startOfWeek, isSameDay, isBefore, startOfDay, parseISO } from "date-fns"
 import { fr } from "date-fns/locale"
 
@@ -19,34 +20,33 @@ export default function BookingCalendar() {
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [allSlots, setAllSlots] = useState([])
   const [loading, setLoading] = useState(true)
+  const [apiError, setApiError] = useState(null)
 
   useEffect(() => {
     const fetchCreneaux = async () => {
       try {
+        setApiError(null)
         const response = await fetch(`http://127.0.0.1:5000/api/entreprise/slug/${slug}`)
-        if (!response.ok) throw new Error("Erreur")
+        if (!response.ok) {
+          if (response.status === 403) {
+            throw new Error("Entreprise indisponible")
+          }
+          throw new Error("Erreur")
+        }
         const data = await response.json()
         const dbSlots = (data.creneaux || []).filter((c) => c.statut)
 
-        if (dbSlots.length > 0) {
-          setAllSlots(dbSlots.map((c) => {
-            const dateDebut = parseISO(c.dateHeureDebut)
-            return {
-              id: c.idCreneau,
-              date: startOfDay(dateDebut),
-              time: format(dateDebut, "HH'h'mm"),
-              start: dateDebut,
-            }
-          }))
-        } else if (prestation) {
-          // Pas de créneaux en BDD → générer des créneaux par défaut
-          setAllSlots(generateMockSlots(prestation.duration))
-        }
-      } catch {
-        // En cas d'erreur API, fallback sur les créneaux générés
-        if (prestation) {
-          setAllSlots(generateMockSlots(prestation.duration))
-        }
+        setAllSlots(dbSlots.map((c) => {
+          const dateDebut = parseISO(c.dateHeureDebut)
+          return {
+            id:   c.idCreneau,
+            date: startOfDay(dateDebut),
+            time: format(dateDebut, "HH'h'mm"),
+            start: dateDebut,
+          }
+        }))
+      } catch (err) {
+        setApiError(err.message || "Erreur")
       } finally {
         setLoading(false)
       }
@@ -56,9 +56,9 @@ export default function BookingCalendar() {
 
   if (!entreprise || !prestation) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
+        <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 text-center">
           <p className="text-sm text-gray-500 mb-4">Données de réservation manquantes</p>
           <button
             onClick={() => navigate("/result")}
@@ -67,6 +67,7 @@ export default function BookingCalendar() {
             Retour aux résultats
           </button>
         </main>
+      <Footer />
       </div>
     )
   }
@@ -107,6 +108,7 @@ export default function BookingCalendar() {
             prestation,
             date: selectedSlot.date,
             time: selectedSlot.time,
+            idCreneau: selectedSlot.id,
           },
         },
       })
@@ -126,7 +128,7 @@ export default function BookingCalendar() {
   const today = startOfDay(new Date())
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Barre résumé prestation */}
@@ -160,7 +162,13 @@ export default function BookingCalendar() {
       </div>
 
       {/* Contenu */}
-      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {apiError === "Entreprise indisponible" && (
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
+            Cette entreprise est indisponible.
+          </div>
+        )}
+
         {/* Navigation semaine */}
         <div className="flex items-center justify-between mb-6">
           <button
@@ -185,6 +193,15 @@ export default function BookingCalendar() {
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
             <span className="ml-3 text-gray-500">Chargement des créneaux...</span>
+          </div>
+        ) : apiError === "Entreprise indisponible" ? (
+          <div className="text-center py-10">
+            <button
+              onClick={() => navigate("/result")}
+              className="px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-600 rounded-lg hover:bg-indigo-50"
+            >
+              Retour aux résultats
+            </button>
           </div>
         ) : (
           <>
@@ -253,6 +270,7 @@ export default function BookingCalendar() {
           </>
         )}
       </main>
+      <Footer />
 
       {/* Modal confirmation */}
       <Modal

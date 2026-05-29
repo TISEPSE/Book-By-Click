@@ -1,9 +1,10 @@
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
 import { useState, useEffect, useRef } from "react"
-import useSubmitForm_pro from "../Hook/useSubmitForm_pro"
+import useSubmitForm_pro from "../hooks/useSubmitForm_pro"
 import Toast from "../components/Toast"
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 export default function ProfessionalRegisterForm() {
   const { handleSubmit, toast, closeToast } = useSubmitForm_pro(
@@ -70,7 +71,7 @@ export default function ProfessionalRegisterForm() {
   }, [])
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={closeToast} />
       <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 p-4">
@@ -442,6 +443,7 @@ export default function ProfessionalRegisterForm() {
         </div>
       </div>
     </main>
-    </>
+      <Footer />
+    </div>
   );
 }

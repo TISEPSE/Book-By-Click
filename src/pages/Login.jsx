@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../components/Toast';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer';
 
 export default function Login() {
   const [error, setError] = useState(null);
@@ -36,7 +37,9 @@ export default function Login() {
 
       if (response.ok) {
         // Code 200 (si connexion réussis), redirection vers le dashboard approprié
-        if (data.estGerant) {
+        if (data.isAdmin) {
+          navigate('/admin');
+        } else if (data.estGerant) {
           navigate('/dashboard_entreprise');
         } else {
           navigate('/dashboard_client');
@@ -54,7 +57,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => setToast({ ...toast, show: false })} />
       <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 px-4">
@@ -210,6 +213,7 @@ export default function Login() {
         </div>
       </div>
     </main>
-    </>
+      <Footer />
+    </div>
   )
 }

@@ -1,6 +1,7 @@
 flask
 flask-cors
 Flask-SQLAlchemy
+flask-migrate
 python-dotenv
 psycopg2-binary
 flask-swagger-ui

@@ -13,19 +13,11 @@ services:
       - db_data:/var/lib/postgresql/data
 
   mail:
-    build:
-      context: Backend/src/mail
+    image: mailhog/mailhog
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
-    environment:
-      MAIL_DOMAIN: "gmail.com"
-      RELAY_HOST: "smtp.gmail.com"
-      RELAY_PORT: "587"
-      RELAY_USER: "arthuralternance.pro@gmail.com"
-      RELAY_PASS: "sfaj vcqj pxkh wmzs"
-    
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Interface web
 
   backend:
     build:
@@ -38,6 +30,10 @@ services:
       - mail
     environment:
       SQLALCHEMY_DATABASE_URI: postgresql://appuser:apppassword@db:5432/appdb
+      FLASK_ENV: development
+      FLASK_DEBUG: "1"
+      SMTP_HOST: mail
+      SMTP_PORT: "1025"
     ports:
       - "5000:5000"
     volumes:
