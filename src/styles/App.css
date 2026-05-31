@@ -133,6 +133,7 @@ input {
 
 .rbc-time-content {
   border-top: none;
+  position: relative;
 }
 
 .rbc-time-slot {
@@ -144,10 +145,9 @@ input {
   border-left: 1px solid #e5e7eb;
 }
 
+
 .rbc-current-time-indicator {
-  background-color: #6366f1;
-  height: 2px;
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+  display: none !important;
 }
 
 .rbc-today {

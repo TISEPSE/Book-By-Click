@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   Calendar, Clock, CheckCircle, XCircle, AlertCircle,
-  TrendingUp, Users, Euro, ArrowRight, Search,
+  Euro, ArrowRight, Search,
 } from "lucide-react"
 import { format, isToday, isTomorrow, isFuture, parseISO } from "date-fns"
 import { fr } from "date-fns/locale"
@@ -176,78 +176,53 @@ function ProDashboard({ reservations, loading, navigate }) {
         ))}
       </div>
 
-      {/* Prochains RDV + Accès rapides */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Prochains rendez-vous */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">Prochains rendez-vous</h2>
-            <button
-              onClick={() => navigate("/dashboard_entreprise?section=reservations")}
-              className="text-xs text-indigo-600 hover:underline flex items-center gap-1"
-            >
-              Voir tout <ArrowRight className="w-3 h-3" />
-            </button>
+      {/* Prochains rendez-vous — pleine largeur */}
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-900">Prochains rendez-vous</h2>
+          <button
+            onClick={() => navigate("/dashboard_entreprise?section=reservations")}
+            className="text-xs text-indigo-600 hover:underline flex items-center gap-1"
+          >
+            Voir tout <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="p-5 space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+            ))}
           </div>
-
-          {loading ? (
-            <div className="p-5 space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse" />
-              ))}
-            </div>
-          ) : next5.length === 0 ? (
-            <div className="p-8 text-center">
-              <Calendar className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p className="text-sm text-gray-400">Aucun rendez-vous à venir</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {next5.map((r) => {
-                const st = STATUS_LABELS[r.status]
-                return (
-                  <div key={r.db_id} className="px-5 py-3.5 flex items-center gap-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{r.clientName}</p>
-                      <p className="text-xs text-gray-500">{r.service}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-xs font-medium text-gray-700">{formatRdvDate(r.date, r.time)}</p>
-                      <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${st.classes}`}>
-                        {st.label}
-                      </span>
-                    </div>
-                    <div className="text-right shrink-0 w-14">
-                      <p className="text-sm font-semibold text-gray-900">{r.price.toFixed(0)} €</p>
-                    </div>
+        ) : next5.length === 0 ? (
+          <div className="p-8 text-center">
+            <Calendar className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+            <p className="text-sm text-gray-400">Aucun rendez-vous à venir</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {next5.map((r) => {
+              const st = STATUS_LABELS[r.status]
+              return (
+                <div key={r.db_id} className="px-5 py-3.5 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{r.clientName}</p>
+                    <p className="text-xs text-gray-500">{r.service}</p>
                   </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Accès rapides */}
-        <div className="space-y-3">
-          {[
-            { label: "Planning & créneaux",    icon: Clock,       section: "planning"      },
-            { label: "Voir les réservations", icon: Calendar,    section: "reservations"  },
-            { label: "Liste des clients",     icon: Users,       section: "clients"       },
-            { label: "Statistiques",          icon: TrendingUp,  section: "statistics"    },
-          ].map(({ label, icon: Icon, section }) => (
-            <button
-              key={section}
-              onClick={() => navigate(`/dashboard_entreprise?section=${section}`)}
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 flex items-center gap-3 hover:border-indigo-300 hover:bg-indigo-50 transition-colors text-left"
-            >
-              <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
-                <Icon className="w-4 h-4" />
-              </div>
-              <span className="text-sm font-medium text-gray-700">{label}</span>
-              <ArrowRight className="w-4 h-4 text-gray-400 ml-auto" />
-            </button>
-          ))}
-        </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-medium text-gray-700">{formatRdvDate(r.date, r.time)}</p>
+                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${st.classes}`}>
+                      {st.label}
+                    </span>
+                  </div>
+                  <div className="text-right shrink-0 w-14">
+                    <p className="text-sm font-semibold text-gray-900">{r.price.toFixed(0)} €</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )

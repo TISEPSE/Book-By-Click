@@ -178,14 +178,14 @@ export default function BookingConfirmation() {
         <div className="flex flex-col sm:flex-row gap-3 mt-6">
           <Link
             to="/dashboard_client"
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 whitespace-nowrap"
           >
             <Calendar className="w-4 h-4" />
             Voir mes réservations
           </Link>
           <Link
             to="/"
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 whitespace-nowrap"
           >
             <Home className="w-4 h-4" />
             Retour à l'accueil

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Navbar            from '../../components/Navbar'
 import DashboardContent   from './sections/DashboardContent'
@@ -24,11 +24,9 @@ import SemaineTypeContent from './sections/SemaineTypeContent'
  */
 const DashboardEntreprise = () => {
   const location = useLocation()
-  const params   = new URLSearchParams(location.search)
-
-  // Initialisation depuis l'URL pour supporter les liens directs (?section=xxx)
-  const [activeSection, setActiveSection] = useState(params.get('section') || 'dashboard')
   const navigate = useNavigate()
+
+  const activeSection = new URLSearchParams(location.search).get('section') || 'dashboard'
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,6 +39,8 @@ const DashboardEntreprise = () => {
     }
     checkAuth()
   }, [navigate])
+
+  const goTo = (section) => navigate(`/dashboard_entreprise?section=${section}`)
 
   /** Retourne le composant de section correspondant à l'onglet actif. */
   const renderContent = () => {
@@ -81,7 +81,7 @@ const DashboardEntreprise = () => {
               { key: 'evenements',   label: 'Événements'      },
               { key: 'statistics',   label: 'Statistiques'    },
             ].map(({ key, label }) => (
-              <button key={key} onClick={() => setActiveSection(key)} className={tabClass(key)}>
+              <button key={key} onClick={() => goTo(key)} className={tabClass(key)}>
                 {label}
               </button>
             ))}

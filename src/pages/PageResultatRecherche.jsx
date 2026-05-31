@@ -6,7 +6,7 @@ import {
   Building2,
   Loader2,
 } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
@@ -74,6 +74,55 @@ export default function PageResultatRecherche() {
   const [error, setError] = useState(null)
   const [hasSearched, setHasSearched] = useState(false)
 
+  // Autocomplétion service
+  const [serviceSuggestions, setServiceSuggestions] = useState([])
+  const [showServiceSuggestions, setShowServiceSuggestions] = useState(false)
+  const serviceRef = useRef(null)
+
+  // Autocomplétion ville
+  const [citySuggestions, setCitySuggestions] = useState([])
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false)
+  const locationRef = useRef(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.length > 0) {
+        fetch(`http://127.0.0.1:5000/api/services?q=${encodeURIComponent(searchQuery)}`)
+          .then(r => r.json())
+          .then(data => setServiceSuggestions(data))
+          .catch(() => setServiceSuggestions([]))
+      } else {
+        setServiceSuggestions([])
+      }
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchLocation.length > 0) {
+        fetch(`http://127.0.0.1:5000/api/villes?q=${encodeURIComponent(searchLocation)}`)
+          .then(r => r.json())
+          .then(data => setCitySuggestions(data))
+          .catch(() => setCitySuggestions([]))
+      } else {
+        setCitySuggestions([])
+      }
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [searchLocation])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (serviceRef.current && !serviceRef.current.contains(event.target))
+        setShowServiceSuggestions(false)
+      if (locationRef.current && !locationRef.current.contains(event.target))
+        setShowCitySuggestions(false)
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   const fetchResults = async (service, localisation) => {
     if (!service && !localisation) return
 
@@ -131,25 +180,59 @@ export default function PageResultatRecherche() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <form onSubmit={handleSearch} className="flex items-center gap-3">
-            <div className="flex-1 relative">
+            <div className="flex-1 relative" ref={serviceRef}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => { setSearchQuery(e.target.value); setShowServiceSuggestions(true) }}
+                onFocus={() => setShowServiceSuggestions(true)}
                 placeholder="Quel service recherchez-vous ?"
                 className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 rounded-lg"
+                autoComplete="off"
               />
+              {showServiceSuggestions && serviceSuggestions.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                  {serviceSuggestions.slice(0, 8).map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => { setSearchQuery(s); setShowServiceSuggestions(false) }}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-indigo-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                    >
+                      <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-900">{s}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="flex-1 relative">
+            <div className="flex-1 relative" ref={locationRef}>
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 value={searchLocation}
-                onChange={(e) => setSearchLocation(e.target.value)}
+                onChange={(e) => { setSearchLocation(e.target.value); setShowCitySuggestions(true) }}
+                onFocus={() => setShowCitySuggestions(true)}
                 placeholder="Ville ou adresse"
                 className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 rounded-lg"
+                autoComplete="off"
               />
+              {showCitySuggestions && citySuggestions.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                  {citySuggestions.slice(0, 8).map((v, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => { setSearchLocation(v); setShowCitySuggestions(false) }}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-indigo-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                    >
+                      <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-900">{v}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <button
               type="submit"
@@ -163,7 +246,7 @@ export default function PageResultatRecherche() {
       </div>
 
       {/* Contenu principal */}
-      <div className="flex-1">
+      <div className="flex-1 min-h-screen">
         <div className="max-w-screen-xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
         <main className="w-full">
           {/* Nombre de résultats */}

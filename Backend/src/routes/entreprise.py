@@ -72,7 +72,7 @@ def search():
         base = base.filter(Entreprise.ville.ilike(f"%{localisation}%"))
 
     entreprises = base.all()
-    return jsonify({e.nomEntreprise: _format_entreprise_public(e) for e in entreprises}), 203
+    return jsonify({e.nomEntreprise: _format_entreprise_public(e) for e in entreprises}), 200
 
 
 @entreprise_blueprint.get("/api/entreprise/slug/<string:slug>")

@@ -1,6 +1,7 @@
 import { UserIcon } from "@heroicons/react/24/outline"
 import PasswordChecklist from "react-password-checklist"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import useSubmitForm_user from "../hooks/useSubmitForm_user"
 import Toast from "../components/Toast"
 import Navbar from "../components/Navbar"
@@ -232,9 +233,9 @@ export default function Register_User() {
               <input type="checkbox" required />
               <span>
                 J’accepte les{" "}
-                <a href="#" className="text-indigo-600 hover:underline">
+                <Link to="/conditions" className="text-indigo-600 hover:underline">
                   conditions d'utilisation
-                </a>
+                </Link>
               </span>
             </div>
 

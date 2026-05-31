@@ -16,6 +16,8 @@ export default function ProfessionalRegisterForm() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isValid, setIsValid] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [countryValue, setCountryValue] = useState("")
 
   // Auto-suggestion secteur
   const [sectorInput, setSectorInput] = useState("")
@@ -106,6 +108,25 @@ export default function ProfessionalRegisterForm() {
           <form
             className="space-y-5"
             onSubmit={(e) => {
+              const fd = new FormData(e.target)
+              const newErrors = {}
+              if (!fd.get("prenom")) newErrors.prenom = "Ce champ est obligatoire"
+              if (!fd.get("nom")) newErrors.nom = "Ce champ est obligatoire"
+              if (!fd.get("dateNaissance")) newErrors.dateNaissance = "Ce champ est obligatoire"
+              if (!fd.get("telephone")) newErrors.telephone = "Ce champ est obligatoire"
+              if (!fd.get("companyName")) newErrors.companyName = "Ce champ est obligatoire"
+              if (!fd.get("email")) newErrors.email = "Ce champ est obligatoire"
+              if (!fd.get("slug")) newErrors.slug = "Ce champ est obligatoire"
+              if (!sectorInput) newErrors.sector = "Ce champ est obligatoire"
+              if (!fd.get("address")) newErrors.address = "Ce champ est obligatoire"
+              if (!fd.get("postalCode")) newErrors.postalCode = "Ce champ est obligatoire"
+              if (!cityInput) newErrors.city = "Ce champ est obligatoire"
+              if (!countryValue) newErrors.country = "Ce champ est obligatoire"
+              if (Object.keys(newErrors).length > 0) {
+                e.preventDefault()
+                setErrors(newErrors)
+                return
+              }
               if (!isValid) {
                 e.preventDefault()
                 return
@@ -116,90 +137,104 @@ export default function ProfessionalRegisterForm() {
             {/* Nom et Prénom */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col items-start">
-                <label className="font-medium block text-left">Prénom</label>
+                <label className="font-medium block text-left">Prénom <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="prenom"
                   required
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                  onChange={() => setErrors(e => ({ ...e, prenom: undefined }))}
+                  className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.prenom ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-indigo-600"}`}
                   placeholder="Votre prénom"
                 />
+                {errors.prenom && <p className="mt-1 text-xs text-red-500">{errors.prenom}</p>}
               </div>
-              
+
               <div className="flex flex-col items-start">
-                <label className="font-medium block text-left">Nom</label>
+                <label className="font-medium block text-left">Nom <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="nom"
                   required
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                  onChange={() => setErrors(e => ({ ...e, nom: undefined }))}
+                  className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.nom ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-indigo-600"}`}
                   placeholder="Votre Nom"
                 />
+                {errors.nom && <p className="mt-1 text-xs text-red-500">{errors.nom}</p>}
               </div>
             </div>
 
             {/* Date de naissance */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Date de naissance</label>
+              <label className="font-medium block text-left">Date de naissance <span className="text-red-500">*</span></label>
               <input
                 type="date"
                 name="dateNaissance"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                onChange={() => setErrors(e => ({ ...e, dateNaissance: undefined }))}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.dateNaissance ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-indigo-600"}`}
               />
+              {errors.dateNaissance && <p className="mt-1 text-xs text-red-500">{errors.dateNaissance}</p>}
             </div>
 
             {/* Téléphone */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Téléphone</label>
+              <label className="font-medium block text-left">Téléphone <span className="text-red-500">*</span></label>
               <input
                 type="tel"
                 name="telephone"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-indigo-600 shadow-sm rounded-lg"
+                onChange={() => setErrors(e => ({ ...e, telephone: undefined }))}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.telephone ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-indigo-600"}`}
                 placeholder="06 12 34 56 78"
               />
+              {errors.telephone && <p className="mt-1 text-xs text-red-500">{errors.telephone}</p>}
             </div>
 
             {/* Nom de l'entreprise */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Nom de l'entreprise *</label>
+              <label className="font-medium block text-left">Nom de l'entreprise <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="companyName"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                onChange={() => setErrors(e => ({ ...e, companyName: undefined }))}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.companyName ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                 placeholder="Votre entreprise"
               />
+              {errors.companyName && <p className="mt-1 text-xs text-red-500">{errors.companyName}</p>}
             </div>
 
             {/* Email */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Email professionnel *</label>
+              <label className="font-medium block text-left">Email professionnel <span className="text-red-500">*</span></label>
               <input
                 type="email"
                 name="email"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                onChange={() => setErrors(e => ({ ...e, email: undefined }))}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.email ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                 placeholder="contact@entreprise.com"
               />
+              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
             </div>
 
             {/* Slug */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Slug</label>
+              <label className="font-medium block text-left">Slug <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="slug"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                onChange={() => setErrors(e => ({ ...e, slug: undefined }))}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.slug ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                 placeholder="Slug de l'entreprise"
               />
+              {errors.slug && <p className="mt-1 text-xs text-red-500">{errors.slug}</p>}
             </div>
 
             {/* Secteur d'activité */}
             <div className="flex flex-col items-start relative" ref={sectorRef}>
-              <label className="font-medium block text-left">Secteur d'activité *</label>
+              <label className="font-medium block text-left">Secteur d'activité <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="sector"
@@ -208,9 +243,10 @@ export default function ProfessionalRegisterForm() {
                 onChange={(e) => {
                   setSectorInput(e.target.value)
                   setShowSectorSuggestions(true)
+                  setErrors(err => ({ ...err, sector: undefined }))
                 }}
-                onFocus={() => setShowSectorSuggestions(true)}
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                onClick={() => setShowSectorSuggestions(true)}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.sector ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                 placeholder="Restauration, Coiffeur, Médecin..."
                 autoComplete="off"
               />
@@ -231,35 +267,40 @@ export default function ProfessionalRegisterForm() {
                   ))}
                 </div>
               )}
+              {errors.sector && <p className="mt-1 text-xs text-red-500">{errors.sector}</p>}
             </div>
 
             {/* Adresse */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Adresse *</label>
+              <label className="font-medium block text-left">Adresse <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="address"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                onChange={() => setErrors(e => ({ ...e, address: undefined }))}
+                className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.address ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                 placeholder="123 Rue de l'Exemple"
               />
+              {errors.address && <p className="mt-1 text-xs text-red-500">{errors.address}</p>}
             </div>
 
             {/* Code postal et Ville */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col items-start">
-                <label className="font-medium block text-left">Code postal *</label>
+                <label className="font-medium block text-left">Code postal <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="postalCode"
                   required
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                  onChange={() => setErrors(e => ({ ...e, postalCode: undefined }))}
+                  className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.postalCode ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                   placeholder="75000"
                 />
+                {errors.postalCode && <p className="mt-1 text-xs text-red-500">{errors.postalCode}</p>}
               </div>
-              
+
               <div className="flex flex-col items-start relative" ref={cityRef}>
-                <label className="font-medium block text-left">Ville *</label>
+                <label className="font-medium block text-left">Ville <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   name="city"
@@ -268,9 +309,10 @@ export default function ProfessionalRegisterForm() {
                   onChange={(e) => {
                     setCityInput(e.target.value)
                     setShowCitySuggestions(true)
+                    setErrors(err => ({ ...err, city: undefined }))
                   }}
-                  onFocus={() => setShowCitySuggestions(true)}
-                  className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                  onClick={() => setShowCitySuggestions(true)}
+                  className={`w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border shadow-sm rounded-lg ${errors.city ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
                   placeholder="Paris"
                   autoComplete="off"
                 />
@@ -291,16 +333,22 @@ export default function ProfessionalRegisterForm() {
                     ))}
                   </div>
                 )}
+                {errors.city && <p className="mt-1 text-xs text-red-500">{errors.city}</p>}
               </div>
             </div>
 
             {/* Pays */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Pays *</label>
+              <label className="font-medium block text-left">Pays <span className="text-red-500">*</span></label>
               <select
                 name="country"
                 required
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
+                value={countryValue}
+                onChange={(e) => {
+                  setCountryValue(e.target.value)
+                  setErrors(err => ({ ...err, country: undefined }))
+                }}
+                className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg ${countryValue ? "text-gray-900" : "text-gray-500"} ${errors.country ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-blue-600"}`}
               >
                 <option value="">Sélectionnez un pays</option>
                 <option value="france">France</option>
@@ -309,11 +357,12 @@ export default function ProfessionalRegisterForm() {
                 <option value="luxembourg">Luxembourg</option>
                 <option value="autre">Autre</option>
               </select>
+              {errors.country && <p className="mt-1 text-xs text-red-500">{errors.country}</p>}
             </div>
 
             {/* Mot de passe */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Mot de passe *</label>
+              <label className="font-medium block text-left">Mot de passe <span className="text-red-500">*</span></label>
               <input
                 type="password"
                 name="password"
@@ -322,6 +371,7 @@ export default function ProfessionalRegisterForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
                 placeholder="••••••••"
+                autoComplete="new-password"
               />
               <p className="mt-1 text-xs text-gray-500">
                 Minimum 8 caractères avec lettres et chiffres
@@ -330,7 +380,7 @@ export default function ProfessionalRegisterForm() {
 
             {/* Confirmation mot de passe */}
             <div className="flex flex-col items-start">
-              <label className="font-medium block text-left">Confirmer le mot de passe *</label>
+              <label className="font-medium block text-left">Confirmer le mot de passe <span className="text-red-500">*</span></label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -339,6 +389,7 @@ export default function ProfessionalRegisterForm() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border border-gray-300 focus:border-blue-600 shadow-sm rounded-lg"
                 placeholder="••••••••"
+                autoComplete="new-password"
               />
             </div>
 
@@ -378,6 +429,10 @@ export default function ProfessionalRegisterForm() {
                 </span>
               </div>
             </div>
+
+            <p className="text-xs text-gray-500">
+              Les champs marqués d'un <span className="text-red-500 font-medium">*</span> sont obligatoires.
+            </p>
 
             <button
               type="submit"

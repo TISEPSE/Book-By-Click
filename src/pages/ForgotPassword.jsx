@@ -29,7 +29,7 @@ export default function ForgotPassword() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <main className="w-full min-h-screen flex items-center justify-center bg-gray-50 pt-20 px-4">
+      <main className="w-full min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 px-4 py-10">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
             <div className="flex justify-center mb-4">

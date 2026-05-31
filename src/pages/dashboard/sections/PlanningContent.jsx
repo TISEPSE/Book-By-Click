@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { Calendar, dateFnsLocalizer } from "react-big-calendar"
 import { format, parse, startOfWeek, endOfWeek, getDay } from "date-fns"
 import { fr } from "date-fns/locale"
@@ -251,9 +251,38 @@ export default function PlanningContent() {
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
-  const minTime    = new Date(); minTime.setHours(7, 0, 0, 0)
-  const maxTime    = new Date(); maxTime.setHours(20, 0, 0, 0)
-  const scrollTime = new Date(); scrollTime.setHours(8, 30, 0, 0)
+  const minTime    = useMemo(() => { const d = new Date(); d.setHours(7,  0, 0, 0); return d }, [])
+  const maxTime    = useMemo(() => { const d = new Date(); d.setHours(20, 0, 0, 0); return d }, [])
+  const scrollTime = useMemo(() => { const d = new Date(); d.setHours(8, 30, 0, 0); return d }, [])
+
+  const calendarRef = useRef(null)
+  const [nowTime, setNowTime] = useState(new Date())
+
+  useEffect(() => {
+    const id = setInterval(() => setNowTime(new Date()), 60_000)
+    return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    if (!calendarRef.current || loading) return
+    const slot = calendarRef.current.querySelector('.rbc-day-slot.rbc-today')
+    if (!slot) return
+    const prev = slot.querySelector('.custom-time-indicator')
+    if (prev) prev.remove()
+    const MIN_H = 7, MAX_H = 20
+    const h = nowTime.getHours() + nowTime.getMinutes() / 60
+    if (h < MIN_H || h > MAX_H || slot.offsetHeight === 0) return
+    const topPx = ((h - MIN_H) / (MAX_H - MIN_H)) * slot.offsetHeight
+    const line = document.createElement('div')
+    line.className = 'custom-time-indicator'
+    line.style.cssText = `position:absolute;top:${topPx}px;left:0;right:0;height:2px;background-color:#ef4444;z-index:10;pointer-events:none;`
+    const dot = document.createElement('div')
+    dot.style.cssText = `position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background-color:#ef4444;`
+    line.appendChild(dot)
+    slot.appendChild(line)
+    return () => { if (line.parentNode) line.remove() }
+  }, [nowTime, loading, currentDate, currentView])
+
 
   return (
     <div className="space-y-4">
@@ -285,7 +314,7 @@ export default function PlanningContent() {
             <p className="text-sm text-red-600">{error}</p>
           </div>
         ) : (
-          <div style={{ height: "700px" }}>
+          <div ref={calendarRef} style={{ height: "700px" }}>
             <Calendar
               localizer={localizer}
               culture="fr"

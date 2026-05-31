@@ -38,13 +38,26 @@ def register_user():
     Returns:
         JSON: id du compte créé, HTTP 200.
     """
-    data       = request.get_json()
+    data     = request.get_json() or {}
+    required = ["email", "password", "nom", "prenom", "dateNaissance", "telephone"]
+    missing  = [f for f in required if not data.get(f)]
+    if missing:
+        return jsonify({"error": f"Champs manquants : {', '.join(missing)}"}), 400
+
+    if Utilisateur.query.filter_by(email=data.get("email")).first():
+        return jsonify({"error": "Cette adresse email est déjà utilisée"}), 409
+
+    try:
+        dob = datetime.fromisoformat(data.get("dateNaissance")).date()
+    except (ValueError, TypeError):
+        return jsonify({"error": "Format de date invalide (YYYY-MM-DD requis)"}), 400
+
     type_client = TypeUtilisateur.query.filter_by(role="client").first()
 
     user = Utilisateur(
         nom=data.get("nom"),
         prenom=data.get("prenom"),
-        dateNaissance=datetime.fromisoformat(data.get("dateNaissance")).date(),
+        dateNaissance=dob,
         email=data.get("email"),
         motDePasseHash=generate_password_hash(data.get("password")),
         telephone=data.get("telephone"),
@@ -82,6 +95,9 @@ def register_pro():
     missing = [f for f in required if not data.get(f)]
     if missing:
         return jsonify({"error": f"Champs manquants : {', '.join(missing)}"}), 400
+
+    if Utilisateur.query.filter_by(email=data.get("email")).first():
+        return jsonify({"error": "Cette adresse email est déjà utilisée"}), 409
 
     try:
         dob = datetime.fromisoformat(data.get("dateNaissance")).date()

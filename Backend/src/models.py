@@ -42,7 +42,7 @@ class Utilisateur(db.Model):
     nom               = db.Column(db.String(), nullable=False)
     prenom            = db.Column(db.String(), nullable=False)
     dateNaissance     = db.Column(db.Date, nullable=False)
-    email             = db.Column(db.String(), nullable=False)
+    email             = db.Column(db.String(), nullable=False, unique=True)
     motDePasseHash    = db.Column(db.String(), nullable=False)
     estGerant         = db.Column(db.Boolean, nullable=False)
     estBloque         = db.Column(db.Boolean, nullable=False, default=False, server_default='false')

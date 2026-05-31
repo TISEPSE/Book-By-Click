@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Navbar              from '../../components/Navbar'
 import DashboardContent    from './sections/DashboardContent'
-import CalendarContent     from './sections/CalendarContent'
 import ReservationsContent from './sections/ReservationsContent'
 
 /**
@@ -15,8 +14,16 @@ import ReservationsContent from './sections/ReservationsContent'
  * non connecté est redirigé vers /login.
  */
 const DashboardClient = () => {
-  const [activeSection, setActiveSection] = useState('dashboard')
+  const location = useLocation()
+  const [activeSection, setActiveSection] = useState(
+    new URLSearchParams(location.search).get('section') || 'dashboard'
+  )
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const section = new URLSearchParams(location.search).get('section')
+    if (section) setActiveSection(section)
+  }, [location.search])
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -33,7 +40,6 @@ const DashboardClient = () => {
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':    return <DashboardContent />
-      case 'calendar':     return <CalendarContent showLegend={false} />
       case 'reservations': return <ReservationsContent />
       default:             return <DashboardContent />
     }
@@ -55,7 +61,6 @@ const DashboardClient = () => {
           <nav className="flex gap-4 overflow-x-auto">
             {[
               { key: 'dashboard',    label: 'Tableau de bord' },
-              { key: 'calendar',     label: 'Calendrier'      },
               { key: 'reservations', label: 'Réservations'    },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setActiveSection(key)} className={tabClass(key)}>
