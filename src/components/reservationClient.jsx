@@ -1,1 +1,0 @@
-// coucou Alan faut faire le composant pour les client mon choubidou

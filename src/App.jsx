@@ -20,7 +20,6 @@ import DashboardEntreprise from "./pages/dashboard/DashboardEntreprise.jsx"
 import DashboardClient     from "./pages/dashboard/DashboardClient.jsx"
 import Contact             from "./pages/Contact.jsx"
 import ResultatRecherche   from "./pages/PageResultatRecherche.jsx"
-import Recap               from "./pages/Recap.jsx"
 import Profile             from "./pages/Profile.jsx"
 import EntrepriseDetail    from "./pages/EntrepriseDetail.jsx"
 import BookingCalendar     from "./pages/BookingCalendar.jsx"
@@ -62,9 +61,6 @@ function App() {
         <Route path="/dashboard_client"         element={<DashboardClient />} />
         <Route path="/profile"                  element={<Profile />} />
         <Route path="/admin"                    element={<Admin />} />
-
-        {/* ── Divers ── */}
-        <Route path="/recap"                    element={<Recap />} />
 
         {/* ── Pages institutionnelles ── */}
         <Route path="/aide"                     element={<Aide />} />
